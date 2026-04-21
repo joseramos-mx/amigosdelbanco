@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
+import Reveal from "@/components/Reveal";
 
 const GOAL = 750_000;
 const PERCENT = 64;
@@ -22,8 +23,8 @@ export default function MissionSection() {
       <div className="mx-auto max-w-6xl">
 
         {/* ── Top row — title + description ─────────────────────────── */}
-        <div className="mb-12 grid grid-cols-1 gap-6 sm:mb-16 md:grid-cols-2 md:gap-16">
-          <h2 className="text-3xl font-semibold leading-tight text-gray-900sm:text-4xl">
+        <Reveal className="mb-12 grid grid-cols-1 gap-6 sm:mb-16 md:grid-cols-2 md:gap-16">
+          <h2 className="text-3xl font-semibold leading-tight text-gray-900 sm:text-4xl">
             Nuestra misión va de la mano<br />con nuestros valores
           </h2>
 
@@ -32,28 +33,29 @@ export default function MissionSection() {
             nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
             volutpat. Ut wisi enim ad minim
           </p>
-        </div>
+        </Reveal>
 
         {/* ── Bottom row — image + values card ──────────────────────── */}
         <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
 
           {/* Image with mask 4 */}
-          <div
-            className="relative overflow-hidden"
-            style={{ ...maskStyle, aspectRatio: "869.38 / 490.43" }}
-          >
-            {/* Replace src with the real mission photo when available */}
-            <Image
-              src="/imagen2.png"
-              alt="Manos compartiendo alimento"
-              fill
-              sizes="(max-width: 768px) 90vw, 50vw"
-              className="object-cover"
-            />
-          </div>
+          <Reveal delay={100}>
+            <div
+              className="relative overflow-hidden"
+              style={{ ...maskStyle, aspectRatio: "869.38 / 490.43" }}
+            >
+              <Image
+                src="/imagen2.png"
+                alt="Manos compartiendo alimento"
+                fill
+                sizes="(max-width: 768px) 90vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          </Reveal>
 
           {/* Values card */}
-          <div>
+          <Reveal delay={200}>
             <h3 className="mb-3 text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
               Alimenta el futuro<br />y la esperanza
             </h3>
@@ -90,7 +92,7 @@ export default function MissionSection() {
             >
               Donar ahora
             </Link>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

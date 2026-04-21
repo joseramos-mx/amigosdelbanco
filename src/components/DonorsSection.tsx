@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Reveal from "@/components/Reveal";
 
 /* ── Static data — wire to Stripe later ────────────────────────────── */
 const RAISED = 10_156;
@@ -54,35 +55,36 @@ export default function DonorsSection() {
 
         {/* ── Left — title + brand grid ──────────────────────────────── */}
         <div>
-          <h2 className="mb-10 max-w-sm text-3xl font-semibold leading-tight text-gray-900 sm:text-4xl">
-            Agradecemos profundamente<br />a nuestros donantes
-          </h2>
+          <Reveal>
+            <h2 className="mb-10 max-w-sm text-3xl font-semibold leading-tight text-gray-900 sm:text-4xl">
+              Agradecemos profundamente<br />a nuestros donantes
+            </h2>
+          </Reveal>
 
-          {/* Brand logo grid — replace divs with real <Image> when logos arrive */}
-          <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 sm:gap-6">
-            {BRANDS.map((name) => (
-              <div
-                key={name}
-                className="flex h-16 items-center justify-center rounded-xl bg-gray-50 px-3 sm:h-20"
-              >
-                <span className="text-center text-[11px] font-semibold leading-tight text-gray-400 sm:text-xs">
-                  {name}
-                </span>
-              </div>
-            ))}
-          </div>
+          <Reveal delay={120}>
+            <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 sm:gap-6">
+              {BRANDS.map((name) => (
+                <div
+                  key={name}
+                  className="flex h-16 items-center justify-center rounded-xl bg-gray-50 px-3 sm:h-20"
+                >
+                  <span className="text-center text-[11px] font-semibold leading-tight text-gray-400 sm:text-xs">
+                    {name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
 
         {/* ── Right — donation scoreboard card ──────────────────────── */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+        <Reveal delay={200} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
 
           {/* Progress ring + stats */}
           <div className="mb-5 flex items-center gap-4">
             <div className="relative shrink-0">
               <svg width="88" height="88" viewBox="0 0 100 100">
-                {/* Track */}
                 <circle cx="50" cy="50" r={R} fill="none" stroke="#e5e7eb" strokeWidth="10" />
-                {/* Progress */}
                 <circle
                   cx="50" cy="50" r={R}
                   fill="none"
@@ -127,18 +129,13 @@ export default function DonorsSection() {
           <div className="divide-y divide-gray-100">
             {DONORS.map((d, i) => (
               <div key={i} className="flex items-center gap-3 py-3">
-                {/* Avatar */}
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500">
                   {d.initials ? d.initials : <AnonIcon />}
                 </div>
-
-                {/* Name + time */}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-gray-800">{d.name}</p>
                   <p className="text-xs text-gray-400">{d.daysAgo} d</p>
                 </div>
-
-                {/* Amount */}
                 <span className="shrink-0 text-sm font-semibold text-gray-700">
                   {fmt(d.amount)}
                 </span>
@@ -162,7 +159,7 @@ export default function DonorsSection() {
               Ver destacadas
             </Link>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

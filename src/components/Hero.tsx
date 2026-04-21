@@ -28,25 +28,40 @@ export default function Hero() {
       {/* ── Hero copy ─────────────────────────────────────────────────── */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-5 pt-24 pb-6 text-center sm:pt-32 sm:px-6">
         <h1 className="select-none leading-tight text-white">
-          <span className="block text-5xl font-normal tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+          <span
+            className="block text-5xl font-normal tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+            style={{ animation: "fade-up 0.65s ease-out 0.15s both" }}
+          >
             Por un durango
           </span>
-          <span className="block text-6xl font-semibold tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
+          <span
+            className="block text-6xl font-semibold tracking-tight sm:text-7xl md:text-8xl lg:text-9xl"
+            style={{ animation: "fade-up 0.65s ease-out 0.28s both" }}
+          >
             sin hambre
           </span>
         </h1>
 
         {/* Swoosh */}
-        <div className="mt-1 w-full max-w-xs sm:max-w-xl md:max-w-2xl">
+        <div
+          className="mt-1 w-full max-w-xs sm:max-w-xl md:max-w-2xl"
+          style={{ animation: "fade-up 0.5s ease-out 0.42s both" }}
+        >
           <Image src="/swoosh.svg" alt="" width={600} height={32} className="w-full" aria-hidden />
         </div>
 
-        <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/75 sm:max-w-xl sm:text-base md:text-sm">
+        <p
+          className="mt-5 max-w-sm text-sm leading-relaxed text-white/75 sm:max-w-xl sm:text-base md:text-sm"
+          style={{ animation: "fade-up 0.65s ease-out 0.5s both" }}
+        >
           Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
           tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <div
+          className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+          style={{ animation: "fade-up 0.65s ease-out 0.6s both" }}
+        >
           <Link
             href="/donar"
             className="rounded-full bg-brand-yellow px-7 py-3 text-sm font-bold text-white shadow-lg transition-opacity hover:opacity-90 sm:px-8 sm:text-base"
@@ -74,6 +89,7 @@ export default function Hero() {
           md:mx-auto md:-mt-8.5 md:mb-10 md:grid md:max-w-7xl md:w-full
           md:grid-cols-3 md:items-end md:gap-5 md:pb-0
         "
+        style={{ animation: "fade-up 0.7s ease-out 0.72s both" }}
       >
         {/* Card 1 — Volunteer */}
         <div className="flex flex-col gap-3">
