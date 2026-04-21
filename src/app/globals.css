@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@theme inline {
+  --color-brand-yellow: #fcb51d;
+  --color-brand-blue: #1d4dfc;
+  --color-brand-lime: #9ae600;
+  --font-sans: var(--font-albert-sans);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-albert-sans), sans-serif;
+}
+
+/* Force Albert Sans everywhere, including elements that don't inherit by default */
+*, *::before, *::after {
+  font-family: inherit;
+}
