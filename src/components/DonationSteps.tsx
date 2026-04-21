@@ -82,7 +82,10 @@ export default function DonationSteps() {
               <h2 className="text-2xl font-semibold leading-tight text-gray-900 sm:text-3xl md:text-4xl">
                 ¿Cómo puedo donar<br />y apoyar al banco<br />de alimentos?
               </h2>
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-yellow sm:h-20 sm:w-20 md:h-24 md:w-24">
+              <div
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-yellow sm:h-20 sm:w-20 md:h-24 md:w-24"
+                style={{ animation: "float 4s ease-in-out infinite" }}
+              >
                 <span className="text-center text-[8px] font-extrabold uppercase leading-tight text-white sm:text-[10px]">
                   ¡YO<br />APOYO!<br />al BANCO<br />DURANGO
                 </span>

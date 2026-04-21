@@ -42,10 +42,10 @@ export default function Hero() {
           </span>
         </h1>
 
-        {/* Swoosh */}
+        {/* Swoosh — draws in left → right */}
         <div
           className="mt-1 w-full max-w-xs sm:max-w-xl md:max-w-2xl"
-          style={{ animation: "fade-up 0.5s ease-out 0.42s both" }}
+          style={{ animation: "swipe-in 0.65s ease-out 0.44s both" }}
         >
           <Image src="/swoosh.svg" alt="" width={600} height={32} className="w-full" aria-hidden />
         </div>
@@ -89,10 +89,9 @@ export default function Hero() {
           md:mx-auto md:-mt-8.5 md:mb-10 md:grid md:max-w-7xl md:w-full
           md:grid-cols-3 md:items-end md:gap-5 md:pb-0
         "
-        style={{ animation: "fade-up 0.7s ease-out 0.72s both" }}
       >
         {/* Card 1 — Volunteer */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3" style={{ animation: "fade-up 0.6s ease-out 0.7s both" }}>
           <div
             className="relative overflow-hidden"
             style={{ ...maskStyle(1), aspectRatio: RATIOS[1] }}
@@ -119,13 +118,13 @@ export default function Hero() {
         {/* Card 2 — Group photo */}
         <div
           className="relative overflow-hidden"
-          style={{ ...maskStyle(2), aspectRatio: RATIOS[2] }}
+          style={{ ...maskStyle(2), aspectRatio: RATIOS[2], animation: "fade-up 0.6s ease-out 0.84s both" }}
         >
           <Image src="/imagen2.png" alt="Voluntarios del Banco de Alimentos Durango" fill sizes="(max-width: 768px) 90vw, 33vw" className="object-cover" />
         </div>
 
         {/* Card 3 — Historia */}
-        <div className="flex flex-col justify-end">
+        <div className="flex flex-col justify-end" style={{ animation: "fade-up 0.6s ease-out 0.98s both" }}>
           <div
             className="relative overflow-hidden"
             style={{ ...maskStyle(3), aspectRatio: RATIOS[3] }}

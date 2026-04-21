@@ -5,6 +5,7 @@ import DonorsSection from "@/components/DonorsSection";
 import MissionSection from "@/components/MissionSection";
 import CtaSection from "@/components/CtaSection";
 import GallerySection from "@/components/GallerySection";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <MissionSection />
       <CtaSection />
       <GallerySection />
+      <Footer />
     </>
   );
 }
