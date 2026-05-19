@@ -10,6 +10,7 @@ interface NavbarProps {
 const NAV_LINKS = [
   { href: "/",          label: "Inicio" },
   { href: "/#mision",   label: "Quiénes Somos" },
+  { href: "/progreso",  label: "Progreso" },
   { href: "/#donantes", label: "Donantes" },
   { href: "/#galeria",  label: "Galería" },
 ];

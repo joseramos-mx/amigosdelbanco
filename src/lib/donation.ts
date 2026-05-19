@@ -47,5 +47,21 @@ export function formatMxn(cents: number, opts: { decimals?: boolean } = {}): str
 }
 
 export function percentOfGoal(raisedCents: number): number {
-  return Math.min(100, Math.round((raisedCents / GOAL_CENTS) * 100));
+  if (raisedCents <= 0) return 0;
+  const exact = (raisedCents / GOAL_CENTS) * 100;
+  // Floor at 1% so a tiny first donation doesn't render as 0%.
+  return Math.min(100, Math.max(1, Math.round(exact)));
+}
+
+/** Adaptive label for the donor-count card on the Hero. */
+export function formatDonorCount(n: number): { line1: string; line2: string } {
+  if (n <= 0) return { line1: "Sé el primer", line2: "donante" };
+  if (n < 10) return { line1: "Únete a", line2: `${n} ${n === 1 ? "donante" : "donantes"}` };
+  // 10+ → round down to nearest 10 and add "+" for the social-proof feel.
+  const tier = n < 100
+    ? Math.floor(n / 10) * 10
+    : n < 1000
+      ? Math.floor(n / 100) * 100
+      : Math.floor(n / 1000) * 1000;
+  return { line1: "Únete a", line2: `${tier.toLocaleString("es-MX")}+ Donantes` };
 }

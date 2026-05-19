@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import ShareButton from "@/components/ShareButton";
 import { GOAL_CENTS, formatMxn } from "@/lib/donation";
 import type { PublicDonor, Totals } from "@/lib/queries";
 
@@ -8,10 +9,20 @@ interface DonorsSectionProps {
   donors: PublicDonor[];
 }
 
-const BRAND_LOGOS = Array.from({ length: 11 }, (_, i) => ({
-  src: `/logos%20sponsor/${i + 1}.webp`,
-  alt: `Patrocinador ${i + 1}`,
-}));
+const BRAND_LOGOS = [
+  { src: "/logos%20sponsor/logo.webp",              alt: "Grupo Logo" },
+  { src: "/logos%20sponsor/atocha.png",             alt: "Minera Atocha" },
+  { src: "/logos%20sponsor/ferreteria%20rodo.webp", alt: "Ferretería Rodo" },
+  { src: "/logos%20sponsor/maelsa.webp",            alt: "Maelsa" },
+  { src: "/logos%20sponsor/2.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/3.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/4.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/7.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/8.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/9.webp",                 alt: "Patrocinador" },
+  { src: "/logos%20sponsor/10.webp",                alt: "Patrocinador" },
+  { src: "/logos%20sponsor/11.webp",                alt: "Patrocinador" },
+];
 
 const R = 42;
 const CIRC = 2 * Math.PI * R;
@@ -32,14 +43,6 @@ function AnonIcon() {
     <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-gray-400" stroke="currentColor" strokeWidth="1.8">
       <circle cx="12" cy="8" r="4" />
       <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.8">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
     </svg>
   );
 }
@@ -123,9 +126,7 @@ export default function DonorsSection({ totals, donors }: DonorsSectionProps) {
             >
               Donar ahora
             </Link>
-            <button className="flex w-full items-center justify-center rounded-full bg-[#1e3a1e] py-3 text-sm font-bold text-brand-lime transition-opacity hover:opacity-90">
-              Compartir
-            </button>
+            <ShareButton />
           </div>
 
           {/* Donor list */}
@@ -157,20 +158,13 @@ export default function DonorsSection({ totals, donors }: DonorsSectionProps) {
             )}
           </div>
 
-          {/* Footer buttons */}
-          <div className="mt-4 flex gap-2">
+          {/* Footer button */}
+          <div className="mt-4">
             <Link
               href="/donantes"
-              className="flex flex-1 items-center justify-center rounded-full border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              className="flex w-full items-center justify-center rounded-full border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
             >
-              Ver todo
-            </Link>
-            <Link
-              href="/donantes?destacadas=1"
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-gray-200 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              <StarIcon />
-              Ver destacadas
+              Ver todos los donantes
             </Link>
           </div>
         </Reveal>

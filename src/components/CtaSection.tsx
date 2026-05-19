@@ -1,29 +1,14 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useInView } from "@/hooks/useInView";
 
-const MEALS_SERVED = 421_321;
-
-function useCountUp(target: number, inView: boolean, duration = 2000) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = 1 - (1 - t) ** 3; // ease-out cubic
-      setCount(Math.round(target * eased));
-      if (t < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }, [inView]);
-  return count;
-}
+// Swap this path to use a different image for the CTA banner.
+const CTA_IMAGE_SRC = "/gallery/img4.jpeg";
+const CTA_IMAGE_ALT = "Banco de Alimentos Durango entregando alimento a la comunidad";
 
 export default function CtaSection() {
   const [ref, inView] = useInView(0.25);
-  const count = useCountUp(MEALS_SERVED, inView);
 
   return (
     <section className="bg-white px-5 pb-16 sm:px-6 sm:pb-20">
@@ -40,14 +25,22 @@ export default function CtaSection() {
           Nuestra misión va de la mano<br />con nuestros valores
         </h2>
 
-        <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#451703]/65 sm:text-base">
-          Gracias a quienes creen en esta causa, hemos llevado alimento a miles de hogares
-          duranguenses. Estas son las comidas que juntos hemos hecho posibles:
+        <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#451703]/70 sm:text-base">
+          Gracias a quienes creen en esta causa, hemos llevado alimento a miles
+          de hogares duranguenses.
         </p>
 
-        <p className="mt-8 text-5xl font-extrabold tracking-tight text-[#451703] sm:text-7xl md:text-9xl">
-          {count.toLocaleString("en-US")}+
-        </p>
+        <div className="mx-auto mt-8 w-full max-w-2xl">
+          <div className="relative aspect-video overflow-hidden rounded-2xl shadow-lg">
+            <Image
+              src={CTA_IMAGE_SRC}
+              alt={CTA_IMAGE_ALT}
+              fill
+              sizes="(max-width: 768px) 90vw, 700px"
+              className="object-cover"
+            />
+          </div>
+        </div>
 
         <div className="mt-10">
           <Link

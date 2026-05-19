@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, MotionConfig } from "motion/react";
 import HeroClouds from "@/components/HeroClouds";
+import { formatDonorCount } from "@/lib/donation";
+
+interface HeroProps {
+  donorCount?: number;
+}
 
 const maskStyle = (n: 1 | 2 | 3) =>
   ({
@@ -34,7 +39,9 @@ const swooshDraw = {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export default function Hero() {
+export default function Hero({ donorCount = 0 }: HeroProps) {
+  const donorLabel = formatDonorCount(donorCount);
+
   return (
     // reducedMotion="user" respects the OS setting normally; switch to "never"
     // if you want animations even when "Reduce motion" is on.
@@ -99,12 +106,14 @@ export default function Hero() {
             >
               Donar ahora
             </Link>
-            <Link
-              href="/historia"
+            <a
+              href="https://youtu.be/ALJQvdfJAWY?si=HZpoxGHCLyv6ysqi"
+              target="_blank"
+              rel="noopener noreferrer"
               className="top-10 rounded-full border-2 border-white/40 bg-white/10 px-7 py-3 text-sm font-bold text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-white/20 sm:px-8 sm:text-base"
             >
               Ver historia
-            </Link>
+            </a>
           </motion.div>
         </div>
 
@@ -128,18 +137,20 @@ export default function Hero() {
               <Image src="/imagen1.png" alt="Voluntario" fill sizes="(max-width: 768px) 90vw, 33vw" className="object-cover" />
               <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/30" />
               <div className="absolute bottom-3 right-3 z-10 sm:bottom-4 sm:right-4">
-                <Link
-                  href="/voluntarios"
+                <a
+                  href="https://forms.gle/8V4bNPLLgQTPyEQt7"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="rounded-full bg-brand-blue px-4 py-1.5 text-xs font-bold text-white shadow transition-opacity hover:opacity-90 sm:px-5 sm:py-2 sm:text-sm"
                 >
                   Ser voluntario
-                </Link>
+                </a>
               </div>
             </div>
 
             <div className="rounded-2xl bg-brand-yellow px-5 py-3 text-center sm:px-6 sm:py-4">
               <p className="text-lg font-extrabold leading-tight text-[#451703] sm:text-xl">
-                Únete a<br />8000+ Donantes
+                {donorLabel.line1}<br />{donorLabel.line2}
               </p>
             </div>
           </motion.div>
@@ -166,12 +177,14 @@ export default function Hero() {
               <Image src="/imagen3.png" alt="Historia" fill sizes="(max-width: 768px) 90vw, 33vw" className="object-cover" />
               <div className="absolute inset-0 bg-black/2" />
               <div className="absolute inset-0 z-10 flex items-end mb-20 justify-center">
-                <Link
-                  href="/historia"
+                <a
+                  href="https://youtu.be/ALJQvdfJAWY?si=HZpoxGHCLyv6ysqi"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="rounded-full bg-brand-blue px-5 py-2 text-xs font-bold text-white shadow transition-opacity hover:opacity-90 sm:px-6 sm:text-sm"
                 >
                   Ver historia
-                </Link>
+                </a>
               </div>
             </div>
           </motion.div>

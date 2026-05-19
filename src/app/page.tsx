@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <>
-      <Hero />
+      <Hero donorCount={totals.donor_count} />
       <DonationSteps />
       <DonorsSection totals={totals} donors={donors} />
       <MissionSection totals={totals} />

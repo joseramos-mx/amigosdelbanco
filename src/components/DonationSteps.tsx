@@ -145,7 +145,7 @@ export default function DonationSteps() {
                 style={{ animation: "float 7s ease-in-out infinite" }}
               >
                 <span className="text-center text-[8px] font-extrabold uppercase leading-tight text-white sm:text-[10px]">
-                  ¡YO<br />APOYO!<br />al BANCO<br />DURANGO
+                  ¡YO<br />APOYO!<br />al BANCO DE ALIMENTOS<br />DURANGO
                 </span>
               </div>
             </div>

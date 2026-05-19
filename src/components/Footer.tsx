@@ -5,9 +5,10 @@ const NAV_GROUPS = [
     label: "Organización",
     links: [
       { href: "/quienes-somos", label: "Quiénes Somos" },
-      { href: "/historia",      label: "Historia" },
-      { href: "/voluntarios",   label: "Voluntarios" },
+      { href: "https://youtu.be/ALJQvdfJAWY?si=HZpoxGHCLyv6ysqi", label: "Historia", external: true },
+      { href: "https://forms.gle/8V4bNPLLgQTPyEQt7", label: "Voluntarios", external: true },
       { href: "/galeria",       label: "Galería" },
+      { href: "/progreso",      label: "Progreso de obra" },
     ],
   },
   {
@@ -102,12 +103,23 @@ export default function Footer() {
               <ul className="space-y-3">
                 {group.links.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-400 transition-colors hover:text-white"
-                    >
-                      {link.label}
-                    </Link>
+                    {"external" in link && link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-gray-400 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-400 transition-colors hover:text-white"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
