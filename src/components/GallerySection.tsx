@@ -36,7 +36,7 @@ export default function GallerySection() {
   const [gridRef, gridInView] = useInView();
 
   return (
-    <section className="bg-gray-50 px-5 py-16 sm:px-6 sm:py-20">
+    <section id="galeria" className="bg-gray-50 px-5 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-6xl">
 
         {/* ── Header ──────────────────────────────────────────────────── */}

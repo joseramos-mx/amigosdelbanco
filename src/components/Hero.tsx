@@ -54,8 +54,8 @@ export default function Hero() {
           className="mt-5 max-w-sm text-sm leading-relaxed text-white/75 sm:max-w-xl sm:text-base md:text-sm"
           style={{ animation: "fade-up 0.65s ease-out 0.5s both" }}
         >
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod
-          tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad
+          Cada día rescatamos alimento y lo llevamos a las familias que más lo necesitan en
+          Durango. Con tu apoyo, una despensa deja de ser un sueño y se convierte en mesa servida.
         </p>
 
         <div

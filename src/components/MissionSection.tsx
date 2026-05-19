@@ -2,11 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import Reveal from "@/components/Reveal";
+import { GOAL_MXN, percentOfGoal } from "@/lib/donation";
+import type { Totals } from "@/lib/queries";
 
-const GOAL = 750_000;
-const PERCENT = 64;
+interface MissionSectionProps {
+  totals: Totals;
+}
+
 const SEGMENTS = 10;
-const FILLED = Math.round((PERCENT / 100) * SEGMENTS);
 
 const maskStyle: React.CSSProperties = {
   WebkitMaskImage: "url('/mask%204.svg')",
@@ -17,9 +20,12 @@ const maskStyle: React.CSSProperties = {
   maskRepeat: "no-repeat",
 };
 
-export default function MissionSection() {
+export default function MissionSection({ totals }: MissionSectionProps) {
+  const percent = percentOfGoal(totals.raised_cents);
+  const filled = Math.round((percent / 100) * SEGMENTS);
+
   return (
-    <section className="bg-white px-5 py-16 sm:px-6 sm:py-20">
+    <section id="mision" className="bg-white px-5 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-6xl">
 
         {/* ── Top row — title + description ─────────────────────────── */}
@@ -29,9 +35,9 @@ export default function MissionSection() {
           </h2>
 
           <p className="text-sm leading-relaxed text-gray-500 sm:text-base md:pt-2">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat. Ut wisi enim ad minim
+            Creemos que nadie en Durango debería irse a dormir con hambre. Rescatamos alimento
+            de productores, comercios y donantes, y lo entregamos con dignidad a quienes hoy
+            lo necesitan, transformando lo que sobra en lo que falta.
           </p>
         </Reveal>
 
@@ -61,9 +67,9 @@ export default function MissionSection() {
             </h3>
 
             <p className="mb-6 text-sm leading-relaxed text-gray-500 sm:text-base">
-              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-              nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-              volutpat. Ut wisi enim ad minim
+              Tu donación se convierte en despensas, en comidas calientes y en oportunidades
+              para que niñas, niños y adultos mayores recuperen fuerzas. Con cada peso
+              recaudado avanzamos hacia un Durango donde nadie pase hambre.
             </p>
 
             {/* Segmented progress bar */}
@@ -72,7 +78,7 @@ export default function MissionSection() {
                 <div
                   key={i}
                   className={`h-7 flex-1 rounded-lg transition-colors sm:h-8 ${
-                    i < FILLED ? "bg-brand-lime" : "bg-gray-200"
+                    i < filled ? "bg-brand-lime" : "bg-gray-200"
                   }`}
                 />
               ))}
@@ -80,9 +86,9 @@ export default function MissionSection() {
 
             {/* Progress labels */}
             <div className="mb-6 flex items-center justify-between text-xs text-gray-500 sm:text-sm">
-              <span>Recaudado hasta ahora {PERCENT}%</span>
+              <span>Recaudado hasta ahora {percent}%</span>
               <span className="font-semibold text-gray-800">
-                Objetivo ${GOAL.toLocaleString("en-US")}
+                Objetivo ${GOAL_MXN.toLocaleString("es-MX")}
               </span>
             </div>
 

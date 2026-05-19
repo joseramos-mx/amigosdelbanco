@@ -41,9 +41,8 @@ export default function CtaSection() {
         </h2>
 
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#451703]/65 sm:text-base">
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-          nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-          volutpat. Ut wisi enim ad minim
+          Gracias a quienes creen en esta causa, hemos llevado alimento a miles de hogares
+          duranguenses. Estas son las comidas que juntos hemos hecho posibles:
         </p>
 
         <p className="mt-8 text-5xl font-extrabold tracking-tight text-[#451703] sm:text-7xl md:text-9xl">

@@ -1,34 +1,30 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import { GOAL_CENTS, formatMxn } from "@/lib/donation";
+import type { PublicDonor, Totals } from "@/lib/queries";
 
-/* ── Static data — wire to Stripe later ────────────────────────────── */
-const RAISED = 10_156;
-const GOAL = 15_000;
-const TOTAL_DONATIONS = 12;
+interface DonorsSectionProps {
+  totals: Totals;
+  donors: PublicDonor[];
+}
 
-const DONORS = [
-  { initials: "C",    name: "Claudia DOMINGUEZ",    amount: 4464, daysAgo: 6 },
-  { initials: "J",    name: "Jose F Mere Palafox",  amount: 1000, daysAgo: 6 },
-  { initials: null,   name: "Anónimo",              amount: 5000, daysAgo: 6 },
-  { initials: "N",    name: "Nueva Casa",           amount: 892,  daysAgo: 6 },
-  { initials: null,   name: "Anónimo",              amount: 1000, daysAgo: 6 },
-];
+const BRAND_LOGOS = Array.from({ length: 11 }, (_, i) => ({
+  src: `/logos%20sponsor/${i + 1}.webp`,
+  alt: `Patrocinador ${i + 1}`,
+}));
 
-const BRANDS = [
-  "Hey!", "Flowers & Wine", "Dribbble", "Code/Decode Labs",
-  "MINIMAN", "The Gift Seekers", "Kraken", "Visuals Co.",
-  "Balance Health", "DETECT", "Proxy", "KONSTRUCT",
-  "Inventis", "Wings Co.", "CoDATA", "Avocado",
-];
-
-/* ── Donut SVG math ─────────────────────────────────────────────────── */
 const R = 42;
 const CIRC = 2 * Math.PI * R;
-const PROGRESS = Math.min(RAISED / GOAL, 1);
-const DASH_OFFSET = CIRC * (1 - PROGRESS);
 
-function fmt(n: number) {
-  return "$" + n.toLocaleString("en-US");
+function initials(name: string | null): string | null {
+  if (!name) return null;
+  const trimmed = name.trim();
+  return trimmed ? trimmed.charAt(0).toUpperCase() : null;
+}
+
+function daysSince(iso: string): number {
+  const ms = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(ms / 86_400_000));
 }
 
 function AnonIcon() {
@@ -48,9 +44,12 @@ function StarIcon() {
   );
 }
 
-export default function DonorsSection() {
+export default function DonorsSection({ totals, donors }: DonorsSectionProps) {
+  const progress = Math.min(totals.raised_cents / GOAL_CENTS, 1);
+  const dashOffset = CIRC * (1 - progress);
+
   return (
-    <section className="bg-white px-5 py-16 sm:px-6 sm:py-20">
+    <section id="donantes" className="bg-white px-5 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-[1fr_340px] md:gap-10 lg:grid-cols-[1fr_380px]">
 
         {/* ── Left — title + brand grid ──────────────────────────────── */}
@@ -63,14 +62,18 @@ export default function DonorsSection() {
 
           <Reveal delay={120}>
             <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 sm:gap-6">
-              {BRANDS.map((name) => (
+              {BRAND_LOGOS.map((logo) => (
                 <div
-                  key={name}
-                  className="flex h-16 items-center justify-center rounded-xl bg-gray-50 px-3 sm:h-20"
+                  key={logo.src}
+                  className="flex h-16 items-center justify-center rounded-xl bg-gray-50 p-3 sm:h-20 sm:p-4"
                 >
-                  <span className="text-center text-[11px] font-semibold leading-tight text-gray-400 sm:text-xs">
-                    {name}
-                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    loading="lazy"
+                    className="max-h-full max-w-full object-contain"
+                  />
                 </div>
               ))}
             </div>
@@ -92,7 +95,7 @@ export default function DonorsSection() {
                   strokeWidth="10"
                   strokeLinecap="round"
                   strokeDasharray={CIRC}
-                  strokeDashoffset={DASH_OFFSET}
+                  strokeDashoffset={dashOffset}
                   transform="rotate(-90 50 50)"
                 />
               </svg>
@@ -101,13 +104,13 @@ export default function DonorsSection() {
             <div>
               <p className="text-sm text-gray-500">Se recaudaron</p>
               <p className="text-xl font-bold leading-tight text-gray-900">
-                {fmt(RAISED)}{" "}
+                {formatMxn(totals.raised_cents)}{" "}
                 <span className="text-base font-normal text-gray-400">
-                  de {fmt(GOAL / 1000)}k
+                  de {formatMxn(GOAL_CENTS)}
                 </span>
               </p>
               <p className="mt-0.5 text-sm text-gray-400">
-                {TOTAL_DONATIONS} donaciones
+                {totals.donation_count} {totals.donation_count === 1 ? "donación" : "donaciones"}
               </p>
             </div>
           </div>
@@ -127,20 +130,31 @@ export default function DonorsSection() {
 
           {/* Donor list */}
           <div className="divide-y divide-gray-100">
-            {DONORS.map((d, i) => (
-              <div key={i} className="flex items-center gap-3 py-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500">
-                  {d.initials ? d.initials : <AnonIcon />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-gray-800">{d.name}</p>
-                  <p className="text-xs text-gray-400">{d.daysAgo} d</p>
-                </div>
-                <span className="shrink-0 text-sm font-semibold text-gray-700">
-                  {fmt(d.amount)}
-                </span>
-              </div>
-            ))}
+            {donors.length === 0 ? (
+              <p className="py-6 text-center text-sm text-gray-400">
+                Sé el primero en aparecer aquí.
+              </p>
+            ) : (
+              donors.map((d, i) => {
+                const ini = initials(d.display_name);
+                return (
+                  <div key={i} className="flex items-center gap-3 py-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500">
+                      {ini ?? <AnonIcon />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-gray-800">
+                        {d.display_name ?? "Anónimo"}
+                      </p>
+                      <p className="text-xs text-gray-400">{daysSince(d.updated_at)} d</p>
+                    </div>
+                    <span className="shrink-0 text-sm font-semibold text-gray-700">
+                      {formatMxn(d.total_donated_cents)}
+                    </span>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           {/* Footer buttons */}

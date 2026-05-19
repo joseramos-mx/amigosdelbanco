@@ -8,10 +8,10 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
-  { href: "/",              label: "Inicio" },
-  { href: "/quienes-somos", label: "Quiénes Somos" },
-  { href: "/donantes",      label: "Donantes" },
-  { href: "/galeria",       label: "Galería" },
+  { href: "/",          label: "Inicio" },
+  { href: "/#mision",   label: "Quiénes Somos" },
+  { href: "/#donantes", label: "Donantes" },
+  { href: "/#galeria",  label: "Galería" },
 ];
 
 function CircularProgress({ percent }: { percent: number }) {
@@ -82,7 +82,7 @@ export default function Navbar({ goalPercent = 64 }: NavbarProps) {
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 select-none items-center" onClick={() => setMenuOpen(false)}>
-            <img src="logo.svg" alt="Banco de Alimentos Durango" className="w-14 px-1 sm:w-20 sm:p-2 sm:px-4" />
+            <img src="/logo.svg" alt="Banco de Alimentos Durango" className="w-14 px-1 sm:w-20 sm:p-2 sm:px-4" />
           </Link>
 
           {/* Nav links — desktop only */}
