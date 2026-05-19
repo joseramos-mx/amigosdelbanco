@@ -4,10 +4,10 @@ const NAV_GROUPS = [
   {
     label: "Organización",
     links: [
-      { href: "/quienes-somos", label: "Quiénes Somos" },
+      { href: "/#mision",       label: "Quiénes Somos" },
       { href: "https://youtu.be/ALJQvdfJAWY?si=HZpoxGHCLyv6ysqi", label: "Historia", external: true },
       { href: "https://forms.gle/8V4bNPLLgQTPyEQt7", label: "Voluntarios", external: true },
-      { href: "/galeria",       label: "Galería" },
+      { href: "/#galeria",      label: "Galería" },
       { href: "/progreso",      label: "Progreso de obra" },
     ],
   },
@@ -48,6 +48,8 @@ function PhoneIcon() {
 }
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="bg-gray-900 px-5 pt-16 pb-8 sm:px-6">
       <div className="mx-auto max-w-6xl">
@@ -138,8 +140,8 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2.5 text-sm text-gray-400">
                 <MailIcon />
-                <a href="mailto:contacto@badurango.org" className="transition-colors hover:text-white break-all">
-                  contacto@badurango.org
+                <a href="mailto:informacion@bancodealimentosdurango.org" className="transition-colors hover:text-white break-all">
+                  informacion@bancodealimentosdurango.org
                 </a>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-gray-400">
@@ -155,7 +157,7 @@ export default function Footer() {
         {/* ── Bottom bar ──────────────────────────────────────────────── */}
         <div className="mt-16 flex flex-col items-center justify-between gap-3 border-t border-gray-800 pt-8 sm:flex-row">
           <p className="text-xs text-gray-600">
-            © 2025 Banco de Alimentos de Durango A.C. Todos los derechos reservados.
+            © {year} Banco de Alimentos de Durango A.C. Todos los derechos reservados.
           </p>
           <div className="flex gap-5">
             <Link href="/privacidad" className="text-xs text-gray-600 transition-colors hover:text-gray-400">
