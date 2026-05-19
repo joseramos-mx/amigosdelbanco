@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripe";
+import { stripe, stripeWebhookSecret } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -147,15 +147,14 @@ async function handleSubscriptionChange(sub: Stripe.Subscription) {
 
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!signature || !secret) {
+  if (!signature || !stripeWebhookSecret) {
     return NextResponse.json({ error: "Missing signature or secret" }, { status: 400 });
   }
 
   const rawBody = await request.text();
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, secret);
+    event = stripe.webhooks.constructEvent(rawBody, signature, stripeWebhookSecret);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: `Webhook signature invalid: ${message}` }, { status: 400 });

@@ -7,8 +7,6 @@ import {
   User,
   EnvelopeSimple,
   CreditCard,
-  Storefront,
-  Bank,
   LockKey,
   CheckCircle,
   HandCoins,
@@ -395,16 +393,6 @@ export default function DonationForm() {
         <span className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1 text-[11px] font-bold text-gray-700">
           <CreditCard size={13} weight="bold" /> Tarjeta
         </span>
-        {frequency === "once" && (
-          <>
-            <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-700">
-              <Storefront size={13} weight="bold" /> OXXO
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-md bg-sky-50 px-2.5 py-1 text-[11px] font-bold text-sky-700">
-              <Bank size={13} weight="bold" /> SPEI
-            </span>
-          </>
-        )}
       </div>
 
       <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-gray-400">

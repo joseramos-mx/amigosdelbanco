@@ -1,5 +1,6 @@
 import { cache } from "react";
-import { supabasePublic } from "@/lib/supabase/public";
+import type Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
 
 export type PublicDonor = {
   display_name: string | null;
@@ -13,49 +14,126 @@ export type Totals = {
   donation_count: number;
 };
 
-const FALLBACK_TOTALS: Totals = { raised_cents: 0, donor_count: 0, donation_count: 0 };
-
-export const getTotals = cache(async (): Promise<Totals> => {
-  const { data, error } = await supabasePublic
-    .from("totals")
-    .select("raised_cents,donor_count,donation_count")
-    .eq("id", 1)
-    .maybeSingle();
-
-  if (error || !data) return FALLBACK_TOTALS;
-  return data as Totals;
-});
-
-export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> => {
-  const { data, error } = await supabasePublic
-    .from("donors")
-    .select("display_name,total_donated_cents,updated_at")
-    .eq("list_public", true)
-    .gt("total_donated_cents", 0)
-    .order("total_donated_cents", { ascending: false })
-    .limit(limit);
-
-  if (error || !data) return [];
-  return data as PublicDonor[];
-});
-
 export type RecentDonor = {
   display_name: string;
   total_donated_cents: number;
   updated_at: string;
 };
 
-export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> => {
-  const { data, error } = await supabasePublic
-    .from("donors")
-    .select("display_name,total_donated_cents,updated_at")
-    .eq("list_public", true)
-    .not("display_name", "is", null)
-    .gt("total_donated_cents", 0)
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+const FALLBACK_TOTALS: Totals = { raised_cents: 0, donor_count: 0, donation_count: 0 };
+const MAX_CHARGES = 250;
+const MAX_CUSTOMERS = 250;
 
-  if (error || !data || !data.display_name) return null;
-  return data as RecentDonor;
+// Cached underlying Stripe fetches — dedup across all queries in one request.
+const getAllCharges = cache(async (): Promise<Stripe.Charge[]> => {
+  return stripe.charges.list({ limit: 100 }).autoPagingToArray({ limit: MAX_CHARGES });
+});
+
+const getAllCustomers = cache(async (): Promise<Stripe.Customer[]> => {
+  return stripe.customers.list({ limit: 100 }).autoPagingToArray({ limit: MAX_CUSTOMERS });
+});
+
+function chargeNet(charge: Stripe.Charge): number {
+  if (charge.status !== "succeeded" || !charge.paid) return 0;
+  return charge.amount - (charge.amount_refunded ?? 0);
+}
+
+function customerIdOf(charge: Stripe.Charge): string | null {
+  if (!charge.customer) return null;
+  return typeof charge.customer === "string" ? charge.customer : charge.customer.id;
+}
+
+export const getTotals = cache(async (): Promise<Totals> => {
+  try {
+    const charges = await getAllCharges();
+    let raised = 0;
+    let donations = 0;
+    const customers = new Set<string>();
+
+    for (const charge of charges) {
+      const net = chargeNet(charge);
+      if (net <= 0) continue;
+      raised += net;
+      donations += 1;
+      const id = customerIdOf(charge);
+      if (id) customers.add(id);
+    }
+
+    return { raised_cents: raised, donor_count: customers.size, donation_count: donations };
+  } catch (err) {
+    console.error("[getTotals] Stripe query failed:", err);
+    return FALLBACK_TOTALS;
+  }
+});
+
+type CustomerAgg = { total_cents: number; latest_at: number };
+
+function aggregateByCustomer(charges: Stripe.Charge[]): Map<string, CustomerAgg> {
+  const agg = new Map<string, CustomerAgg>();
+  for (const charge of charges) {
+    const net = chargeNet(charge);
+    if (net <= 0) continue;
+    const id = customerIdOf(charge);
+    if (!id) continue;
+    const prev = agg.get(id) ?? { total_cents: 0, latest_at: 0 };
+    agg.set(id, {
+      total_cents: prev.total_cents + net,
+      latest_at: Math.max(prev.latest_at, charge.created),
+    });
+  }
+  return agg;
+}
+
+export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> => {
+  try {
+    const [charges, customers] = await Promise.all([getAllCharges(), getAllCustomers()]);
+    const aggregates = aggregateByCustomer(charges);
+
+    const donors: PublicDonor[] = [];
+    for (const customer of customers) {
+      const a = aggregates.get(customer.id);
+      if (!a) continue;
+      if (customer.metadata?.list_public !== "true") continue;
+      donors.push({
+        display_name: customer.name || null,
+        total_donated_cents: a.total_cents,
+        updated_at: new Date(a.latest_at * 1000).toISOString(),
+      });
+    }
+
+    donors.sort((a, b) => b.total_donated_cents - a.total_donated_cents);
+    return donors.slice(0, limit);
+  } catch (err) {
+    console.error("[getPublicDonors] Stripe query failed:", err);
+    return [];
+  }
+});
+
+export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> => {
+  try {
+    const [charges, customers] = await Promise.all([getAllCharges(), getAllCustomers()]);
+    const aggregates = aggregateByCustomer(charges);
+    const customersById = new Map(customers.map((c) => [c.id, c]));
+
+    const sortedRecent = [...charges].sort((a, b) => b.created - a.created);
+    for (const charge of sortedRecent) {
+      if (chargeNet(charge) <= 0) continue;
+      const id = customerIdOf(charge);
+      if (!id) continue;
+      const customer = customersById.get(id);
+      if (!customer || customer.metadata?.list_public !== "true" || !customer.name) continue;
+      const a = aggregates.get(id);
+      if (!a) continue;
+      return {
+        display_name: customer.name,
+        total_donated_cents: a.total_cents,
+        updated_at: new Date(charge.created * 1000).toISOString(),
+      };
+    }
+
+    return null;
+  } catch (err) {
+    console.error("[getMostRecentDonor] Stripe query failed:", err);
+    return null;
+  }
 });

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { MIN_AMOUNT_MXN, MAX_AMOUNT_MXN } from "@/lib/donation";
+import { getRedirectOrigin } from "@/lib/origin";
 
 export const runtime = "nodejs";
 
@@ -37,30 +39,62 @@ export async function POST(request: Request) {
 
   const { amount, frequency, email, displayName, listPublic } = result.value;
   const amountCents = Math.round(amount * 100);
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
+  const origin = getRedirectOrigin(request);
 
-  // Reuse customer if email exists in Stripe, otherwise create.
-  const existing = await stripe.customers.list({ email, limit: 1 });
-  const customer = existing.data[0] ?? (await stripe.customers.create({
-    email,
-    name: displayName,
-    metadata: { list_public: String(listPublic) },
-  }));
+  try {
+    // Reuse customer if email exists, otherwise create. Either way, keep
+    // `name` and `list_public` in sync with the latest form submission so
+    // the leaderboard reflects current preferences.
+    const existing = await stripe.customers.list({ email, limit: 1 });
+    const customer = existing.data[0]
+      ? await stripe.customers.update(existing.data[0].id, {
+          name: displayName,
+          metadata: { list_public: String(listPublic) },
+        })
+      : await stripe.customers.create({
+          email,
+          name: displayName,
+          metadata: { list_public: String(listPublic) },
+        });
 
-  const metadata = {
-    display_name: displayName ?? "",
-    list_public: String(listPublic),
-    donor_email: email,
-  };
+    const metadata = {
+      display_name: displayName ?? "",
+      list_public: String(listPublic),
+      donor_email: email,
+    };
 
-  const productName = frequency === "monthly"
-    ? "Donación mensual — Banco de Alimentos Durango"
-    : "Donación — Banco de Alimentos Durango";
+    const productName = frequency === "monthly"
+      ? "Donación mensual — Banco de Alimentos Durango"
+      : "Donación — Banco de Alimentos Durango";
 
-  if (frequency === "monthly") {
-    // Subscriptions: card only. OXXO/SPEI don't support recurring.
+    if (frequency === "monthly") {
+      const session = await stripe.checkout.sessions.create({
+        mode: "subscription",
+        customer: customer.id,
+        payment_method_types: ["card"],
+        line_items: [{
+          quantity: 1,
+          price_data: {
+            currency: "mxn",
+            unit_amount: amountCents,
+            recurring: { interval: "month" },
+            product_data: { name: productName },
+          },
+        }],
+        subscription_data: { metadata },
+        metadata,
+        success_url: `${origin}/donar/exito?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/donar/cancelado`,
+        locale: "es",
+      });
+      return NextResponse.json({ url: session.url });
+    }
+
+    // One-time: card only by default. Re-add "oxxo" and "customer_balance"
+    // to payment_method_types once they're activated in Stripe Dashboard
+    // → Settings → Payment methods. Each must be enabled for MX before use.
     const session = await stripe.checkout.sessions.create({
-      mode: "subscription",
+      mode: "payment",
       customer: customer.id,
       payment_method_types: ["card"],
       line_items: [{
@@ -68,43 +102,28 @@ export async function POST(request: Request) {
         price_data: {
           currency: "mxn",
           unit_amount: amountCents,
-          recurring: { interval: "month" },
           product_data: { name: productName },
         },
       }],
-      subscription_data: { metadata },
+      payment_intent_data: { metadata },
       metadata,
       success_url: `${origin}/donar/exito?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/donar/cancelado`,
       locale: "es",
     });
     return NextResponse.json({ url: session.url });
-  }
 
-  // One-time: card + OXXO + SPEI (customer_balance/mx_bank_transfer).
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    customer: customer.id,
-    payment_method_types: ["card", "oxxo", "customer_balance"],
-    payment_method_options: {
-      customer_balance: {
-        funding_type: "bank_transfer",
-        bank_transfer: { type: "mx_bank_transfer" },
-      },
-    },
-    line_items: [{
-      quantity: 1,
-      price_data: {
-        currency: "mxn",
-        unit_amount: amountCents,
-        product_data: { name: productName },
-      },
-    }],
-    payment_intent_data: { metadata },
-    metadata,
-    success_url: `${origin}/donar/exito?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/donar/cancelado`,
-    locale: "es",
-  });
-  return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("[checkout] Stripe error:", err);
+    if (err instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.statusCode ?? 400 },
+      );
+    }
+    return NextResponse.json(
+      { error: "No pudimos iniciar el pago. Intenta de nuevo en un momento." },
+      { status: 500 },
+    );
+  }
 }

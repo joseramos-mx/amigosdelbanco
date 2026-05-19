@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { sendPortalLink } from "@/lib/email";
+import { getRedirectOrigin } from "@/lib/origin";
 
 export const runtime = "nodejs";
 
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
   const customer = customers.data[0];
 
   if (customer) {
-    const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
+    const origin = getRedirectOrigin(request);
     const session = await stripe.billingPortal.sessions.create({
       customer: customer.id,
       return_url: `${origin}/cuenta`,
