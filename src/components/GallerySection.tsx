@@ -21,14 +21,29 @@ const STATIC_ITEMS = [
     alt: "Apoyo al banco de alimentos",
     className: "group relative aspect-square overflow-hidden rounded-2xl md:aspect-auto",
   },
+  {
+    src: "/gallery/img6.jpeg",
+    alt: "Banco de Alimentos Durango",
+    className: "group relative aspect-square overflow-hidden rounded-2xl md:aspect-auto",
+  },
+  {
+    src: "/gallery/img7.jpeg",
+    alt: "Banco de Alimentos Durango",
+    className: "group relative aspect-square overflow-hidden rounded-2xl md:aspect-auto",
+  },
+  {
+    src: "/gallery/img8.jpeg",
+    alt: "Banco de Alimentos Durango",
+    className: "group relative aspect-square overflow-hidden rounded-2xl md:aspect-auto",
+  },
 ];
 
+// Only images not shown in STATIC_ITEMS — keeps the carousel surprising
+// instead of cycling through photos the user can already see in the grid.
 const CAROUSEL_IMAGES = [
-  { src: "/gallery/img1.jpeg", alt: "Voluntarios" },
-  { src: "/gallery/img2.jpeg", alt: "Distribución" },
-  { src: "/gallery/img3.jpeg", alt: "Apoyo" },
   { src: "/gallery/img4.jpeg", alt: "Comunidad" },
   { src: "/gallery/img5.jpeg", alt: "Banco de alimentos" },
+  { src: "/gallery/img9.jpeg", alt: "Banco de Alimentos Durango" },
 ];
 
 export default function GallerySection() {
@@ -68,7 +83,7 @@ export default function GallerySection() {
         {/* ── Photo grid ──────────────────────────────────────────────── */}
         <div
           ref={gridRef}
-          className="grid grid-cols-2 gap-3 sm:gap-4 md:h-125 md:grid-cols-3 md:grid-rows-2"
+          className="grid grid-cols-2 gap-3 sm:gap-4 md:h-180 md:grid-cols-3 md:grid-rows-3"
         >
           {/* Static photo tiles */}
           {STATIC_ITEMS.map((item, i) => (

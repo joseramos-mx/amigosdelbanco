@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useInView } from "@/hooks/useInView";
 
 // Swap this path to use a different image for the CTA banner.
-const CTA_IMAGE_SRC = "/gallery/img4.jpeg";
+const CTA_IMAGE_SRC = "/gallery/img9.jpeg";
 const CTA_IMAGE_ALT = "Banco de Alimentos Durango entregando alimento a la comunidad";
 
 export default function CtaSection() {
@@ -14,7 +14,7 @@ export default function CtaSection() {
     <section className="bg-white px-5 pb-16 sm:px-6 sm:pb-20">
       <div
         ref={ref}
-        className="mx-auto max-w-5xl rounded-3xl bg-brand-yellow px-8 py-14 text-center sm:px-14 sm:py-16"
+        className="mx-auto max-w-7xl rounded-3xl bg-brand-yellow px-8 py-14 text-center sm:px-14 sm:py-16"
         style={{
           opacity: inView ? 1 : 0,
           transform: inView ? "none" : "translateY(24px)",
