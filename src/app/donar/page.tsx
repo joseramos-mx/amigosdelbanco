@@ -36,14 +36,15 @@ export default async function DonarPage() {
           Donar
         </span>
         <h1 className="text-3xl font-semibold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
-          Tu donación llega <br className="hidden sm:block" />
+          Estamos construyendo <br className="hidden sm:block" />
           <span className="bg-linear-to-r from-amber-500 to-brand-yellow bg-clip-text text-transparent">
-            hoy a una mesa
+            la nueva sede
           </span>
         </h1>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-600 sm:text-base md:max-w-none">
-          Cada peso se convierte en despensas y comidas para las familias
-          que más lo necesitan en Durango.
+          Tu donación se convierte en metros cuadrados, cámaras de refrigeración
+          y transporte para llegar a más familias en Durango. Construyamos juntos
+          el banco que merece la región.
         </p>
       </div>
 

@@ -48,7 +48,7 @@ const TIER_ICONS: Record<number, PhosphorIcon> = {
 };
 
 export default function DonationForm() {
-  const [frequency, setFrequency] = useState<DonationFrequency>("once");
+  const [frequency, setFrequency] = useState<DonationFrequency>("monthly");
   const [amountValue, setAmountValue] = useState(String(SUGGESTED_DEFAULT_MXN));
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
