@@ -1,10 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Albert_Sans } from "next/font/google";
-import SmoothScroll from "@/components/SmoothScroll";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { getTotals } from "@/lib/queries";
-import { percentOfGoal } from "@/lib/donation";
 import "./globals.css";
 
 const albertSans = Albert_Sans({
@@ -126,14 +121,13 @@ const jsonLd = {
   sameAs: [],
 } as const;
 
-export default async function RootLayout({
+// Site chrome (navbar, footer, smooth scroll) lives in the `(site)` route group
+// so standalone landings like /run can render on their own.
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const totals = await getTotals();
-  const goalPercent = percentOfGoal(totals.raised_cents);
-
   return (
     <html lang="es-MX" className={`${albertSans.variable} antialiased`}>
       <head>
@@ -142,13 +136,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="flex flex-col">
-        <SmoothScroll>
-          <Navbar goalPercent={goalPercent} />
-          {children}
-          <Footer />
-        </SmoothScroll>
-      </body>
+      <body className="flex flex-col">{children}</body>
     </html>
   );
 }

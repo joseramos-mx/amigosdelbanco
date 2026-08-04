@@ -6,6 +6,14 @@
   --color-brand-blue: #1d4dfc;
   --color-brand-lime: #9ae600;
   --font-sans: var(--font-albert-sans);
+
+  /* Generous Generation — Social Run 2026 (/run). The font vars are declared
+     by next/font on the /run wrapper, so these utilities only resolve there. */
+  --color-run-amber: #e9a62d;
+  --color-run-card: #141414;
+  --font-geist: var(--font-geist-sans);
+  --font-geist-mono: var(--font-geist-mono-code);
+  --font-schabo: var(--font-schabo-display);
 }
 
 :root {
@@ -19,9 +27,13 @@ body {
   font-family: var(--font-albert-sans), sans-serif;
 }
 
-/* Force Albert Sans everywhere, including elements that don't inherit by default */
-*, *::before, *::after {
-  font-family: inherit;
+/* Force Albert Sans everywhere, including elements that don't inherit by default.
+   Va en @layer base para que las utilidades font-* (capa utilities) puedan
+   ganarle — sin la capa, esta regla sin capa vence a cualquier clase. */
+@layer base {
+  *, *::before, *::after {
+    font-family: inherit;
+  }
 }
 
 /* Hero load animations */

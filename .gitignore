@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# assets fuente del kit Generous Generation (originales pesados)
+/generous-generation
