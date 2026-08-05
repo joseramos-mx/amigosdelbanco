@@ -48,13 +48,11 @@ export default function SeccionRuta() {
           <MapaRuta />
         </Reveal>
 
-        {PROVISIONAL && (
-          <p className="mt-4 text-xs leading-relaxed text-white/35">
-            Trazo preliminar entre salida y meta. El recorrido definitivo por calles
-            se publica en cuanto lo cierre la organización — no lo tomes para
-            calcular tu ritmo todavía.
-          </p>
-        )}
+        <p className="mt-4 text-xs leading-relaxed text-white/35">
+          {PROVISIONAL
+            ? "Trazo preliminar entre salida y meta. El recorrido definitivo por calles se publica en cuanto lo cierre la organización — no lo tomes para calcular tu ritmo todavía."
+            : "Recorrido por calles, medido sobre el trazo oficial."}
+        </p>
       </div>
     </section>
   );

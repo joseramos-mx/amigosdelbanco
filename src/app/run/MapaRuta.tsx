@@ -89,6 +89,7 @@ export default function MapaRuta() {
   useEffect(() => {
     if (!visible || mapaRef.current || !contenedor.current) return;
     let cancelado = false;
+    let temporizador = 0;
 
     (async () => {
       try {
@@ -146,14 +147,28 @@ export default function MapaRuta() {
               .addTo(mapa);
           }
 
-          // Se reencuadra ya cargado: si el contenedor todavía no tenía su
-          // tamaño final cuando se creó el mapa, el ajuste inicial queda
-          // demasiado abierto y la ruta se ve como una rayita.
-          mapa.resize();
-          mapa.fitBounds(limites, { padding: 80, animate: false });
+          // El ajuste va en el cuadro siguiente, no aquí: "load" puede
+          // dispararse antes de que el navegador termine de acomodar la
+          // sección, y entonces el encuadre se calcula con un contenedor que
+          // todavía no tiene su tamaño final — la ruta acaba viéndose como
+          // una rayita en medio de un mapa demasiado abierto.
+          const encuadrar = () => {
+            if (cancelado) return;
+            mapa.resize();
+            mapa.fitBounds(limites, { padding: 60, animate: false });
+            actualizar();
+          };
 
-          actualizar();
-          setListo(true);
+          requestAnimationFrame(() => {
+            encuadrar();
+            setListo(true);
+          });
+
+          // Segundo intento tardío: entre las fuentes que terminan de cargar,
+          // las imágenes de arriba que empujan el diseño y el observador de
+          // tamaño, el contenedor puede seguir moviéndose después del primer
+          // cuadro. Reencuadrar es idempotente, así que no cuesta nada.
+          temporizador = window.setTimeout(encuadrar, 400);
         });
 
         mapa.on("error", () => setError(true));
@@ -164,6 +179,7 @@ export default function MapaRuta() {
 
     return () => {
       cancelado = true;
+      window.clearTimeout(temporizador);
       observadorRef.current?.disconnect();
       observadorRef.current = null;
       mapaRef.current?.remove();
@@ -173,7 +189,15 @@ export default function MapaRuta() {
 
   return (
     <div className="relative h-[420px] w-full overflow-hidden rounded-[20px] border border-white/10 bg-run-card lg:h-[520px]">
-      <div ref={contenedor} className="absolute inset-0" />
+      {/* El posicionamiento va en línea, no en clases de Tailwind, y no es
+          capricho: MapLibre le pone al contenedor su clase `.maplibregl-map`,
+          que trae `position: relative` sin capa. Las utilidades de Tailwind
+          viven en `@layer utilities`, y lo no-capado le gana a lo capado, así
+          que `absolute` se pierde. El div se queda sin altura propia, MapLibre
+          lee `clientHeight === 0` y cae a su valor por defecto de 300 px: mapa
+          recortado y ruta encuadrada como si el hueco midiera 300. Un estilo
+          en línea le gana a cualquier hoja. */}
+      <div ref={contenedor} style={{ position: "absolute", inset: 0 }} />
 
       {/* El trazo va encima del lienzo y deja pasar el ratón, para que el
           mapa se siga pudiendo arrastrar por debajo. */}
