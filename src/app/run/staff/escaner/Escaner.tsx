@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import jsQR from "jsqr";
 import type { FilaPadron } from "@/lib/run/padron";
 
@@ -17,7 +17,39 @@ import type { FilaPadron } from "@/lib/run/padron";
  */
 
 const CLAVE_COLA = "run_cola_checkin";
-const CLAVE_PADRON = "run_padron";
+const EVENTO_COLA = "run:cola";
+
+/**
+ * La cola vive en localStorage y se lee con useSyncExternalStore en vez de
+ * copiarla a estado dentro de un efecto: así no hay un render extra por cada
+ * escaneo, y si el navegador se cierra a media entrega, lo pendiente sigue
+ * ahí al volver.
+ */
+function leerCola(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
+function guardarCola(cola: string[]): void {
+  try {
+    localStorage.setItem(CLAVE_COLA, JSON.stringify(cola));
+  } catch {
+    /* almacenamiento lleno o bloqueado */
+  }
+  window.dispatchEvent(new Event(EVENTO_COLA));
+}
+
+function suscribirCola(alCambiar: () => void): () => void {
+  window.addEventListener(EVENTO_COLA, alCambiar);
+  window.addEventListener("storage", alCambiar);
+  return () => {
+    window.removeEventListener(EVENTO_COLA, alCambiar);
+    window.removeEventListener("storage", alCambiar);
+  };
+}
 
 type Veredicto = "entregado" | "repetido" | "sin_activar" | "desconocido";
 
@@ -51,27 +83,18 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ultimoRef = useRef<{ qr: string; hora: number }>({ qr: "", hora: 0 });
 
-  const [padron, setPadron] = useState<FilaPadron[]>(padronInicial);
   const [registros, setRegistros] = useState<Registro[]>([]);
-  const [pendientes, setPendientes] = useState(0);
+  // El padrón llega del servidor y no se cachea: la página se renderiza en el
+  // servidor, así que sin red no habría cómo abrirla y leer el caché.
+  const padron = padronInicial;
+  const pendientes = useSyncExternalStore(
+    suscribirCola,
+    () => leerCola().length,
+    () => 0,
+  );
   const [enLinea, setEnLinea] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activo, setActivo] = useState(false);
-
-  // El padrón y la cola se guardan localmente: si el teléfono se bloquea o el
-  // navegador se recarga, no se pierde nada.
-  useEffect(() => {
-    try {
-      const guardado = localStorage.getItem(CLAVE_PADRON);
-      if (guardado && !padronInicial.length) setPadron(JSON.parse(guardado));
-      else if (padronInicial.length) {
-        localStorage.setItem(CLAVE_PADRON, JSON.stringify(padronInicial));
-      }
-      setPendientes(JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]").length);
-    } catch {
-      /* almacenamiento lleno o bloqueado: se sigue sin caché */
-    }
-  }, [padronInicial]);
 
   useEffect(() => {
     const alCambiar = () => setEnLinea(navigator.onLine);
@@ -85,23 +108,11 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
   }, []);
 
   const encolar = useCallback((qr: string) => {
-    try {
-      const cola: string[] = JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]");
-      cola.push(qr);
-      localStorage.setItem(CLAVE_COLA, JSON.stringify(cola));
-      setPendientes(cola.length);
-    } catch {
-      /* sin almacenamiento, se intentará mandar de inmediato */
-    }
+    guardarCola([...leerCola(), qr]);
   }, []);
 
   const sincronizar = useCallback(async () => {
-    let cola: string[] = [];
-    try {
-      cola = JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]");
-    } catch {
-      return;
-    }
+    const cola = leerCola();
     if (!cola.length) return;
 
     try {
@@ -113,8 +124,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
       if (!res.ok) return; // se conserva la cola y se reintenta
 
       const { resultados } = await res.json();
-      localStorage.setItem(CLAVE_COLA, "[]");
-      setPendientes(0);
+      guardarCola([]);
 
       // El servidor manda la verdad: puede corregir un "entregado" local a
       // "repetido" si otra mesa escaneó primero.
@@ -148,9 +158,14 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
 
   useEffect(() => {
     if (!enLinea) return;
-    void sincronizar();
-    const id = window.setInterval(() => void sincronizar(), 15_000);
-    return () => window.clearInterval(id);
+    // El primer envío sale fuera de la fase de montaje, no dentro: así una
+    // respuesta lenta no encadena renders mientras la pantalla se arma.
+    const primero = window.setTimeout(() => void sincronizar(), 0);
+    const intervalo = window.setInterval(() => void sincronizar(), 15_000);
+    return () => {
+      window.clearTimeout(primero);
+      window.clearInterval(intervalo);
+    };
   }, [enLinea, sincronizar]);
 
   const procesar = useCallback(
