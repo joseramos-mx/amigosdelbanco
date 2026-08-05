@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:local": "node scripts/db-local.mjs",
-    "test:fase1": "node --env-file=.env.local scripts/fase1-aceptacion.mjs"
+    "test:fase1": "node --env-file=.env.local scripts/fase1-aceptacion.mjs",
+    "db:migrate": "node --env-file=.env.local scripts/db-migrate.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
