@@ -25,7 +25,11 @@ export default function Cortesias() {
     setError(null);
     setResultado(null);
 
-    const datos = Object.fromEntries(new FormData(e.currentTarget).entries());
+    // Se guarda la referencia antes del await: React limpia currentTarget en
+    // cuanto el handler regresa, así que usarlo después da null.
+    const formulario = e.currentTarget;
+    const datos = Object.fromEntries(new FormData(formulario).entries());
+
     try {
       const res = await fetch("/api/run/cortesias", {
         method: "POST",
@@ -35,7 +39,7 @@ export default function Cortesias() {
       const cuerpo = await res.json();
       if (!res.ok) throw new Error(cuerpo.error ?? "No se pudo emitir");
       setResultado(cuerpo);
-      e.currentTarget.reset();
+      formulario.reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Algo salió mal");
     } finally {
