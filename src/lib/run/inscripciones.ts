@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { conReintento, db, enTransaccion } from "@/lib/db";
+import { aplicarTransicionOrden } from "./estados";
 import { crearTokenActivacion } from "./tokens";
 
 export const EVENTO_SLUG = "social-run-2026";
@@ -213,4 +214,12 @@ export async function extenderReserva(ordenId: string, hasta: Date): Promise<voi
        and estado = 'pendiente'
        and (expira_en is null or expira_en < ${hasta})
   `;
+}
+
+/**
+ * Cancela una orden y suelta su cupo. Se usa cuando la compra se cae después
+ * de haber apartado lugar — por ejemplo si Stripe rechaza la sesión.
+ */
+export async function cancelarOrden(ordenId: string): Promise<void> {
+  await enTransaccion((tx) => aplicarTransicionOrden(tx, ordenId, "cancelada"));
 }

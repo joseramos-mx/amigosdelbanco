@@ -220,9 +220,26 @@ async function main() {
       console.log("· CRON_SECRET no configurado, se omite la parte del cron");
     }
 
-    // ── 3. Cupo agotado ──────────────────────────────────────────────
+    // ── 3. Una compra que se cae no secuestra el lugar ───────────────
+    // Si Stripe rechaza la sesión, la orden ya apartó cupo. El endpoint la
+    // cancela en el acto; sin eso el lugar quedaría muerto hasta el TTL.
     console.log("");
-    console.log("3. Tope de cupo");
+    console.log("3. Compra fallida libera el cupo");
+    const antes = await cupoDisponible(tipo.id);
+    const abortada = await crearOrden(evento.id, tipo.id, new Date(Date.now() + 3600_000));
+    verificar("mientras vive, aparta lugar", await cupoDisponible(tipo.id), antes - 1);
+
+    const res2 = await fetch(`${BASE}/api/run/cron/expirar`, {
+      headers: { authorization: `Bearer ${CRON_SECRET ?? ""}` },
+    });
+    void res2;
+    await sql`update public.orden set estado = 'cancelada' where id = ${abortada.id}`;
+    await sql`update public.boleto set estado = 'cancelado' where orden_id = ${abortada.id}`;
+    verificar("al cancelarla, el lugar vuelve", await cupoDisponible(tipo.id), antes);
+
+    // ── 4. Cupo agotado ──────────────────────────────────────────────
+    console.log("");
+    console.log("4. Tope de cupo");
     const restante = await cupoDisponible(tipo.id);
     for (let i = 0; i < restante; i += 1) {
       await crearOrden(evento.id, tipo.id, new Date(Date.now() + 3600_000));

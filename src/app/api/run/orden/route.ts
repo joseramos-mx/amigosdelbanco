@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { getRedirectOrigin } from "@/lib/origin";
 import {
   CupoInsuficiente,
+  cancelarOrden,
   MAX_BOLETOS_POR_ORDEN,
   VentaCerrada,
   crearOrdenPendiente,
@@ -101,15 +102,26 @@ export async function POST(request: Request) {
       factura,
     });
 
-    const sesion = await crearSesionCheckout({
-      evento,
-      tipoBoleto,
-      cantidad,
-      orden,
-      correo,
-      nombre,
-      origin: getRedirectOrigin(request),
-    });
+    // Si Stripe falla, la orden ya apartó cupo: hay que soltarlo de inmediato
+    // en vez de dejarlo secuestrado hasta que venza el TTL. Con OXXO eso son
+    // hasta tres días de un lugar que nadie está pagando.
+    let sesion;
+    try {
+      sesion = await crearSesionCheckout({
+        evento,
+        tipoBoleto,
+        cantidad,
+        orden,
+        correo,
+        nombre,
+        origin: getRedirectOrigin(request),
+      });
+    } catch (err) {
+      await cancelarOrden(orden.id).catch((e) =>
+        console.error("[run/orden] no se pudo liberar el cupo:", e),
+      );
+      throw err;
+    }
 
     await guardarSesionStripe(orden.id, sesion.id);
 
