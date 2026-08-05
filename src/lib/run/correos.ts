@@ -14,6 +14,16 @@ import type { BoletoCompleto } from "./activacion";
 const apiKey = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM_EMAIL || "Banco de Alimentos <onboarding@resend.dev>";
 const resend = apiKey ? new Resend(apiKey) : null;
+/**
+ * Dirección a la que van las respuestas.
+ *
+ * Se manda desde una dirección de la organización, pero esa no necesita ser
+ * un buzón: enviar lo autoriza el DNS del dominio, no la existencia de una
+ * bandeja. Lo que sí conviene es que quien conteste llegue a alguien, y para
+ * eso está esto — si no se configura, contestar rebota.
+ */
+const RESPONDER_A = process.env.RESEND_REPLY_TO;
+
 
 type Resultado = { ok: boolean; error?: string };
 
@@ -46,6 +56,7 @@ export async function enviarRecordatorioVencimiento(params: {
 
   const { error } = await resend.emails.send({
     from: FROM,
+    ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
     to: params.correo,
     subject: `Tu lugar en el Social Run vence pronto — folio ${params.folio}`,
     html: plantilla(
@@ -109,6 +120,7 @@ export async function enviarLigasActivacion(params: {
 
   const { error } = await resend.emails.send({
     from: FROM,
+    ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
     to: params.correo,
     subject: `Tu lugar en el Social Run 2026 está confirmado — folio ${params.folio}`,
     html: plantilla(
@@ -151,6 +163,7 @@ export async function enviarBoleto(params: {
 
   const { error } = await resend.emails.send({
     from: FROM,
+    ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
     to: params.correo,
     subject: `Tu boleto del Social Run 2026 — ${params.boleto.folio}`,
     html: plantilla(

@@ -5,12 +5,23 @@ const apiKey = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM_EMAIL || "Banco de Alimentos <onboarding@resend.dev>";
 
 const resend = apiKey ? new Resend(apiKey) : null;
+/**
+ * Dirección a la que van las respuestas.
+ *
+ * Se manda desde una dirección de la organización, pero esa no necesita ser
+ * un buzón: enviar lo autoriza el DNS del dominio, no la existencia de una
+ * bandeja. Lo que sí conviene es que quien conteste llegue a alguien, y para
+ * eso está esto — si no se configura, contestar rebota.
+ */
+const RESPONDER_A = process.env.RESEND_REPLY_TO;
+
 
 export async function sendPortalLink(email: string, portalUrl: string): Promise<{ ok: boolean; error?: string }> {
   if (!resend) return { ok: false, error: "RESEND_API_KEY not configured" };
 
   const { error } = await resend.emails.send({
     from: FROM,
+    ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
     to: email,
     subject: "Gestiona tu donación — Banco de Alimentos Durango",
     html: `
