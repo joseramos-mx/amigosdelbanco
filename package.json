@@ -10,7 +10,8 @@
     "db:local": "node scripts/db-local.mjs",
     "test:fase1": "node --env-file=.env.local scripts/fase1-aceptacion.mjs",
     "db:migrate": "node --env-file=.env.local scripts/db-migrate.mjs",
-    "run:abrir": "node --env-file=.env.local scripts/run-abrir-venta.mjs"
+    "run:abrir": "node --env-file=.env.local scripts/run-abrir-venta.mjs",
+    "test:fase2": "node --env-file=.env.local scripts/fase2-aceptacion.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -32,6 +33,7 @@
     "@electric-sql/pglite-socket": "^0.2.7",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

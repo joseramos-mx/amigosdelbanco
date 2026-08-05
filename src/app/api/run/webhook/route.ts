@@ -3,7 +3,8 @@ import type Stripe from "stripe";
 import { hasStripeKey, stripe } from "@/lib/stripe";
 import { db, enTransaccion } from "@/lib/db";
 import { aplicarTransicionOrden, type EstadoOrden } from "@/lib/run/estados";
-import { extenderReserva } from "@/lib/run/inscripciones";
+import { datosParaActivacion, extenderReserva } from "@/lib/run/inscripciones";
+import { enviarLigasActivacion } from "@/lib/run/correos";
 import { getRunWebhookSecret, metodoDesdeStripe } from "@/lib/run/stripe";
 
 export const runtime = "nodejs";
@@ -204,10 +205,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ recibido: true, duplicado: true });
     }
 
+    let aplicoElPago = false;
     if (decision.destinoOrden) {
       const resultado = await enTransaccion((tx) =>
         aplicarTransicionOrden(tx, decision.ordenId, decision.destinoOrden!),
       );
+      aplicoElPago = resultado.cambio;
       if (!resultado.cambio && resultado.motivo === "no_permitida") {
         console.warn(
           `[run/webhook] transición no permitida ${resultado.actual} → ${decision.destinoOrden} (orden ${decision.ordenId})`,
@@ -221,8 +224,17 @@ export async function POST(request: Request) {
       await extenderReserva(decision.ordenId, referencia.vence);
     }
 
-    // Fase 2 engancha aquí los correos de activación y Fase 3 la asignación
-    // de dorsales — siempre como trabajo encolado, nunca dentro del handler.
+    // Correo con las ligas de activación, solo cuando el pago se acaba de
+    // confirmar. Va después de responder en lo que importa —el estado ya
+    // quedó guardado— y sin await bloqueante: si Resend falla, el pago sigue
+    // registrado y la liga se puede reenviar a mano.
+    if (decision.destinoOrden === "pagada" && aplicoElPago) {
+      datosParaActivacion(decision.ordenId)
+        .then((datos) => (datos ? enviarLigasActivacion(datos) : null))
+        .catch((err) => console.error("[run/webhook] no se pudo enviar la liga:", err));
+    }
+
+    // Fase 3 engancha aquí la asignación de dorsales.
 
     return NextResponse.json({ recibido: true });
   } catch (err) {

@@ -223,3 +223,25 @@ export async function extenderReserva(ordenId: string, hasta: Date): Promise<voi
 export async function cancelarOrden(ordenId: string): Promise<void> {
   await enTransaccion((tx) => aplicarTransicionOrden(tx, ordenId, "cancelada"));
 }
+
+/** Lo necesario para mandar las ligas de activación de una orden pagada. */
+export async function datosParaActivacion(
+  ordenId: string,
+): Promise<{ correo: string; folio: string; tokens: string[] } | null> {
+  const filas = await db()<
+    { correo_comprador: string; folio: string; token_activacion: string }[]
+  >`
+    select o.correo_comprador, o.folio, b.token_activacion
+      from public.orden o
+      join public.boleto b on b.orden_id = o.id
+     where o.id = ${ordenId}
+       and b.estado <> 'cancelado'
+     order by b.creado_en
+  `;
+  if (!filas.length) return null;
+  return {
+    correo: filas[0].correo_comprador,
+    folio: filas[0].folio,
+    tokens: filas.map((f) => f.token_activacion),
+  };
+}

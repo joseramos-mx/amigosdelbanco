@@ -29,8 +29,15 @@ function secreto(): string {
   return s;
 }
 
-function firmar(payload: string): string {
-  return b64url(createHmac("sha256", secreto()).update(payload).digest());
+/**
+ * Separación de dominio: cada uso tiene su propia derivación del secreto, así
+ * que un token de activación no sirve como QR de entrada ni al revés. Sin
+ * esto, quien tuviera su liga de activación podría fabricar el pase de kit.
+ */
+function firmar(payload: string, dominio = "activacion"): string {
+  return b64url(
+    createHmac("sha256", `${secreto()}:${dominio}`).update(payload).digest(),
+  );
 }
 
 export function crearTokenActivacion(boletoId: string, expiraEn: Date): string {
@@ -77,4 +84,45 @@ export function verificarTokenActivacion(token: string): TokenVerificado {
   if (expiraEn.getTime() < Date.now()) return { ok: false, motivo: "expirado" };
 
   return { ok: true, boletoId: datos.b, expiraEn };
+}
+
+/**
+ * Token del QR del boleto.
+ *
+ * No expira: el boleto vale el día de la carrera y el escáner valida contra
+ * el estado en la base, no contra una fecha dentro del token. Va firmado con
+ * su propio dominio, así que no se puede intercambiar con el de activación.
+ */
+export function crearTokenQr(boletoId: string): string {
+  const payload = b64url(JSON.stringify({ b: boletoId }));
+  return `${payload}.${firmar(payload, "qr")}`;
+}
+
+export type QrVerificado =
+  | { ok: true; boletoId: string }
+  | { ok: false; motivo: "formato" | "firma" };
+
+/**
+ * Verifica el QR sin tocar la base. El escáner del día del evento trabaja sin
+ * conexión: valida la firma en el dispositivo y coteja contra el padrón que
+ * cacheó antes de abrir.
+ */
+export function verificarTokenQr(token: string): QrVerificado {
+  const partes = token.split(".");
+  if (partes.length !== 2) return { ok: false, motivo: "formato" };
+  const [payload, firma] = partes;
+
+  const esperada = Buffer.from(firmar(payload, "qr"));
+  const recibida = Buffer.from(firma);
+  if (esperada.length !== recibida.length || !timingSafeEqual(esperada, recibida)) {
+    return { ok: false, motivo: "firma" };
+  }
+
+  try {
+    const datos = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    if (typeof datos.b !== "string") return { ok: false, motivo: "formato" };
+    return { ok: true, boletoId: datos.b };
+  } catch {
+    return { ok: false, motivo: "formato" };
+  }
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import { Resend } from "resend";
 import { formatMxn } from "@/lib/donation";
+import type { BoletoCompleto } from "./activacion";
 
 /**
  * Correo transaccional del módulo de inscripciones.
@@ -66,6 +67,109 @@ export async function enviarRecordatorioVencimiento(params: {
         <p style="font-size:15px;line-height:1.6;color:#525252;margin:0;">
           Si ya pagaste, ignora este correo: la confirmación puede tardar unas horas
           en llegarnos desde la tienda.
+        </p>
+      `,
+    ),
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+function origen(): string {
+  return (process.env.NEXT_PUBLIC_APP_URL ?? "https://bancodurango.org").replace(/\/+$/, "");
+}
+
+/**
+ * Liga de activación, una por boleto.
+ *
+ * Se manda a quien compró, no al corredor: en una compra de equipo, quien
+ * paga es quien reparte. Cada liga lleva su token firmado.
+ */
+export async function enviarLigasActivacion(params: {
+  correo: string;
+  folio: string;
+  tokens: string[];
+}): Promise<Resultado> {
+  if (!resend) return { ok: false, error: "RESEND_API_KEY no configurada" };
+
+  const varias = params.tokens.length > 1;
+  const ligas = params.tokens
+    .map(
+      (t, i) => `
+        <p style="margin:0 0 12px;">
+          <a href="${origen()}/run/activar/${t}"
+             style="display:inline-block;background:#e9a62d;color:#0a0a0a;font-weight:700;
+                    text-decoration:none;padding:12px 24px;border-radius:8px;font-size:15px;">
+            Llenar datos${varias ? ` — corredor ${i + 1}` : ""}
+          </a>
+        </p>`,
+    )
+    .join("");
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: params.correo,
+    subject: `Tu lugar en el Social Run 2026 está confirmado — folio ${params.folio}`,
+    html: plantilla(
+      "Pago confirmado",
+      `
+        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 20px;">
+          Listo, tu lugar quedó apartado con el folio <strong>${params.folio}</strong>.
+          Falta un paso: llenar los datos de ${varias ? "cada corredor" : "corredor"}
+          —nombre, talla, contacto de emergencia y la carta responsiva—.
+        </p>
+        ${ligas}
+        <p style="font-size:14px;line-height:1.6;color:#737373;margin:20px 0 0;">
+          ${
+            varias
+              ? "Cada botón es para una persona distinta: reparte las ligas entre tu equipo."
+              : "Al terminar te mandamos tu boleto con el código QR."
+          }
+        </p>
+      `,
+    ),
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/** Boleto listo, después de activar. */
+export async function enviarBoleto(params: {
+  correo: string;
+  boleto: BoletoCompleto;
+  token: string;
+}): Promise<Resultado> {
+  if (!resend) return { ok: false, error: "RESEND_API_KEY no configurada" };
+
+  const fecha = new Intl.DateTimeFormat("es-MX", {
+    dateStyle: "full",
+    timeStyle: "short",
+    timeZone: "America/Monterrey",
+  }).format(params.boleto.fecha_carrera);
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: params.correo,
+    subject: `Tu boleto del Social Run 2026 — ${params.boleto.folio}`,
+    html: plantilla(
+      "Nos vemos en la salida",
+      `
+        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 20px;">
+          ${params.boleto.nombre ?? ""}, tu inscripción quedó completa.
+          <br />${fecha}<br />${params.boleto.sede}, ${params.boleto.ciudad}
+        </p>
+        <p style="margin:0 0 20px;">
+          <a href="${origen()}/api/run/boleto/${params.token}/pdf"
+             style="display:inline-block;background:#e9a62d;color:#0a0a0a;font-weight:700;
+                    text-decoration:none;padding:12px 24px;border-radius:8px;font-size:15px;">
+            Descargar mi boleto
+          </a>
+        </p>
+        <p style="font-size:14px;line-height:1.6;color:#737373;margin:0;">
+          Preséntalo en la entrega de kits junto con una identificación oficial.
+          El dorsal se te asigna ahí mismo, no viaja en el correo.
         </p>
       `,
     ),
