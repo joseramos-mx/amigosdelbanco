@@ -11,12 +11,15 @@
     "test:fase1": "node --env-file=.env.local scripts/fase1-aceptacion.mjs",
     "db:migrate": "node --env-file=.env.local scripts/db-migrate.mjs",
     "run:abrir": "node --env-file=.env.local scripts/run-abrir-venta.mjs",
-    "test:fase2": "node --env-file=.env.local scripts/fase2-aceptacion.mjs"
+    "test:fase2": "node --env-file=.env.local scripts/fase2-aceptacion.mjs",
+    "run:pase": "node --env-file=.env.local scripts/run-pase.mjs",
+    "test:fase3": "node --env-file=.env.local scripts/fase3-aceptacion.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@types/canvas-confetti": "^1.9.0",
     "canvas-confetti": "^1.9.4",
+    "jsqr": "^1.4.0",
     "lenis": "^1.3.23",
     "motion": "^12.39.0",
     "next": "16.2.4",
