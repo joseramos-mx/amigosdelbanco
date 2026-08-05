@@ -18,6 +18,11 @@ export const dynamic = "force-dynamic";
  * filtra por `expira_en > now()`), así que este cron no arregla el conteo:
  * lo que hace es dejar el estado explícito para los reportes y disparar el
  * recordatorio. Sin él, la base se llena de órdenes zombi en `pendiente`.
+ *
+ * Corre una vez al día (vercel.json), que es lo que permite el plan Hobby y
+ * además calza con la ventana del aviso: se avisa a lo que vence en menos de
+ * 24 h, así que un pase diario las alcanza todas. En Pro se puede subir a
+ * cada hora cambiando la expresión a "17 * * * *".
  */
 
 const VENTANA_AVISO_HORAS = 24;
