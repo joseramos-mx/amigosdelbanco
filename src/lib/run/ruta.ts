@@ -35,6 +35,25 @@ export const PROVISIONAL = false;
 /** Kilómetros medidos sobre el trazo del GPX. */
 export const DISTANCIA_KM = 6.3;
 
+/**
+ * Desnivel acumulado, en metros.
+ *
+ * El GPX que mandaron no trae etiquetas `<ele>`, así que esto no se puede
+ * medir del trazo: lo tiene que dar la organización o hay que volver a
+ * exportar la ruta con altimetría. Mientras siga en null, la ficha muestra un
+ * guion en lugar de un número inventado.
+ */
+export const DESNIVEL_M: number | null = null;
+
+/**
+ * Tiempo límite para cerrar la meta, ya con formato ("1h 30min").
+ *
+ * No se deduce de nada: es una decisión de la organización, y de ella depende
+ * a qué hora se libera la vialidad. Igual que el desnivel, en null se muestra
+ * un guion.
+ */
+export const TIEMPO_LIMITE: string | null = null;
+
 /** Centro y acercamiento iniciales del mapa, calculados del trazo. */
 export function encuadre(puntos: Punto[]): { centro: Punto; limites: [Punto, Punto] } {
   const lons = puntos.map((p) => p[0]);

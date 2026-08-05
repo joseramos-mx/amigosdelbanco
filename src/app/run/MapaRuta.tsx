@@ -77,6 +77,19 @@ export default function MapaRuta() {
     return () => observador.disconnect();
   }, []);
 
+  /**
+   * Margen del encuadre. Es asimétrico a propósito: las píldoras de Salida y
+   * Meta se dibujan a la izquierda de su punto, así que ese lado necesita
+   * hueco para que no se salgan. En celular el mapa mide la mitad y ese mismo
+   * margen se comería la ruta, así que baja.
+   */
+  const margen = useCallback((mapa: MapaLibre) => {
+    const angosto = mapa.getContainer().clientWidth < 520;
+    return angosto
+      ? { top: 48, bottom: 40, left: 78, right: 34 }
+      : { top: 70, bottom: 60, left: 150, right: 80 };
+  }, []);
+
   const proyectar = useCallback((mapa: MapaLibre) => {
     setTrazo(
       PUNTOS.map((p: Punto) => {
@@ -101,7 +114,7 @@ export default function MapaRuta() {
           container: contenedor.current,
           style: ESTILO,
           bounds: limites,
-          fitBoundsOptions: { padding: 80 },
+          fitBoundsOptions: { padding: 60 },
           attributionControl: { compact: true },
           // La ruta se ve completa de un vistazo; girarla no aporta y en
           // celular provoca giros accidentales al hacer zoom con dos dedos.
@@ -125,7 +138,7 @@ export default function MapaRuta() {
         const observador = new ResizeObserver(() => {
           if (cancelado) return;
           mapa.resize();
-          mapa.fitBounds(limites, { padding: 80, animate: false });
+          mapa.fitBounds(limites, { padding: margen(mapa), animate: false });
         });
         observador.observe(contenedor.current);
         observadorRef.current = observador;
@@ -139,10 +152,25 @@ export default function MapaRuta() {
           ] as const) {
             const nodo = document.createElement("div");
             nodo.className =
-              "flex items-center gap-1.5 rounded-full bg-run-amber px-3 py-1.5 " +
-              "font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black shadow-lg";
+              "relative rounded-full bg-run-amber px-4 py-2 font-geist-mono " +
+              "text-[11px] uppercase tracking-[0.16em] text-black shadow-lg";
             nodo.textContent = etiqueta;
-            new maplibre.Marker({ element: nodo, anchor: "bottom" })
+
+            // La colita del globo: un cuadrado girado que asoma por la
+            // esquina. Se pinta encima de la píldora en vez de detrás —del
+            // mismo ámbar, así que da igual— porque mandarlo atrás con un
+            // z-index negativo lo esconde detrás del lienzo del mapa, no solo
+            // detrás de la píldora. Va después del texto porque
+            // `textContent` borra los hijos que ya hubiera.
+            const cola = document.createElement("span");
+            cola.className =
+              "absolute -right-1 bottom-1.5 h-3.5 w-3.5 rotate-45 rounded-[3px] bg-run-amber";
+            nodo.appendChild(cola);
+
+            // Anclado a la derecha, la píldora queda a la izquierda del punto
+            // y la cola cae justo encima de él. Por eso el encuadre reserva
+            // más margen de ese lado.
+            new maplibre.Marker({ element: nodo, anchor: "right" })
               .setLngLat(punto)
               .addTo(mapa);
           }
@@ -155,7 +183,7 @@ export default function MapaRuta() {
           const encuadrar = () => {
             if (cancelado) return;
             mapa.resize();
-            mapa.fitBounds(limites, { padding: 60, animate: false });
+            mapa.fitBounds(limites, { padding: margen(mapa), animate: false });
             actualizar();
           };
 
@@ -185,10 +213,10 @@ export default function MapaRuta() {
       mapaRef.current?.remove();
       mapaRef.current = null;
     };
-  }, [visible, proyectar]);
+  }, [visible, proyectar, margen]);
 
   return (
-    <div className="relative h-[420px] w-full overflow-hidden rounded-[20px] border border-white/10 bg-run-card lg:h-[520px]">
+    <div className="relative h-full w-full overflow-hidden rounded-[14px] bg-run-card">
       {/* El posicionamiento va en línea, no en clases de Tailwind, y no es
           capricho: MapLibre le pone al contenedor su clase `.maplibregl-map`,
           que trae `position: relative` sin capa. Las utilidades de Tailwind
@@ -207,8 +235,8 @@ export default function MapaRuta() {
             points={trazo}
             fill="none"
             stroke={AMBAR}
-            strokeWidth={14}
-            strokeOpacity={0.22}
+            strokeWidth={20}
+            strokeOpacity={0.18}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -216,7 +244,7 @@ export default function MapaRuta() {
             points={trazo}
             fill="none"
             stroke={AMBAR}
-            strokeWidth={4}
+            strokeWidth={7}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
