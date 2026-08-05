@@ -4,6 +4,7 @@ import Link from "next/link";
 import Countdown from "./Countdown";
 import Reveal from "./Reveal";
 import RunFooter from "./RunFooter";
+import SeccionRuta from "./SeccionRuta";
 
 // ── Datos del evento ────────────────────────────────────────────────────────
 // Viernes 16 de octubre de 2026, 5:00 PM. Durango usa UTC-6 todo el año.
@@ -199,6 +200,8 @@ export default function RunPage() {
           </Reveal>
         </div>
       </main>
+
+      <SeccionRuta />
 
       <RunFooter />
     </>
