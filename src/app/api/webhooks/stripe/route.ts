@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { hasStripeKey, stripe, getStripeWebhookSecret } from "@/lib/stripe";
+import { hayBaseDeDatos } from "@/lib/db";
 import {
   datosDesdeMetadata,
   marcarReembolso,
@@ -171,6 +172,16 @@ export async function POST(request: Request) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: `Webhook signature invalid: ${message}` }, { status: 400 });
+  }
+
+  // Sin base configurada no hay nada que escribir, y las lecturas siguen
+  // saliendo de Stripe. Antes de tener Postgres este handler solo confirmaba
+  // la entrega; se conserva ese comportamiento en lugar de responder 500 a
+  // cada donativo y dejar a Stripe reintentando contra un endpoint que no
+  // puede funcionar.
+  if (!hayBaseDeDatos()) {
+    console.warn(`[webhook] ${event.type} recibido sin DATABASE_URL: no se registró`);
+    return NextResponse.json({ received: true, sinBase: true });
   }
 
   try {
