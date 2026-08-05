@@ -13,6 +13,13 @@
  *
  * Para invalidar todos los pases emitidos —un teléfono perdido a media
  * jornada— sube RUN_STAFF_EPOCH en el entorno y vuelve a generarlos.
+ *
+ * OJO: firma con el RUN_TOKEN_SECRET de .env.local, así que el pase solo
+ * sirve contra un servidor que use ese mismo secreto — típicamente el
+ * local. Para producción usa el endpoint, que firma con el secreto que ya
+ * vive allá:
+ *
+ *   curl -X POST "https://bancodurango.org/api/admin/pase?rol=admin&nombre=Coordinacion&dias=30" \n *        -H "Authorization: Bearer $CRON_SECRET"
  */
 
 import { createHmac } from "node:crypto";
