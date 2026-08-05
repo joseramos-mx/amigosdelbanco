@@ -34,7 +34,7 @@ const GROUPS = [
     links: [
       { href: "/progreso", label: "Progreso de obra" },
       { href: "/run", label: "Social Run 2026" },
-      { href: "/donar", label: "Comprar acceso" },
+      { href: "/run/inscripcion", label: "Comprar acceso" },
     ],
   },
   {
@@ -100,7 +100,7 @@ export default function RunFooter() {
               Asegura tu Founding Member Pass
             </p>
             <Link
-              href="/donar"
+              href="/run/inscripcion"
               className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-1.5 pl-4 transition-colors hover:border-white/25"
             >
               <span className="text-sm text-white/45">Cupo limitado</span>

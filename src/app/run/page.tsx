@@ -12,8 +12,9 @@ const EVENT_DATE = "Viernes 16 de octubre, 2026";
 const EVENT_TIME = "05:00 PM";
 const EVENT_VENUE = "Antigua Estación de Ferrocarril";
 
-// Destino del botón de compra — cámbialo por la liga de boletos cuando exista.
-const TICKETS_URL = "/donar";
+// Checkout propio del evento. La inscripción es contraprestación, no donativo:
+// no debe cobrarse por /donar, que emite recibos deducibles.
+const TICKETS_URL = "/run/inscripcion";
 
 const DESCRIPTION = `Social Run 2026 de Generous Generation: festival, concierto, food village y rifa de auto. ${EVENT_DATE}, ${EVENT_TIME}, ${EVENT_VENUE} en Durango. Powered by Banco de Alimentos de Durango.`;
 
