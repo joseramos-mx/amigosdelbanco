@@ -10,7 +10,7 @@
   /* Generous Generation — Social Run 2026 (/run). The font vars are declared
      by next/font on the /run wrapper, so these utilities only resolve there. */
   --color-run-amber: #e9a62d;
-  --color-run-card: #141414;
+  --color-run-card: #262626;
   --font-geist: var(--font-geist-sans);
   --font-geist-mono: var(--font-geist-mono-code);
   --font-schabo: var(--font-schabo-display);

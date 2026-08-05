@@ -2,14 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-const UNITS = [
-  { key: "days", label: "Días" },
-  { key: "hours", label: "Horas" },
-  { key: "minutes", label: "Min" },
-  { key: "seconds", label: "Seg" },
-] as const;
-
-type Remaining = Record<(typeof UNITS)[number]["key"], number>;
+interface Remaining {
+  days: number;
+  hours: number;
+  minutes: number;
+}
 
 function remainingFrom(targetMs: number): Remaining {
   const ms = Math.max(0, targetMs - Date.now());
@@ -17,13 +14,14 @@ function remainingFrom(targetMs: number): Remaining {
     days: Math.floor(ms / 86_400_000),
     hours: Math.floor(ms / 3_600_000) % 24,
     minutes: Math.floor(ms / 60_000) % 60,
-    seconds: Math.floor(ms / 1_000) % 60,
   };
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
 export default function Countdown({ targetIso }: { targetIso: string }) {
   const targetMs = new Date(targetIso).getTime();
-  // Null until mounted — the server has no clock to agree with.
+  // Null hasta montar — el servidor no tiene reloj con el que coincidir.
   const [left, setLeft] = useState<Remaining | null>(null);
 
   useEffect(() => {
@@ -34,28 +32,25 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
   }, [targetMs]);
 
   const started =
-    left !== null && left.days + left.hours + left.minutes + left.seconds === 0;
-
-  if (started) {
-    return (
-      <p className="font-schabo text-[clamp(2.5rem,7vw,5.5rem)] uppercase leading-[0.85] tracking-tight">
-        ¡Hoy corremos juntos!
-      </p>
-    );
-  }
+    left !== null && left.days + left.hours + left.minutes === 0;
 
   return (
-    <div className="grid grid-cols-4 divide-x divide-black/15" aria-hidden>
-      {UNITS.map(({ key, label }) => (
-        <div key={key} className="flex flex-col items-center px-1">
-          <span className="font-schabo text-[clamp(3.25rem,12vw,4.5rem)] leading-[0.78] tabular-nums lg:text-[clamp(3.5rem,7vw,7rem)]">
-            {left ? String(left[key]).padStart(2, "0") : "––"}
-          </span>
-          <span className="mt-2 font-geist-mono text-[9px] uppercase tracking-[0.22em] text-black/55 sm:text-[11px]">
-            {label}
-          </span>
-        </div>
-      ))}
-    </div>
+    <>
+      <p className="sr-only">
+        {left
+          ? `Faltan ${left.days} días, ${left.hours} horas y ${left.minutes} minutos.`
+          : "Cargando la cuenta regresiva."}
+      </p>
+      <p
+        aria-hidden
+        className="font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
+      >
+        {started
+          ? "¡HOY!"
+          : left
+            ? `${pad(left.days)}:${pad(left.hours)}:${pad(left.minutes)}`
+            : "--:--:--"}
+      </p>
+    </>
   );
 }
