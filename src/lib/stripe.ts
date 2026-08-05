@@ -45,6 +45,22 @@ export function getStripeMode(): "test" | "live" {
   return resolveMode();
 }
 
+/**
+ * Whether the secret key for the current mode is configured.
+ *
+ * Verifying a webhook signature is pure HMAC and needs no API key, but it
+ * runs through the lazy client above — so a missing key throws from inside
+ * the signature check and a misconfigured server reports itself as "invalid
+ * signature". Callers use this to tell the two apart: a bad signature is a
+ * 400 (don't retry), a missing key is a 500 (retry once we fix it).
+ */
+export function hasStripeKey(): boolean {
+  const key = resolveMode() === "live"
+    ? process.env.STRIPE_SECRET_KEY_LIVE
+    : process.env.STRIPE_SECRET_KEY_TEST;
+  return Boolean(key);
+}
+
 export function getStripeWebhookSecret(): string | undefined {
   const mode = resolveMode();
   return mode === "live"

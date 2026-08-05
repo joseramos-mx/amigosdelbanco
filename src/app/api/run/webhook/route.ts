@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripe";
-import { db, enTransaccion, esViolacionUnica } from "@/lib/run/db";
+import { hasStripeKey, stripe } from "@/lib/stripe";
+import { db, enTransaccion } from "@/lib/run/db";
 import { aplicarTransicionOrden, type EstadoOrden } from "@/lib/run/estados";
 import { extenderReserva } from "@/lib/run/inscripciones";
 import { getRunWebhookSecret, metodoDesdeStripe } from "@/lib/run/stripe";
@@ -100,30 +100,36 @@ function decidir(evento: Stripe.Event): Decision | null {
  * Inserta el pago. La clave única es el id del evento de Stripe, así que el
  * segundo y el tercer reenvío del mismo evento chocan aquí y no llegan a
  * tocar la orden.
+ *
+ * El duplicado se detecta por el `returning` vacío del `on conflict do
+ * nothing`, no atrapando la excepción 23505. La diferencia importa: cuando
+ * varias entregas simultáneas viajan canalizadas por una misma conexión,
+ * Postgres descarta las sentencias posteriores a la que falla hasta el Sync,
+ * y esas resuelven vacías en lugar de lanzar. Con el catch, ese handler
+ * creía haber insertado y le respondía a Stripe que había aplicado el pago
+ * —sin haberlo hecho—. Con `returning`, no hay nada que interpretar: si no
+ * volvió fila, alguien más ya registró este evento.
  */
 async function registrarPago(
   evento: Stripe.Event,
   d: Decision,
   referencia: { numero: string | null; vence: Date | null },
 ): Promise<{ duplicado: boolean }> {
-  try {
-    await db()`
-      insert into public.pago (
-        evento_id, orden_id, proveedor, metodo, referencia_externa,
-        idempotency_key, monto_centavos, estado, vencimiento_ref,
-        payload_crudo, procesado_en
-      ) values (
-        ${d.eventoId}, ${d.ordenId}, 'stripe', ${d.metodo}::public.metodo_pago,
-        ${referencia.numero}, ${evento.id}, ${d.montoCentavos},
-        ${d.estadoPago}::public.estado_pago, ${referencia.vence},
-        ${JSON.stringify(evento)}::jsonb, now()
-      )
-    `;
-    return { duplicado: false };
-  } catch (err) {
-    if (esViolacionUnica(err)) return { duplicado: true };
-    throw err;
-  }
+  const filas = await db()<{ id: string }[]>`
+    insert into public.pago (
+      evento_id, orden_id, proveedor, metodo, referencia_externa,
+      idempotency_key, monto_centavos, estado, vencimiento_ref,
+      payload_crudo, procesado_en
+    ) values (
+      ${d.eventoId}, ${d.ordenId}, 'stripe', ${d.metodo}::public.metodo_pago,
+      ${referencia.numero}, ${evento.id}, ${d.montoCentavos},
+      ${d.estadoPago}::public.estado_pago, ${referencia.vence},
+      ${JSON.stringify(evento)}::jsonb, now()
+    )
+    on conflict (idempotency_key) do nothing
+    returning id
+  `;
+  return { duplicado: filas.length === 0 };
 }
 
 /**
@@ -160,9 +166,19 @@ async function detallesReferencia(
 
 export async function POST(request: Request) {
   const firma = request.headers.get("stripe-signature");
+  if (!firma) {
+    return NextResponse.json({ error: "Falta la firma" }, { status: 400 });
+  }
+
+  // Servidor mal configurado ≠ firma inválida. Va 500 para que Stripe
+  // reintente cuando esté arreglado, en vez de 400, que da por perdida la
+  // entrega y deja la orden pagada sin registrar.
   const secreto = getRunWebhookSecret();
-  if (!firma || !secreto) {
-    return NextResponse.json({ error: "Falta firma o secreto" }, { status: 400 });
+  if (!secreto || !hasStripeKey()) {
+    console.error(
+      "[run/webhook] falta STRIPE_RUN_WEBHOOK_SECRET_* o la llave secreta de Stripe",
+    );
+    return NextResponse.json({ error: "Stripe no está configurado" }, { status: 500 });
   }
 
   const cuerpo = await request.text();

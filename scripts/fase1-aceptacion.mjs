@@ -14,6 +14,9 @@
  * Uso:
  *   node --env-file=.env.local scripts/fase1-aceptacion.mjs [http://localhost:3000]
  *
+ * Con --idle=5 espera cinco minutos al final y vuelve a consultar, para
+ * confirmar que una conexión ociosa no deja el pool con un socket muerto.
+ *
  * Requiere DATABASE_URL, STRIPE_RUN_WEBHOOK_SECRET_TEST y CRON_SECRET.
  * Crea su propio evento de prueba y lo borra al terminar.
  */
@@ -137,14 +140,24 @@ async function main() {
       },
     };
 
-    const respuestas = [];
-    for (let i = 0; i < 3; i += 1) respuestas.push(await dispararWebhook(eventoStripe));
+    // En paralelo, no en serie: en serie la segunda entrega encuentra el
+    // pago ya escrito y confirmado, que es el caso fácil. Simultáneas se
+    // pelean por la restricción única y por el FOR UPDATE de la orden, que
+    // es lo que de verdad pasa cuando Stripe reintenta sobre un handler
+    // lento.
+    const respuestas = await Promise.all(
+      Array.from({ length: 3 }, () => dispararWebhook(eventoStripe)),
+    );
 
     verificar("las tres entregas responden 200", respuestas.map((r) => r.status), [200, 200, 200]);
+    // El orden de llegada no es determinista: se cuenta, no se posiciona.
     verificar(
-      "la segunda y la tercera se reconocen como reenvío",
-      respuestas.map((r) => Boolean(r.cuerpo.duplicado)),
-      [false, true, true],
+      "exactamente una entrega aplicó el pago y dos se reconocieron como reenvío",
+      {
+        aplicaron: respuestas.filter((r) => !r.cuerpo.duplicado).length,
+        reenvios: respuestas.filter((r) => r.cuerpo.duplicado).length,
+      },
+      { aplicaron: 1, reenvios: 2 },
     );
 
     const [{ estado }] = await sql`select estado from public.orden where id = ${orden.id}`;
@@ -220,6 +233,24 @@ async function main() {
     await sql`delete from public.orden where evento_id = ${evento.id}`;
     await sql`delete from public.tipo_boleto where evento_id = ${evento.id}`;
     await sql`delete from public.evento where id = ${evento.id}`;
+  }
+
+  // ── 4. Conexión después de un rato ocioso ─────────────────────────
+  // El pooler cierra conexiones inactivas; si el cliente no cerró antes, la
+  // siguiente consulta toma el socket muerto y truena con ECONNRESET.
+  const minutos = Number((process.argv.find((a) => a.startsWith("--idle=")) ?? "").split("=")[1]);
+  if (Number.isFinite(minutos) && minutos > 0) {
+    console.log("");
+    console.log(`4. Reposo de ${minutos} min y reconexión`);
+    await new Promise((r) => setTimeout(r, minutos * 60_000));
+
+    const res = await fetch(`${BASE}/api/run/orden`);
+    const datos = await res.json().catch(() => ({}));
+    verificar("tras el reposo, la lectura responde 200", res.status, 200);
+    verificar("y trae el evento, sin ECONNRESET", Boolean(datos.evento), true);
+
+    const [{ n }] = await sql`select count(*)::int as n from public.evento`;
+    verificar("la conexión del script también sigue viva", typeof n, "number");
   }
 
   console.log("");

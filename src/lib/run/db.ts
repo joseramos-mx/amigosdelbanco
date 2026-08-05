@@ -27,6 +27,23 @@ function maxConexiones(): number {
   return Math.min(10, Math.max(1, Math.trunc(crudo)));
 }
 
+/**
+ * Segundos que una conexión puede quedarse ociosa antes de que la cerremos
+ * nosotros.
+ *
+ * Tiene que ser **más corto** que el tiempo que aguanta el pooler, y esa es
+ * toda la razón de que exista: si el servidor cierra primero, el cliente se
+ * queda con un socket muerto y la siguiente consulta truena con ECONNRESET.
+ * Cerrando antes, el pool simplemente abre una conexión nueva. Veinte
+ * segundos también encaja con Vercel, donde la instancia se congela entre
+ * peticiones y una conexión ociosa no sirve de nada.
+ */
+function idleTimeout(): number {
+  const crudo = Number(process.env.RUN_DB_IDLE_TIMEOUT);
+  if (!Number.isFinite(crudo)) return 20;
+  return Math.min(300, Math.max(5, Math.trunc(crudo)));
+}
+
 let cached: postgres.Sql | null = null;
 
 function crearCliente(): postgres.Sql {
@@ -41,9 +58,11 @@ function crearCliente(): postgres.Sql {
 
   return postgres(url, {
     max: maxConexiones(),
-    idle_timeout: 20,
+    idle_timeout: idleTimeout(),
     connect_timeout: 10,
-    // El pooler en modo transacción no soporta sentencias preparadas.
+    // Obligatorio contra el pooler en modo transacción: cada consulta puede
+    // caer en una conexión distinta del lado del servidor, así que una
+    // sentencia preparada en la anterior ya no existe.
     prepare: false,
     // postgres.js devuelve int8 como string para no perder precisión. Las
     // consultas de este módulo castean los montos a ::int, que es lo que
@@ -126,14 +145,4 @@ function reiniciarCliente(): void {
   const viejo = cached;
   cached = null;
   viejo?.end({ timeout: 0 }).catch(() => {});
-}
-
-/** Código de error de Postgres para violación de restricción única. */
-export const UNIQUE_VIOLATION = "23505";
-
-export function esViolacionUnica(err: unknown, restriccion?: string): boolean {
-  if (typeof err !== "object" || err === null) return false;
-  const e = err as { code?: string; constraint_name?: string };
-  if (e.code !== UNIQUE_VIOLATION) return false;
-  return restriccion ? e.constraint_name === restriccion : true;
 }
