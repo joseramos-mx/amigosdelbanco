@@ -83,6 +83,51 @@ export async function enTransaccion<T>(
   return db().begin(fn) as Promise<T>;
 }
 
+const ERRORES_DE_CONEXION = new Set([
+  "ECONNRESET",
+  "EPIPE",
+  "CONNECTION_CLOSED",
+  "CONNECTION_ENDED",
+  "CONNECTION_DESTROYED",
+]);
+
+function esErrorDeConexion(err: unknown): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const code = (err as { code?: string }).code;
+  return typeof code === "string" && ERRORES_DE_CONEXION.has(code);
+}
+
+/**
+ * Reintenta una vez si la conexión estaba muerta.
+ *
+ * El pooler cierra conexiones inactivas y la instancia de Vercel se enfría;
+ * cuando eso pasa, la primera consulta que toma el socket viejo falla con
+ * ECONNRESET aunque la base esté perfectamente. Reintentar la descarta y
+ * abre una nueva.
+ *
+ * Solo para lecturas: una escritura que falla así puede haberse aplicado o
+ * no, y repetirla a ciegas duplicaría efectos. En escrituras el error sube
+ * — el webhook responde 500 y Stripe reintenta, que es justo lo que
+ * queremos.
+ */
+export async function conReintento<T>(consulta: () => Promise<T>): Promise<T> {
+  try {
+    return await consulta();
+  } catch (err) {
+    if (!esErrorDeConexion(err)) throw err;
+    // Reintentar sin más volvería a tomar el mismo socket muerto del pool:
+    // hay que tirar el cliente para que el siguiente intento abra uno nuevo.
+    reiniciarCliente();
+    return consulta();
+  }
+}
+
+function reiniciarCliente(): void {
+  const viejo = cached;
+  cached = null;
+  viejo?.end({ timeout: 0 }).catch(() => {});
+}
+
 /** Código de error de Postgres para violación de restricción única. */
 export const UNIQUE_VIOLATION = "23505";
 

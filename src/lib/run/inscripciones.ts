@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { db, enTransaccion } from "./db";
+import { conReintento, db, enTransaccion } from "./db";
 import { crearTokenActivacion } from "./tokens";
 
 export const EVENTO_SLUG = "social-run-2026";
@@ -30,22 +30,22 @@ export type TipoBoleto = {
 };
 
 export async function obtenerEvento(slug = EVENTO_SLUG): Promise<Evento | null> {
-  const filas = await db()<Evento[]>`
+  const filas = await conReintento(() => db()<Evento[]>`
     select id, nombre, slug, fecha_carrera, sede, ciudad, estado, ttl_reserva_horas
       from public.evento
      where slug = ${slug}
-  `;
+  `);
   return filas[0] ?? null;
 }
 
 export async function obtenerTiposBoleto(eventoId: string): Promise<TipoBoleto[]> {
-  return db()<TipoBoleto[]>`
+  return conReintento(() => db()<TipoBoleto[]>`
     select id, evento_id, nombre, precio_centavos::int as precio_centavos,
            cupo_total, dorsal_desde, dorsal_hasta
       from public.tipo_boleto
      where evento_id = ${eventoId}
      order by precio_centavos, nombre
-  `;
+  `);
 }
 
 /**
@@ -61,7 +61,7 @@ export async function obtenerTiposBoleto(eventoId: string): Promise<TipoBoleto[]
  * ninguna fila en lugar de devolver el cupo completo.
  */
 export async function cupoDisponible(tipoBoletoId: string): Promise<number> {
-  const filas = await db()<{ disponibles: number }[]>`
+  const filas = await conReintento(() => db()<{ disponibles: number }[]>`
     select tb.cupo_total - (
              select count(*)
                from public.boleto b
@@ -72,7 +72,7 @@ export async function cupoDisponible(tipoBoletoId: string): Promise<number> {
            )::int as disponibles
       from public.tipo_boleto tb
      where tb.id = ${tipoBoletoId}
-  `;
+  `);
   return filas[0]?.disponibles ?? 0;
 }
 

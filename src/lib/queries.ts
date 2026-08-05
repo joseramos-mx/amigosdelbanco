@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { db, hayBaseDeDatos } from "@/lib/run/db";
+import { conReintento, db, hayBaseDeDatos } from "@/lib/run/db";
 
 /**
  * Lecturas públicas de donativos.
@@ -40,13 +40,13 @@ const FALLBACK_TOTALS: Totals = { raised_cents: 0, donor_count: 0, donation_coun
 export const getTotals = cache(async (): Promise<Totals> => {
   if (!hayBaseDeDatos()) return FALLBACK_TOTALS;
   try {
-    const filas = await db()<Totals[]>`
+    const filas = await conReintento(() => db()<Totals[]>`
       select raised_cents::int as raised_cents,
              donor_count,
              donation_count
         from public.totals
        where id = 1
-    `;
+    `);
     return filas[0] ?? FALLBACK_TOTALS;
   } catch (err) {
     console.error("[getTotals] consulta a Postgres falló:", err);
@@ -57,7 +57,7 @@ export const getTotals = cache(async (): Promise<Totals> => {
 export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> => {
   if (!hayBaseDeDatos()) return [];
   try {
-    const filas = await db()<
+    const filas = await conReintento(() => db()<
       { display_name: string | null; total_donated_cents: number; updated_at: Date }[]
     >`
       select display_name,
@@ -68,7 +68,7 @@ export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> =
          and total_donated_cents > 0
        order by total_donated_cents desc
        limit ${limit}
-    `;
+    `);
     return filas.map((f) => ({ ...f, updated_at: f.updated_at.toISOString() }));
   } catch (err) {
     console.error("[getPublicDonors] consulta a Postgres falló:", err);
@@ -79,7 +79,7 @@ export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> =
 export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> => {
   if (!hayBaseDeDatos()) return null;
   try {
-    const filas = await db()<
+    const filas = await conReintento(() => db()<
       { display_name: string; total_donated_cents: number; updated_at: Date }[]
     >`
       select d.display_name,
@@ -92,7 +92,7 @@ export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> =>
          and dn.status = 'succeeded'
        order by dn.created_at desc
        limit 1
-    `;
+    `);
     const f = filas[0];
     return f ? { ...f, updated_at: f.updated_at.toISOString() } : null;
   } catch (err) {
