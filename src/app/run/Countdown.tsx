@@ -43,7 +43,7 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
       </p>
       <p
         aria-hidden
-        className="font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
+        className="font-schabo text-[30vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
       >
         {started
           ? "¡HOY!"
