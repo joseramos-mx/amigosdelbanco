@@ -18,11 +18,17 @@ import {
  * Las tablas y los agregados (`totals`, `donors.total_donated_cents`) vienen
  * de 0001_init.sql y los mantienen triggers, así que aquí solo hay lecturas.
  *
- * Mientras DATABASE_URL no exista, estas funciones caen al lector de Stripe
- * (donativos-stripe.ts) en lugar de devolver ceros. Sin ese respaldo, el
- * primer despliegue sin base configurada dejaría el sitio anunciando cero
- * recaudado y cero donantes — que es peor que la duplicidad que se quiso
- * quitar. En cuanto la base esté, el respaldo deja de usarse solo.
+ * Hay un respaldo que lee de Stripe (donativos-stripe.ts) y entra en dos
+ * casos, los dos porque anunciar "cero recaudado" en un sitio que pide
+ * donativos es peor que la duplicidad que se quiso quitar:
+ *
+ *   · No hay DATABASE_URL — todavía no se conecta la base.
+ *   · La base está conectada pero vacía — se aplicaron las migraciones y
+ *     aún no corre el backfill. Es una ventana real: en cuanto la variable
+ *     existe, las lecturas se van a Postgres.
+ *
+ * Con el primer donativo registrado la condición deja de cumplirse y el
+ * respaldo no se vuelve a tocar.
  */
 
 export type PublicDonor = {
@@ -55,7 +61,10 @@ export const getTotals = cache(async (): Promise<Totals> => {
         from public.totals
        where id = 1
     `);
-    return filas[0] ?? FALLBACK_TOTALS;
+    const totales = filas[0];
+    // Base vacía = todavía sin backfill. Ver la nota de arriba.
+    if (!totales || totales.donation_count === 0) return totalesDeStripe();
+    return totales;
   } catch (err) {
     console.error("[getTotals] consulta a Postgres falló:", err);
     return FALLBACK_TOTALS;
@@ -77,6 +86,7 @@ export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> =
        order by total_donated_cents desc
        limit ${limit}
     `);
+    if (!filas.length) return donantesDeStripe(limit);
     return filas.map((f) => ({ ...f, updated_at: f.updated_at.toISOString() }));
   } catch (err) {
     console.error("[getPublicDonors] consulta a Postgres falló:", err);
@@ -102,7 +112,8 @@ export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> =>
        limit 1
     `);
     const f = filas[0];
-    return f ? { ...f, updated_at: f.updated_at.toISOString() } : null;
+    if (!f) return donanteRecienteDeStripe();
+    return { ...f, updated_at: f.updated_at.toISOString() };
   } catch (err) {
     console.error("[getMostRecentDonor] consulta a Postgres falló:", err);
     return null;
