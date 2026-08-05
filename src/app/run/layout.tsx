@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import SmoothScroll from "@/components/SmoothScroll";
+import MotionProvider from "./MotionProvider";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +33,9 @@ export default function RunLayout({
     <div
       className={`${geist.variable} ${geistMono.variable} ${schabo.variable} font-geist bg-black text-white`}
     >
-      {children}
+      <SmoothScroll>
+        <MotionProvider>{children}</MotionProvider>
+      </SmoothScroll>
     </div>
   );
 }

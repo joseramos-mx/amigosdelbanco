@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Reveal from "./Reveal";
+import GiantWordmark from "./GiantWordmark";
 
 const GROUPS = [
   {
@@ -67,8 +69,8 @@ export default function RunFooter() {
 
         {/* ── Columnas + bloque de acceso ───────────────────────────── */}
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:mt-20 lg:grid-cols-[repeat(4,minmax(0,1fr))_1.25fr] lg:gap-8">
-          {GROUPS.map((group) => (
-            <div key={group.label}>
+          {GROUPS.map((group, i) => (
+            <Reveal key={group.label} delay={i * 70}>
               <p className="text-[15px] text-white/35">{group.label}</p>
               <ul className="mt-6 space-y-4">
                 {group.links.map((link) => (
@@ -90,10 +92,10 @@ export default function RunFooter() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           ))}
 
-          <div className="sm:col-span-2 lg:col-span-1">
+          <Reveal delay={280} className="sm:col-span-2 lg:col-span-1">
             <p className="text-[15px] text-white/85">
               Asegura tu Founding Member Pass
             </p>
@@ -106,11 +108,11 @@ export default function RunFooter() {
                 Comprar
               </span>
             </Link>
-          </div>
+          </Reveal>
         </div>
 
         {/* ── Barra inferior ────────────────────────────────────────── */}
-        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between lg:mt-24">
+        <Reveal className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between lg:mt-24">
           <p className="text-sm text-white/50">
             © {year} Banco de Alimentos de Durango A.C. — Durango, Dgo., México
           </p>
@@ -128,20 +130,10 @@ export default function RunFooter() {
               Términos de uso
             </Link>
           </div>
-        </div>
+        </Reveal>
       </div>
 
-      {/* ── Wordmark gigante, recortado por el borde inferior ───────
-          SCHABO mide 2.79em de ancho en "GENEROUS" y 0.8em de caja alta.
-          El tope de 537px evita que 32vw crezca más que el contenedor de
-          1500px (1500 / 2.79); el margen negativo corta ~10% de abajo
-          contra el overflow-hidden del footer. */}
-      <p
-        aria-hidden
-        className="mx-auto mt-20 mb-[-0.18em] max-w-[1500px] select-none text-center font-schabo text-[min(32vw,537px)] uppercase leading-[0.8] text-white/6 lg:mt-28"
-      >
-        Generous
-      </p>
+      <GiantWordmark />
     </footer>
   );
 }
