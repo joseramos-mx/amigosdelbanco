@@ -4,6 +4,7 @@ import Link from "next/link";
 import Countdown from "./Countdown";
 import Reveal from "./Reveal";
 import RunFooter from "./RunFooter";
+import SeccionMoods from "./SeccionMoods";
 import SeccionRuta from "./SeccionRuta";
 
 // ── Datos del evento ────────────────────────────────────────────────────────
@@ -202,6 +203,8 @@ export default function RunPage() {
       </main>
 
       <SeccionRuta />
+
+      <SeccionMoods />
 
       <RunFooter />
     </>
