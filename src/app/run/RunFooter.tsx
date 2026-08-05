@@ -55,12 +55,6 @@ export default function RunFooter() {
 
   return (
     <footer className="relative overflow-hidden px-4 pt-20 sm:px-6 lg:px-12 lg:pt-28">
-      {/* Resplandor cálido, como en la referencia */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-64 left-0 h-[34rem] w-[34rem] rounded-full bg-run-amber/10 blur-[150px]"
-      />
-
       <div className="relative mx-auto max-w-[1500px]">
         <Link href="/" aria-label="Banco de Alimentos de Durango">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -138,12 +132,13 @@ export default function RunFooter() {
       </div>
 
       {/* ── Wordmark gigante, recortado por el borde inferior ───────
-          SCHABO mide 2.79em de ancho en "GENEROUS" y 0.8em de caja alta:
-          con 32vw llena el ancho y el margen negativo corta ~10% de abajo
+          SCHABO mide 2.79em de ancho en "GENEROUS" y 0.8em de caja alta.
+          El tope de 537px evita que 32vw crezca más que el contenedor de
+          1500px (1500 / 2.79); el margen negativo corta ~10% de abajo
           contra el overflow-hidden del footer. */}
       <p
         aria-hidden
-        className="mx-auto mt-20 mb-[-0.18em] max-w-[1500px] select-none font-schabo text-[32vw] uppercase leading-[0.8] text-white/6 lg:mt-28"
+        className="mx-auto mt-20 mb-[-0.18em] max-w-[1500px] select-none text-center font-schabo text-[min(32vw,537px)] uppercase leading-[0.8] text-white/6 lg:mt-28"
       >
         Generous
       </p>
