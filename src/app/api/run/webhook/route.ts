@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { hasStripeKey, stripe } from "@/lib/stripe";
-import { db, enTransaccion } from "@/lib/run/db";
+import { db, enTransaccion } from "@/lib/db";
 import { aplicarTransicionOrden, type EstadoOrden } from "@/lib/run/estados";
 import { extenderReserva } from "@/lib/run/inscripciones";
 import { getRunWebhookSecret, metodoDesdeStripe } from "@/lib/run/stripe";

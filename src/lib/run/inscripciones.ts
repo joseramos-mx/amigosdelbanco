@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { conReintento, db, enTransaccion } from "./db";
+import { conReintento, db, enTransaccion } from "@/lib/db";
 import { crearTokenActivacion } from "./tokens";
 
 export const EVENTO_SLUG = "social-run-2026";

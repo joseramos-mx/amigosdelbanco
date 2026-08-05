@@ -1,6 +1,11 @@
 import "server-only";
 import { cache } from "react";
-import { conReintento, db, hayBaseDeDatos } from "@/lib/run/db";
+import { conReintento, db, hayBaseDeDatos } from "@/lib/db";
+import {
+  donanteRecienteDeStripe,
+  donantesDeStripe,
+  totalesDeStripe,
+} from "@/lib/donativos-stripe";
 
 /**
  * Lecturas públicas de donativos.
@@ -13,8 +18,11 @@ import { conReintento, db, hayBaseDeDatos } from "@/lib/run/db";
  * Las tablas y los agregados (`totals`, `donors.total_donated_cents`) vienen
  * de 0001_init.sql y los mantienen triggers, así que aquí solo hay lecturas.
  *
- * Si DATABASE_URL no está configurada, cada función devuelve su valor por
- * omisión en lugar de tumbar la página.
+ * Mientras DATABASE_URL no exista, estas funciones caen al lector de Stripe
+ * (donativos-stripe.ts) en lugar de devolver ceros. Sin ese respaldo, el
+ * primer despliegue sin base configurada dejaría el sitio anunciando cero
+ * recaudado y cero donantes — que es peor que la duplicidad que se quiso
+ * quitar. En cuanto la base esté, el respaldo deja de usarse solo.
  */
 
 export type PublicDonor = {
@@ -38,7 +46,7 @@ export type RecentDonor = {
 const FALLBACK_TOTALS: Totals = { raised_cents: 0, donor_count: 0, donation_count: 0 };
 
 export const getTotals = cache(async (): Promise<Totals> => {
-  if (!hayBaseDeDatos()) return FALLBACK_TOTALS;
+  if (!hayBaseDeDatos()) return totalesDeStripe();
   try {
     const filas = await conReintento(() => db()<Totals[]>`
       select raised_cents::int as raised_cents,
@@ -55,7 +63,7 @@ export const getTotals = cache(async (): Promise<Totals> => {
 });
 
 export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> => {
-  if (!hayBaseDeDatos()) return [];
+  if (!hayBaseDeDatos()) return donantesDeStripe(limit);
   try {
     const filas = await conReintento(() => db()<
       { display_name: string | null; total_donated_cents: number; updated_at: Date }[]
@@ -77,7 +85,7 @@ export const getPublicDonors = cache(async (limit = 5): Promise<PublicDonor[]> =
 });
 
 export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> => {
-  if (!hayBaseDeDatos()) return null;
+  if (!hayBaseDeDatos()) return donanteRecienteDeStripe();
   try {
     const filas = await conReintento(() => db()<
       { display_name: string; total_donated_cents: number; updated_at: Date }[]

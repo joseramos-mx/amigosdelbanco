@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db, enTransaccion } from "@/lib/run/db";
+import { db, enTransaccion } from "@/lib/db";
 import { aplicarTransicionOrden } from "@/lib/run/estados";
 import { enviarRecordatorioVencimiento } from "@/lib/run/correos";
 

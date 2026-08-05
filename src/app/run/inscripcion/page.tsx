@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatMxn } from "@/lib/donation";
-import { hayBaseDeDatos } from "@/lib/run/db";
+import { hayBaseDeDatos } from "@/lib/db";
 import { cupoDisponible, obtenerEvento, obtenerTiposBoleto } from "@/lib/run/inscripciones";
 import FormInscripcion, { type OpcionBoleto } from "./FormInscripcion";
 
