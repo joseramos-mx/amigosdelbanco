@@ -189,11 +189,12 @@ export default function RunPage() {
               new revolution
             </p>
 
-            <p className="font-schabo text-3xl uppercase leading-[0.86] lg:text-4xl">
-              Generous
-              <br />
-              <span className="text-[0.32em] tracking-[0.38em]">Generation</span>
-            </p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/run/gglogo.svg"
+              alt="Generous Generation"
+              className="h-10 w-auto shrink-0 lg:h-12"
+            />
           </Reveal>
         </div>
       </main>
