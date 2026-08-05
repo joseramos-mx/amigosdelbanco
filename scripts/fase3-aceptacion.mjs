@@ -296,6 +296,75 @@ async function main() {
       verificar("el padrón de cronometraje trae los dorsales asignados", crono.includes("9000"), true);
     }
 
+    // ── 5. Cortesías ─────────────────────────────────────────────────
+    // También operan sobre el evento configurado.
+    console.log("\n5. Cortesías");
+    if (real) {
+      const antes = await sql`
+        select coalesce(sum(monto_inscripcion + monto_donativo), 0)::int as total
+          from public.orden where evento_id = ${real.id} and estado = 'pagada'
+      `;
+
+      const res = await fetch(`${BASE}/api/run/cortesias`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-run-pase": paseAdmin },
+        body: JSON.stringify({
+          nombre: "Patrocinador de prueba",
+          correo: "cortesia-prueba@example.com",
+          motivo: "Prueba automatizada",
+          cantidad: 2,
+        }),
+      });
+      const cuerpo = await res.json();
+      verificar("coordinación puede emitir cortesías", res.status, 200);
+      verificar("entrega una liga por boleto", cuerpo.ligas?.length, 2);
+
+      const [orden] = await sql`
+        select o.id, o.estado::text, o.monto_inscripcion::int as monto, o.motivo_cortesia,
+               (select count(*)::int from public.boleto b where b.orden_id = o.id) as boletos
+          from public.orden o
+         where o.evento_id = ${real.id} and o.motivo_cortesia is not null
+         order by o.creada_en desc limit 1
+      `;
+      ordenesEnReal.push(orden.id);
+
+      verificar("nace pagada", orden.estado, "pagada");
+      verificar("con monto cero", orden.monto, 0);
+      verificar("y con el motivo escrito", orden.motivo_cortesia, "Prueba automatizada");
+      verificar("con sus dos boletos", orden.boletos, 2);
+
+      const [pago] = await sql`
+        select metodo::text, monto_centavos::int as monto, estado::text
+          from public.pago where orden_id = ${orden.id}
+      `;
+      verificar("el pago queda como cortesía confirmada",
+        [pago.metodo, pago.monto, pago.estado], ["cortesia", 0, "confirmado"]);
+
+      const despues = await sql`
+        select coalesce(sum(monto_inscripcion + monto_donativo), 0)::int as total
+          from public.orden where evento_id = ${real.id} and estado = 'pagada'
+      `;
+      verificar("no infla lo recaudado", despues[0].total, antes[0].total);
+
+      // La liga sirve: es el flujo completo, que es lo que la hace útil para
+      // probar antes de abrir venta.
+      const token = cuerpo.ligas[0].replace("/run/activar/", "");
+      const activacion = await fetch(`${BASE}/api/run/activar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token, nombre: "Invitado", apellidos: "De Prueba",
+          fechaNacimiento: "1992-07-14", sexo: "M", correo: "cortesia-prueba@example.com",
+          tallaPlayera: "L", contactoEmergNombre: "Alguien", contactoEmergTel: "6180001234",
+          aceptaResponsiva: true,
+        }),
+      });
+      verificar("la liga de cortesía activa igual que una pagada", activacion.status, 200);
+
+      const pdf = await fetch(`${BASE}/api/run/boleto/${token}/pdf`);
+      verificar("y genera su boleto con QR", pdf.status, 200);
+    }
+
   } finally {
     for (const ordenId of ordenesEnReal) {
       await sql`delete from public.checkin where boleto_id in

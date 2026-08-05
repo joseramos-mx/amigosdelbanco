@@ -5,6 +5,7 @@ import { EVENTO_SLUG } from "@/lib/run/inscripciones";
 import { resumen } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "./AccionesPanel";
+import Cortesias from "./Cortesias";
 
 export const dynamic = "force-dynamic";
 
@@ -118,6 +119,8 @@ export default async function PanelPage() {
         </div>
 
         <AccionesPanel />
+
+        <Cortesias />
 
         <section className="mt-10">
           <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
