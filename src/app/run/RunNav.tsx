@@ -19,10 +19,16 @@ import { useEffect, useState } from "react";
  * El corte está en 768 y no en 640 porque a 640 la cuenta salía por dos
  * píxeles: cabía, pero a costa de comprimir la marca, y los logos se
  * deformaban en vez de recortarse.
+ *
+ * Por lo mismo, lo que va apareciendo sube por escalones y no de golpe: los
+ * enlaces en 768 con el relleno apretado y el botón corto, el botón completo
+ * en 1024, y el letrero de la marca hasta 1280. Cada pieza entra donde
+ * empieza a sobrar espacio, no donde apenas alcanza.
  */
 
 const SECCIONES = [
   { id: "inicio", etiqueta: "Inicio" },
+  { id: "quees", etiqueta: "Qué es" },
   { id: "ruta", etiqueta: "Ruta" },
   { id: "moods", etiqueta: "Moods" },
   { id: "kit", etiqueta: "Kit" },
@@ -103,7 +109,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
             alt="Generous Generation"
             className="h-6 w-auto shrink-0 sm:h-7"
           />
-          <span className="hidden font-geist font-black text-[24px] uppercase tracking-tightest text-white/70 lg:inline">
+          <span className="hidden font-geist text-[24px] font-black uppercase tracking-tighter text-white/70 xl:inline">
             Social Run <span className="font-light">5KM</span>
           </span>
         </div>
@@ -118,7 +124,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
                   href={`#${seccion.id}`}
                   onClick={(e) => irA(e, seccion.id)}
                   aria-current={activo ? "true" : undefined}
-                  className={`flex flex-col items-center gap-1.5 rounded-xl px-5 py-2.5 transition-colors ${
+                  className={`flex flex-col items-center gap-1.5 rounded-xl px-4 py-2.5 transition-colors lg:px-5 ${
                     activo
                       ? "bg-[#ece8e0] text-black"
                       : "text-white/55 hover:text-white"
@@ -143,7 +149,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
           href={ticketsHref}
           className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
         >
-          Comprar<span className="hidden md:inline"> boleto</span>
+          Comprar<span className="hidden lg:inline"> boleto</span>
         </Link>
       </div>
     </nav>
