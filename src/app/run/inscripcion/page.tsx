@@ -96,14 +96,18 @@ function Marco({ children }: { children: React.ReactNode }) {
  */
 function Precio({ centavos }: { centavos: number }) {
   return (
-    <div className="mt-10 rounded-[20px] border border-run-amber/45 bg-run-card px-6 py-8 text-center sm:px-10">
+    <div className="flex flex-col justify-center rounded-[20px] border border-run-amber/45 bg-run-card px-6 py-8 text-center sm:px-8">
       <p className="font-geist-mono text-[11px] uppercase tracking-[0.2em] text-run-amber">
         Un solo precio
       </p>
-      <p className="mt-2 font-schabo text-[clamp(4rem,16vw,7rem)] leading-[0.85] tracking-tight">
+      {/* leading-none y no menos: schabo es una condensada alta, y con la
+          interlínea por debajo de 1 los trazos se salen de su renglón hacia
+          arriba. Con 0.85 el signo de pesos tapaba el "UN" de la línea de
+          encima. */}
+      <p className="mt-3 font-schabo text-[clamp(3.5rem,11vw,5.5rem)] leading-none tracking-tight">
         {formatMxn(centavos).replace(/\s*MXN$/, "")}
       </p>
-      <p className="font-geist-mono text-[13px] uppercase tracking-[0.18em] text-run-amber">
+      <p className="mt-1 font-geist-mono text-[13px] uppercase tracking-[0.18em] text-run-amber">
         Boleto general
       </p>
     </div>
@@ -128,20 +132,22 @@ export default async function InscripcionPage() {
             abre el 19 de agosto.
           </p>
 
-          <div className="mt-8 rounded-[20px] bg-run-amber px-6 py-6 text-black sm:px-8">
-            <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-black/60">
-              La venta abre en
-            </p>
-            <Countdown
-              targetIso={APERTURA_ISO}
-              clase="mt-1 font-schabo text-[13.5vw] leading-[0.85] tracking-tight tabular-nums sm:text-[4.25rem]"
-              // No dice "ya abrió" al llegar a cero: quien abre la venta es el
-              // estado del evento en la base, no este reloj.
-              alLlegar="Muy pronto"
-            />
-          </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-6 py-7 text-black sm:px-7">
+              <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-black/60">
+                La venta abre en
+              </p>
+              <Countdown
+                targetIso={APERTURA_ISO}
+                clase="mt-2 font-schabo text-[13vw] leading-none tracking-tight tabular-nums sm:text-[2.9rem] lg:text-[3.4rem]"
+                // No dice "ya abrió" al llegar a cero: quien abre la venta es
+                // el estado del evento en la base, no este reloj.
+                alLlegar="Muy pronto"
+              />
+            </div>
 
-          <Precio centavos={precioCentavos} />
+            <Precio centavos={precioCentavos} />
+          </div>
 
           <Link
             href="/run"
@@ -181,7 +187,9 @@ export default async function InscripcionPage() {
 
         {unSoloTipo ? (
           <>
-            <Precio centavos={precioCentavos} />
+            <div className="mt-10">
+              <Precio centavos={precioCentavos} />
+            </div>
             <p className="mt-4 text-sm text-white/50">
               {datos.opciones[0].disponibles > 0
                 ? `${datos.opciones[0].disponibles} lugares disponibles`
