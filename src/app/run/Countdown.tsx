@@ -23,7 +23,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Tamaño por omisión: el de la portada, donde el reloj es la pieza grande. */
 const CLASE_PORTADA =
-  "font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]";
+  "font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,13vw,13rem)]";
 
 export default function Countdown({
   targetIso,

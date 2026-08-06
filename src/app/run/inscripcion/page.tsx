@@ -142,12 +142,12 @@ export default async function InscripcionPage() {
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:h-[300px] lg:gap-4">
             <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-8 text-black sm:px-9 lg:px-12">
-              <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-black/60">
+              <p className="text-center font-geist-mono text-[10px] uppercase tracking-[0.2em] text-black/60">
                 La venta abre en
               </p>
               <Countdown
                 targetIso={APERTURA_ISO}
-                clase="mt-3 font-schabo text-[13vw] leading-none tracking-tight tabular-nums sm:text-[3.6rem] lg:text-[5.5rem]"
+                clase="mt-3 font-schabo text-[13vw] text-center leading-none tracking-tight tabular-nums sm:text-[3.6rem] lg:text-[clamp(3.6rem,11vw,12rem)]"
                 // No dice "ya abrió" al llegar a cero: quien abre la venta es
                 // el estado del evento en la base, no este reloj.
                 alLlegar="Muy pronto"
