@@ -4,6 +4,7 @@ import DonorsSection from "@/components/DonorsSection";
 import MissionSection from "@/components/MissionSection";
 import CtaSection from "@/components/CtaSection";
 import GallerySection from "@/components/GallerySection";
+import RunBanner from "@/components/RunBanner";
 import { getTotals, getPublicDonors } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ export default async function Home() {
       <MissionSection totals={totals} />
       <CtaSection />
       <GallerySection />
+      <RunBanner />
     </>
   );
 }
