@@ -21,6 +21,7 @@ const SECCIONES = [
   { id: "inicio", etiqueta: "Inicio" },
   { id: "ruta", etiqueta: "Ruta" },
   { id: "moods", etiqueta: "Moods" },
+  { id: "kit", etiqueta: "Kit" },
 ] as const;
 
 export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
@@ -90,9 +91,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
             />
           </Link>
 
-          <span className="hidden font-geist-mono text-[11px] uppercase tracking-[0.18em] text-white/70 lg:inline">
-            Social Run
-          </span>
+
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -100,6 +99,9 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
             alt="Generous Generation"
             className="h-6 w-auto sm:h-7"
           />
+          <span className="hidden font-geist font-black text-[24px] uppercase tracking-tightest text-white/70 lg:inline">
+            Social Run <span className="font-light">5KM</span>
+          </span>
         </div>
 
         {/* ── Enlaces ──────────────────────────────────────────────── */}

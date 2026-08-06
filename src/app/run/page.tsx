@@ -5,6 +5,7 @@ import Countdown from "./Countdown";
 import RunNav from "./RunNav";
 import Reveal from "./Reveal";
 import RunFooter from "./RunFooter";
+import SeccionKit from "./SeccionKit";
 import SeccionMoods from "./SeccionMoods";
 import SeccionRuta from "./SeccionRuta";
 
@@ -220,6 +221,8 @@ export default function RunPage() {
       <SeccionRuta />
 
       <SeccionMoods />
+
+      <SeccionKit />
 
       <RunFooter />
 
