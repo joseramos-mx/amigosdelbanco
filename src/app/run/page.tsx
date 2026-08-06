@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Countdown from "./Countdown";
+import RunNav from "./RunNav";
 import Reveal from "./Reveal";
 import RunFooter from "./RunFooter";
 import SeccionMoods from "./SeccionMoods";
@@ -90,7 +91,7 @@ export default function RunPage() {
         </h1>
 
         {/* Retícula de 15 columnas: 7/4/4 · 4/7/4 · 4/11 */}
-        <div className="mx-auto grid max-w-[1500px] grid-cols-2 gap-3 lg:h-[calc(100svh-6rem)] lg:grid-cols-15 lg:grid-rows-[1.95fr_2.5fr_1fr]">
+        <div id="inicio" className="mx-auto grid max-w-[1500px] grid-cols-2 gap-3 lg:h-[calc(100svh-6rem)] lg:grid-cols-15 lg:grid-rows-[1.95fr_2.5fr_1fr]">
           {/* ── Boleto: PNG suelto, sin tarjeta ni fondo ───────────────── */}
           <Reveal delay={0} className="col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Image
@@ -112,19 +113,33 @@ export default function RunPage() {
           {/* ── Compra tu acceso ──────────────────────────────────────── */}
           <Reveal
             delay={120}
-            className={`${CARD} col-span-2 flex flex-col justify-center px-6 py-8 lg:col-span-4 lg:col-start-1 lg:row-start-2 lg:px-9`}
+            className={`${CARD} relative col-span-2 flex flex-col justify-center overflow-hidden px-6 py-8 lg:col-span-4 lg:col-start-1 lg:row-start-2 lg:px-9`}
           >
-            <p className="text-[clamp(1.9rem,3.1vw,2.9rem)] uppercase leading-[1.02] tracking-tight">
-              <span className="block font-bold">Compra tu</span>
-              <span className="block">Acceso</span>
-            </p>
+            {/* Decorativa: lo que dice la tarjeta ya está en el texto. */}
+            <Image
+              src="/run/comprar-bg.jpg"
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              className="object-cover"
+            />
+            {/* La foto tiene zonas claras y el texto va en blanco: sin el velo
+                se pierde. Más oscuro abajo, que es donde cae el botón. */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/55 to-black/35" />
 
-            <Link
-              href={TICKETS_URL}
-              className="mt-7 block rounded-md bg-run-amber py-3 text-center text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
-            >
-              Comprar
-            </Link>
+            <div className="relative">
+              <p className="text-center text-[clamp(1.9rem,3.1vw,2.9rem)] uppercase leading-[1.02] tracking-tight">
+                <span className="block font-bold">Compra tu</span>
+                <span className="block">Acceso</span>
+              </p>
+
+              <Link
+                href={TICKETS_URL}
+                className="mt-7 block rounded-md bg-run-amber py-3 text-center text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
+              >
+                Comprar
+              </Link>
+            </div>
           </Reveal>
 
           {/* ── Foto: pareja ──────────────────────────────────────────── */}
@@ -207,6 +222,11 @@ export default function RunPage() {
       <SeccionMoods />
 
       <RunFooter />
+
+      {/* Hueco para que la barra fija no se coma el final del pie. */}
+      <div aria-hidden className="h-24 sm:h-28" />
+
+      <RunNav ticketsHref={TICKETS_URL} />
     </>
   );
 }

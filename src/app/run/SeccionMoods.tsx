@@ -17,25 +17,10 @@ import { MOODS } from "@/lib/run/moods";
  */
 export default function SeccionMoods() {
   return (
-    <section className="px-4 pb-16 sm:px-6 lg:px-12 lg:pb-24">
+    <section id="moods" className="px-4 pb-16 sm:px-6 lg:px-12 lg:pb-24">
       <div className="mx-auto max-w-[1500px]">
-        <Reveal>
-          <p className="font-geist-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            En el festival
-          </p>
-          <h2 className="mt-3 font-geist text-[clamp(2.5rem,7vw,5rem)] uppercase leading-[0.85] tracking-tighter">
-            Escoge
-            <br />
-            <span className="font-bold tracking-tighter text-run-amber">tu mood</span>
-          </h2>
-          <p className="mt-5 max-w-[52ch] text-sm leading-relaxed text-white/45">
-            Al llegar al Banco de Alimentos el festival se abre en varias zonas
-            y cada una toca lo suyo. Nadie te asigna ninguna: te vas a la que se
-            te antoje y te cambias cuando quieras.
-          </p>
-        </Reveal>
-
-        <div className="mt-10 space-y-3 lg:space-y-4">
+        
+        <div className="space-y-3 lg:space-y-4">
           {MOODS.map((mood, i) => {
             const invertida = i % 2 === 1;
             return (
@@ -103,6 +88,7 @@ export default function SeccionMoods() {
                       invertida ? "lg:order-1" : ""
                     }`}
                   >
+                    <div className="font-bold text-xl uppercase text-neutral-800">Elige tu mood {mood.nombre}:</div>
                     <p className="text-[17px] leading-relaxed text-neutral-800">
                       {mood.descripcion}
                     </p>

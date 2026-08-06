@@ -32,22 +32,9 @@ export default function SeccionRuta() {
   ];
 
   return (
-    <section className="px-4 py-16 sm:px-6 lg:px-12 lg:py-24">
+    <section id="ruta" className="px-4 py-16 sm:px-6 lg:px-12 lg:py-24">
       <div className="mx-auto max-w-[1500px]">
         <Reveal>
-          <p className="font-geist-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            El recorrido
-          </p>
-          <h2 className="mt-3 font-geist text-[clamp(2.5rem,7vw,5rem)] uppercase leading-[0.85] tracking-tighter">
-            De la estación
-            <br />
-            <span className="font-bold tracking-tighter text-run-amber">
-              al banco de alimentos
-            </span>
-          </h2>
-        </Reveal>
-
-        <Reveal delay={120} className="mt-10">
           <div className="grid gap-x-7 gap-y-3 lg:h-[760px] lg:grid-cols-[minmax(0,1.24fr)_minmax(0,1fr)]">
             {/* ── Columna izquierda: foto + ficha ──────────────────────── */}
             <div className="flex flex-col gap-3">
