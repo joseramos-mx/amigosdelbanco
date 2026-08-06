@@ -71,10 +71,18 @@ async function cargar(): Promise<Datos | null> {
   }
 }
 
+/**
+ * Marco de la página.
+ *
+ * Mismo ancho y mismos márgenes laterales que `SeccionKit`, para que los
+ * bloques de aquí arriba queden alineados con los de allá abajo. El margen de
+ * abajo es el mismo hueco que separa a las tarjetas entre sí —`SeccionKit` no
+ * trae margen arriba—, así que toda la columna respira igual.
+ */
 function Marco({ children }: { children: React.ReactNode }) {
   return (
-    <main className="px-4 py-10 sm:px-6 lg:px-12 lg:py-16">
-      <div className="mx-auto max-w-2xl">
+    <main className="px-4 pt-10 pb-3 sm:px-6 lg:px-12 lg:pt-16 lg:pb-4">
+      <div className="mx-auto max-w-[1500px]">
         <Link
           href="/run"
           className="font-geist-mono text-[11px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-run-amber"
@@ -104,7 +112,7 @@ function Precio({ centavos }: { centavos: number }) {
           interlínea por debajo de 1 los trazos se salen de su renglón hacia
           arriba. Con 0.85 el signo de pesos tapaba el "UN" de la línea de
           encima. */}
-      <p className="mt-3 font-schabo text-[clamp(3.5rem,11vw,5.5rem)] leading-none tracking-tight">
+      <p className="mt-3 font-schabo text-[clamp(3.5rem,11vw,7rem)] leading-none tracking-tight">
         {formatMxn(centavos).replace(/\s*MXN$/, "")}
       </p>
       <p className="mt-1 font-geist-mono text-[13px] uppercase tracking-[0.18em] text-run-amber">
@@ -132,14 +140,14 @@ export default async function InscripcionPage() {
             abre el 19 de agosto.
           </p>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-6 py-7 text-black sm:px-7">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:h-[300px] lg:gap-4">
+            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-8 text-black sm:px-9 lg:px-12">
               <p className="font-geist-mono text-[10px] uppercase tracking-[0.2em] text-black/60">
                 La venta abre en
               </p>
               <Countdown
                 targetIso={APERTURA_ISO}
-                clase="mt-2 font-schabo text-[13vw] leading-none tracking-tight tabular-nums sm:text-[2.9rem] lg:text-[3.4rem]"
+                clase="mt-3 font-schabo text-[13vw] leading-none tracking-tight tabular-nums sm:text-[3.6rem] lg:text-[5.5rem]"
                 // No dice "ya abrió" al llegar a cero: quien abre la venta es
                 // el estado del evento en la base, no este reloj.
                 alLlegar="Muy pronto"
@@ -148,13 +156,6 @@ export default async function InscripcionPage() {
 
             <Precio centavos={precioCentavos} />
           </div>
-
-          <Link
-            href="/run"
-            className="mt-10 inline-block rounded-md bg-run-amber px-6 py-3 text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
-          >
-            Volver al evento
-          </Link>
         </Marco>
 
         <SeccionKit />
@@ -208,7 +209,11 @@ export default async function InscripcionPage() {
           </div>
         )}
 
-        <FormInscripcion opciones={datos.opciones} />
+        {/* La forma no se va a lo ancho aunque el marco sí: campos de 1500
+            píxeles se leen mal y el ojo pierde el renglón entre uno y otro. */}
+        <div className="max-w-2xl">
+          <FormInscripcion opciones={datos.opciones} />
+        </div>
       </Marco>
 
       <SeccionKit />
