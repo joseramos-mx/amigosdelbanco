@@ -6,6 +6,7 @@ interface Remaining {
   days: number;
   hours: number;
   minutes: number;
+  seconds: number;
 }
 
 function remainingFrom(targetMs: number): Remaining {
@@ -14,6 +15,7 @@ function remainingFrom(targetMs: number): Remaining {
     days: Math.floor(ms / 86_400_000),
     hours: Math.floor(ms / 3_600_000) % 24,
     minutes: Math.floor(ms / 60_000) % 60,
+    seconds: Math.floor(ms / 1_000) % 60,
   };
 }
 
@@ -25,17 +27,32 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
   const [left, setLeft] = useState<Remaining | null>(null);
 
   useEffect(() => {
-    const tick = () => setLeft(remainingFrom(targetMs));
+    let id = 0;
+
+    // El pulso se reengancha al filo de cada segundo en lugar de correr con
+    // un intervalo fijo. Con `setInterval(1000)` el arranque cae donde caiga
+    // y el desfase se nota: los segundos se ven brincar de 34 a 32 porque dos
+    // lecturas seguidas caen dentro del mismo segundo del reloj.
+    const tick = () => {
+      setLeft(remainingFrom(targetMs));
+      const alSiguiente = 1000 - (Date.now() % 1000);
+      id = window.setTimeout(tick, alSiguiente);
+    };
     tick();
-    const id = window.setInterval(tick, 1000);
-    return () => window.clearInterval(id);
+
+    return () => window.clearTimeout(id);
   }, [targetMs]);
 
   const started =
-    left !== null && left.days + left.hours + left.minutes === 0;
+    left !== null &&
+    left.days + left.hours + left.minutes + left.seconds === 0;
 
   return (
     <>
+      {/* El resumen hablado se queda en días, horas y minutos. Los segundos
+          sirven para mirarlos, no para escucharlos: en un lector de pantalla
+          solo alargan la frase con un dato que ya cambió al terminar de
+          leerla. */}
       <p className="sr-only">
         {left
           ? `Faltan ${left.days} días, ${left.hours} horas y ${left.minutes} minutos.`
@@ -43,13 +60,13 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
       </p>
       <p
         aria-hidden
-        className="font-schabo text-[30vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
+        className="font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
       >
         {started
           ? "¡HOY!"
           : left
-            ? `${pad(left.days)}:${pad(left.hours)}:${pad(left.minutes)}`
-            : "--:--:--"}
+            ? `${pad(left.days)}:${pad(left.hours)}:${pad(left.minutes)}:${pad(left.seconds)}`
+            : "--:--:--:--"}
       </p>
     </>
   );
