@@ -21,7 +21,21 @@ function remainingFrom(targetMs: number): Remaining {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function Countdown({ targetIso }: { targetIso: string }) {
+/** Tamaño por omisión: el de la portada, donde el reloj es la pieza grande. */
+const CLASE_PORTADA =
+  "font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]";
+
+export default function Countdown({
+  targetIso,
+  clase = CLASE_PORTADA,
+  alLlegar = "¡HOY!",
+}: {
+  targetIso: string;
+  /** Con qué se dibuja. Se cambia entero, no se agrega: son clases de tamaño. */
+  clase?: string;
+  /** Qué decir al llegar a cero. */
+  alLlegar?: string;
+}) {
   const targetMs = new Date(targetIso).getTime();
   // Null hasta montar — el servidor no tiene reloj con el que coincidir.
   const [left, setLeft] = useState<Remaining | null>(null);
@@ -58,12 +72,9 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
           ? `Faltan ${left.days} días, ${left.hours} horas y ${left.minutes} minutos.`
           : "Cargando la cuenta regresiva."}
       </p>
-      <p
-        aria-hidden
-        className="font-schabo text-[22vw] leading-[0.8] tracking-tight tabular-nums lg:text-[clamp(5rem,11.5vw,10.5rem)]"
-      >
+      <p aria-hidden className={clase}>
         {started
-          ? "¡HOY!"
+          ? alLlegar
           : left
             ? `${pad(left.days)}:${pad(left.hours)}:${pad(left.minutes)}:${pad(left.seconds)}`
             : "--:--:--:--"}

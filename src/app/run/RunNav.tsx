@@ -5,11 +5,16 @@ import { useLenis } from "lenis/react";
 import { useEffect, useState } from "react";
 
 /**
- * Barra fija al pie de la pantalla, solo para la portada del Social Run.
+ * Barra fija al pie de la pantalla, para las páginas del Social Run.
  *
- * Va abajo y no arriba porque su trabajo principal no es navegar —la página
- * son tres secciones— sino tener el botón de comprar siempre a la mano, y en
+ * Va abajo y no arriba porque su trabajo principal no es navegar —la portada
+ * son cinco secciones— sino tener el botón principal siempre a la mano, y en
  * celular el pulgar vive en la mitad de abajo.
+ *
+ * Fuera de la portada se le pasa `base`: las secciones no existen en el
+ * documento, así que los enlaces se vuelven absolutos, nadie queda marcado
+ * como activo y el desplazamiento suave sobra —el navegador tiene que cambiar
+ * de página primero.
  *
  * En pantallas angostas se queda nada más la marca y el botón. Meter también
  * los enlaces no cabe: dos logos, cuatro enlaces y el botón suman más ancho
@@ -34,11 +39,33 @@ const SECCIONES = [
   { id: "kit", etiqueta: "Kit" },
 ] as const;
 
-export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
-  const [activa, setActiva] = useState<string>(SECCIONES[0].id);
+export default function RunNav({
+  ctaHref,
+  ctaCorta = "Comprar",
+  ctaLarga = "Comprar boleto",
+  base = "",
+}: {
+  ctaHref: string;
+  /** Texto del botón hasta 1024. */
+  ctaCorta?: string;
+  /** Texto del botón de 1024 para arriba, donde ya cabe completo. */
+  ctaLarga?: string;
+  /** Prefijo de los enlaces. Vacío en la portada, "/run" desde otra página. */
+  base?: string;
+}) {
+  const enLaPortada = base === "";
+  const [activa, setActiva] = useState<string>(
+    enLaPortada ? SECCIONES[0].id : "",
+  );
   const lenis = useLenis();
 
   useEffect(() => {
+    // Fuera de la portada nadie se marca. No basta con que no haya secciones
+    // que observar: otras páginas reciclan alguna —la de inscripción monta el
+    // Founder Kit— y sin esta salida el enlace de Kit se prendía ahí, aunque
+    // apuntara a otra página.
+    if (!enLaPortada) return;
+
     const nodos = SECCIONES.map(({ id }) => document.getElementById(id)).filter(
       (n): n is HTMLElement => n !== null,
     );
@@ -73,7 +100,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
 
     for (const nodo of nodos) observador.observe(nodo);
     return () => observador.disconnect();
-  }, []);
+  }, [enLaPortada]);
 
   // Lenis se adueña del scroll, así que un href="#algo" a secas da un brinco
   // seco en lugar del desplazamiento suave del resto de la página.
@@ -121,8 +148,8 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
             return (
               <li key={seccion.id}>
                 <a
-                  href={`#${seccion.id}`}
-                  onClick={(e) => irA(e, seccion.id)}
+                  href={`${base}#${seccion.id}`}
+                  onClick={enLaPortada ? (e) => irA(e, seccion.id) : undefined}
                   aria-current={activo ? "true" : undefined}
                   className={`flex flex-col items-center gap-1.5 rounded-xl px-4 py-2.5 transition-colors lg:px-5 ${
                     activo
@@ -146,10 +173,11 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
 
         {/* ── Comprar ──────────────────────────────────────────────── */}
         <Link
-          href={ticketsHref}
+          href={ctaHref}
           className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
         >
-          Comprar<span className="hidden lg:inline"> boleto</span>
+          <span className="lg:hidden">{ctaCorta}</span>
+          <span className="hidden lg:inline">{ctaLarga}</span>
         </Link>
       </div>
     </nav>

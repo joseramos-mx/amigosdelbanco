@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import BotonLateral from "./BotonLateral";
 import Countdown from "./Countdown";
 import RunNav from "./RunNav";
 import Reveal from "./Reveal";
@@ -232,7 +233,9 @@ export default function RunPage() {
       {/* Hueco para que la barra fija no se coma el final del pie. */}
       <div aria-hidden className="h-24 sm:h-28" />
 
-      <RunNav ticketsHref={TICKETS_URL} />
+      <BotonLateral href={TICKETS_URL}>Comprar boleto</BotonLateral>
+
+      <RunNav ctaHref={TICKETS_URL} />
     </>
   );
 }
