@@ -99,15 +99,15 @@ export default function SeccionMoods() {
 
                   {/* ── Tarjeta con la descripción ──────────────────────── */}
                   <div
-                    className={`flex flex-col justify-center rounded-[20px] bg-[#c9c9c9] px-7 py-7 lg:px-10 ${
+                    className={`flex flex-col justify-center rounded-[20px] bg-[#c9c9c9] px-7 py-7 lg:px-12 ${
                       invertida ? "lg:order-1" : ""
                     }`}
                   >
-                    <p className="text-[15px] leading-relaxed text-neutral-800">
+                    <p className="text-[17px] leading-relaxed text-neutral-800">
                       {mood.descripcion}
                     </p>
                     {mood.artistas.length > 0 && (
-                      <p className="mt-4 text-[15px] leading-relaxed text-neutral-600">
+                      <p className="mt-4 text-[17px] leading-relaxed text-neutral-600">
                         Si te gusta{" "}
                         <span className="font-medium text-neutral-900">
                           {mood.artistas.join(", ")}

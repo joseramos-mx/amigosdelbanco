@@ -16,7 +16,11 @@ export type Mood = {
   slug: string;
   /** Para el texto alternativo del letrero. */
   nombre: string;
-  /** Qué se toca ahí. */
+  /**
+   * Qué se toca ahí. Todas rondan los 200 caracteres a propósito: la
+   * tarjeta es de alto fijo y con textos de largo distinto unas quedan
+   * apretadas y otras medio vacías.
+   */
   descripcion: string;
   /** Referencias para ubicarse. Vacío mientras no las confirmen. */
   artistas: string[];
@@ -41,7 +45,10 @@ export const MOODS: Mood[] = [
     slug: "rave",
     nombre: "Rave",
     descripcion:
-      "Electrónica de principio a fin. Para quien llega a bailar y no piensa sentarse en toda la tarde.",
+      "Electrónica de principio a fin, sin pausa entre canción y canción. Es la zona de quien llegó a bailar y no piensa sentarse en toda la tarde: se entra sabiendo que se sale hasta que apaguen las bocinas, y hasta ahora nadie ha salido antes.",
+    // Sin artistas de referencia, así que el texto va más largo: es el único
+    // que no lleva el renglón de "si te gusta…" y sin eso la tarjeta se veía
+    // más vacía que las otras tres.
     artistas: [],
     ancho: "74%",
     playlist: null,
@@ -50,7 +57,7 @@ export const MOODS: Mood[] = [
     slug: "ska",
     nombre: "Ska",
     descripcion:
-      "Ska y brincos, con los coros a todo pulmón.",
+      "Ska del que se brinca, no del que se oye sentado. Metales, coros a todo pulmón y gente que no se conoce entre sí cantando exactamente lo mismo, sin ponerse de acuerdo.",
     artistas: ["Panteón Rococó"],
     ancho: "58%",
     playlist: null,
@@ -59,7 +66,7 @@ export const MOODS: Mood[] = [
     slug: "oldies",
     nombre: "Oldies",
     descripcion:
-      "Baladas y pop en español, de las que todo mundo se sabe aunque jure que no.",
+      "Baladas y pop en español de las que todo mundo se sabe aunque jure que no. Para cantar con los ojos cerrados y sin pena, que para eso vino.",
     artistas: ["Luis Miguel", "Flans", "Mijares", "Timbiriche"],
     ancho: "59%",
     playlist: null,
@@ -68,7 +75,7 @@ export const MOODS: Mood[] = [
     slug: "ranchero",
     nombre: "Ranchero",
     descripcion:
-      "Norteño, banda y ranchero para cantar hasta quedar ronco.",
+      "Norteño, banda y ranchero para cantar hasta quedar ronco. La zona donde nadie pregunta si te sabes la letra, porque se da por hecho que sí.",
     artistas: ["Intocable", "Banda MS", "El Recodo"],
     ancho: "80%",
     playlist: null,
