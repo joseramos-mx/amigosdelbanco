@@ -12,9 +12,13 @@ import { useEffect, useState } from "react";
  * celular el pulgar vive en la mitad de abajo.
  *
  * En pantallas angostas se queda nada más la marca y el botón. Meter también
- * los tres enlaces no cabe: dos logos, tres enlaces y el botón suman más
- * ancho del que tiene un teléfono, y lo que se sacrifica primero es lo que se
- * puede hacer con el dedo de todos modos.
+ * los enlaces no cabe: dos logos, cuatro enlaces y el botón suman más ancho
+ * del que tiene un teléfono, y lo que se sacrifica primero es lo que se puede
+ * hacer con el dedo de todos modos.
+ *
+ * El corte está en 768 y no en 640 porque a 640 la cuenta salía por dos
+ * píxeles: cabía, pero a costa de comprimir la marca, y los logos se
+ * deformaban en vez de recortarse.
  */
 
 const SECCIONES = [
@@ -81,13 +85,13 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
     >
       <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-3 rounded-[18px] border border-white/10 bg-[#141414]/85 p-2 backdrop-blur-md">
         {/* ── Marca ────────────────────────────────────────────────── */}
-        <div className="flex items-center gap-3 pl-2 sm:gap-4 sm:pl-3">
+        <div className="flex shrink-0 items-center gap-3 pl-2 sm:gap-4 sm:pl-3">
           <Link href="/" aria-label="Banco de Alimentos de Durango">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.svg"
               alt="Banco de Alimentos de Durango"
-              className="h-6 w-auto transition-opacity hover:opacity-70 sm:h-7"
+              className="h-6 w-auto shrink-0 transition-opacity hover:opacity-70 sm:h-7"
             />
           </Link>
 
@@ -97,7 +101,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
           <img
             src="/run/gglogo.svg"
             alt="Generous Generation"
-            className="h-6 w-auto sm:h-7"
+            className="h-6 w-auto shrink-0 sm:h-7"
           />
           <span className="hidden font-geist font-black text-[24px] uppercase tracking-tightest text-white/70 lg:inline">
             Social Run <span className="font-light">5KM</span>
@@ -105,7 +109,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
         </div>
 
         {/* ── Enlaces ──────────────────────────────────────────────── */}
-        <ul className="hidden items-center gap-1 sm:flex">
+        <ul className="hidden items-center gap-1 md:flex">
           {SECCIONES.map((seccion) => {
             const activo = activa === seccion.id;
             return (
@@ -139,7 +143,7 @@ export default function RunNav({ ticketsHref }: { ticketsHref: string }) {
           href={ticketsHref}
           className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
         >
-          Comprar<span className="hidden sm:inline"> boleto</span>
+          Comprar<span className="hidden md:inline"> boleto</span>
         </Link>
       </div>
     </nav>

@@ -7,6 +7,7 @@ import Reveal from "./Reveal";
 import RunFooter from "./RunFooter";
 import SeccionKit from "./SeccionKit";
 import SeccionMoods from "./SeccionMoods";
+import SeccionQueEs from "./SeccionQueEs";
 import SeccionRuta from "./SeccionRuta";
 
 // ── Datos del evento ────────────────────────────────────────────────────────
@@ -217,6 +218,8 @@ export default function RunPage() {
           </Reveal>
         </div>
       </main>
+
+      <SeccionQueEs />
 
       <SeccionRuta />
 
