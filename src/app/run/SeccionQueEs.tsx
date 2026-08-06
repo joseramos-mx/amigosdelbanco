@@ -34,7 +34,7 @@ export default function SeccionQueEs() {
                   El Social Run es una carrera para todo el mundo. Cualquier
                   persona, del nivel que sea, puede participar: no hay marca que
                   alcanzar ni clasificación previa, y el recorrido es el mismo
-                  para todos. Se puede correr, trotar o caminar completo — lo
+                  para todos. Se puede correr, trotar o caminar completo lo
                   único que se pide es cruzar la meta, y no hay una sola manera
                   de hacerlo.
                 </p>
