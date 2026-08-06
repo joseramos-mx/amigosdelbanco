@@ -104,19 +104,15 @@ function Marco({ children }: { children: React.ReactNode }) {
  */
 function Precio({ centavos }: { centavos: number }) {
   return (
-    <div className="flex flex-col justify-center rounded-[20px] border border-run-amber/45 bg-run-card px-6 py-8 text-center sm:px-8">
-      <p className="font-geist-mono text-[11px] uppercase tracking-[0.2em] text-run-amber">
-        Un solo precio
-      </p>
+    <div className="flex flex-col justify-center rounded-[20px] bg-run-card px-6 py-8 text-center sm:px-8">
       {/* leading-none y no menos: schabo es una condensada alta, y con la
           interlínea por debajo de 1 los trazos se salen de su renglón hacia
-          arriba. Con 0.85 el signo de pesos tapaba el "UN" de la línea de
-          encima. */}
-      <p className="mt-3 font-schabo text-[clamp(3.5rem,11vw,7rem)] leading-none tracking-tight">
+          arriba y se montan sobre lo que tengan encima. */}
+      <p className="mt-3 font-schabo text-[clamp(3.5rem,11vw,11rem)] leading-none tracking-tight">
         {formatMxn(centavos).replace(/\s*MXN$/, "")}
       </p>
       <p className="mt-1 font-geist-mono text-[13px] uppercase tracking-[0.18em] text-run-amber">
-        Boleto general
+        Founding Member Pass
       </p>
     </div>
   );
