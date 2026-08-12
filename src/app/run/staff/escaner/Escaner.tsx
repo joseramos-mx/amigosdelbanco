@@ -50,6 +50,24 @@ function suscribirCola(alCambiar: () => void): () => void {
     window.removeEventListener("storage", alCambiar);
   };
 }
+const CLAVE_VISTOS = "run_qr_vistos";
+
+function leerVistos(): Set<string> {
+  try {
+    const arr = JSON.parse(localStorage.getItem(CLAVE_VISTOS) ?? "[]");
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function guardarVistos(vistos: Set<string>): void {
+  try {
+    localStorage.setItem(CLAVE_VISTOS, JSON.stringify([...vistos]));
+  } catch {
+    /* almacenamiento lleno o bloqueado */
+  }
+}
 
 type Veredicto = "entregado" | "repetido" | "sin_activar" | "desconocido";
 
@@ -82,6 +100,9 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ultimoRef = useRef<{ qr: string; hora: number }>({ qr: "", hora: 0 });
+  const vistosRef = useRef<Set<string>>(
+    typeof window !== "undefined" ? leerVistos() : new Set(),
+  );
 
   const [registros, setRegistros] = useState<Registro[]>([]);
   // El padrón llega del servidor y no se cachea: la página se renderiza en el
@@ -130,6 +151,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
       // "repetido" si otra mesa escaneó primero.
       setRegistros((previos) =>
         previos.map((r) => {
+          if (r.veredicto !== "entregado" || r.sincronizado) return r;
           const server = resultados.find(
             (x: { qr: string }) => x.qr === r.qr,
           );
@@ -145,9 +167,10 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
                   : server.resultado === "sin_activar"
                     ? "sin_activar"
                     : "desconocido",
-            detalle: server.registradoEn
-              ? `Primera entrega: ${new Date(server.registradoEn).toLocaleTimeString("es-MX")}`
-              : r.detalle,
+            detalle:
+              server.resultado !== "entregado" && server.registradoEn
+                ? `Primera entrega: ${new Date(server.registradoEn).toLocaleTimeString("es-MX")}`
+                : r.detalle,
           };
         }),
       );
@@ -185,31 +208,33 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         return;
       }
 
-      const yaEnPantalla = registros.find((r) => r.qr === qr);
-      const veredicto: Veredicto = fila.entregado || yaEnPantalla ? "repetido" : "entregado";
+      const yaEntregadoAqui = fila.entregado || vistosRef.current.has(qr);
+      const veredicto: Veredicto = yaEntregadoAqui ? "repetido" : "entregado";
 
       const registro: Registro = {
-          qr,
-          boletoId: fila.id,
-          nombre: [fila.nombre, fila.apellidos].filter(Boolean).join(" ") || fila.folio,
-          dorsal: fila.dorsal,
-          veredicto,
-          detalle: veredicto === "repetido" ? "Verifica con la persona" : fila.talla_playera
-            ? `Talla ${fila.talla_playera}`
-            : undefined,
-          hora: ahora,
-          sincronizado: false,
+        qr,
+        boletoId: fila.id,
+        nombre: [fila.nombre, fila.apellidos].filter(Boolean).join(" ") || fila.folio,
+        dorsal: fila.dorsal,
+        veredicto,
+        detalle: veredicto === "repetido" ? "Verifica con la persona" : fila.talla_playera
+          ? `Talla ${fila.talla_playera}`
+          : undefined,
+        hora: ahora,
+        sincronizado: false,
       };
       setRegistros((r) => [registro, ...r].slice(0, 60));
 
       if (veredicto === "entregado") {
+        vistosRef.current.add(qr);
+        guardarVistos(vistosRef.current);
         encolar(qr);
         if (navigator.vibrate) navigator.vibrate(60);
       } else if (navigator.vibrate) {
         navigator.vibrate([40, 60, 40]);
       }
     },
-    [padron, registros, encolar],
+    [padron, encolar],
   );
 
   useEffect(() => {
@@ -271,9 +296,8 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <span
-          className={`rounded-full px-3 py-1 font-geist-mono text-[10px] uppercase tracking-[0.16em] ${
-            enLinea ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"
-          }`}
+          className={`rounded-full px-3 py-1 font-geist-mono text-[10px] uppercase tracking-[0.16em] ${enLinea ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 text-amber-300"
+            }`}
         >
           {enLinea ? "En línea" : "Sin conexión"}
         </span>

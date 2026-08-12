@@ -197,8 +197,10 @@ export default async function InscripcionPage() {
 
         {/* La forma no se va a lo ancho aunque el marco sí: campos de 1500
             píxeles se leen mal y el ojo pierde el renglón entre uno y otro. */}
-        <div className="max-w-2xl">
-          <FormInscripcion opciones={datos.opciones} />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="max-w-2xl w-full">
+            <FormInscripcion opciones={datos.opciones} />
+          </div>
         </div>
       </Marco>
 

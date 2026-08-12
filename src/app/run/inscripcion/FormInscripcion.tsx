@@ -155,9 +155,8 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
               key={m}
               type="button"
               onClick={() => setDonativo(m)}
-              className={`rounded-md px-4 py-2 text-sm transition-colors ${
-                donativo === m ? "bg-run-amber text-black" : "bg-white/10 text-white/70 hover:bg-white/15"
-              }`}
+              className={`rounded-md px-4 py-2 text-sm transition-colors ${donativo === m ? "bg-run-amber text-black" : "bg-white/10 text-white/70 hover:bg-white/15"
+                }`}
             >
               {m === 0 ? "Sin donativo" : formatMxn(m * 100)}
             </button>
@@ -173,7 +172,7 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
 
       <div className="flex items-center justify-between border-t border-white/10 pt-5">
         <div>
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-white/50 mb-2">
             Inscripción {formatMxn(inscripcion)}
             {donativo > 0 && ` + donativo ${formatMxn(donativo * 100)}`}
           </p>
