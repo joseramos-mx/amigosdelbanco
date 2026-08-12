@@ -173,7 +173,7 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
 
       <div className="flex items-center justify-between border-t border-white/10 pt-5">
         <div>
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-white/50 mb-2">
             Inscripción {formatMxn(inscripcion)}
             {donativo > 0 && ` + donativo ${formatMxn(donativo * 100)}`}
           </p>
