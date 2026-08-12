@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import BotonBloqueado from "./BotonBloqueado";
 import BotonLateral from "./BotonLateral";
 import Countdown from "./Countdown";
 import RunNav from "./RunNav";
@@ -20,6 +21,12 @@ const EVENT_VENUE = "Antigua Estación de Ferrocarril";
 
 // Checkout propio del evento. La inscripción es contraprestación, no donativo:
 // no debe cobrarse por /donar, que emite recibos deducibles.
+//
+// Hoy los botones están bloqueados hasta la fecha en `./apertura.ts` para que
+// el checkout no quede a la vista mientras el back se afina. Cuando la venta
+// abra hay que devolver los `<Link href={TICKETS_URL}>` en la tarjeta de
+// "Compra tu Acceso", quitar el `bloqueado` de <RunNav> y volver a pasarle
+// `href` a <BotonLateral>.
 const TICKETS_URL = "/run/inscripcion";
 
 const DESCRIPTION = `Social Run 2026 de Generous Generation: festival, concierto, food village y rifa de auto. ${EVENT_DATE}, ${EVENT_TIME}, ${EVENT_VENUE} en Durango. Powered by Banco de Alimentos de Durango.`;
@@ -136,12 +143,10 @@ export default function RunPage() {
                 <span className="block">Acceso</span>
               </p>
 
-              <Link
-                href={TICKETS_URL}
-                className="mt-7 block rounded-md bg-run-amber py-3 text-center text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
-              >
-                Comprar
-              </Link>
+              <BotonBloqueado
+                formato="largo"
+                className="mt-7 flex items-center justify-center gap-2 rounded-md bg-white/10 py-3 text-center text-sm uppercase tracking-wide text-white/70 ring-1 ring-inset ring-white/15"
+              />
             </div>
           </Reveal>
 
@@ -233,9 +238,9 @@ export default function RunPage() {
       {/* Hueco para que la barra fija no se coma el final del pie. */}
       <div aria-hidden className="h-24 sm:h-28" />
 
-      <BotonLateral href={TICKETS_URL}>Comprar boleto</BotonLateral>
+      <BotonLateral />
 
-      <RunNav ctaHref={TICKETS_URL} />
+      <RunNav ctaHref={TICKETS_URL} bloqueado />
     </>
   );
 }

@@ -3,21 +3,11 @@ import Link from "next/link";
 import Countdown from "../Countdown";
 import RunNav from "../RunNav";
 import SeccionKit from "../SeccionKit";
+import { VENTA_ABRE_ISO } from "../apertura";
 import { formatMxn } from "@/lib/donation";
 import { hayBaseDeDatos } from "@/lib/db";
 import { cupoDisponible, obtenerEvento, obtenerTiposBoleto } from "@/lib/run/inscripciones";
 import FormInscripcion, { type OpcionBoleto } from "./FormInscripcion";
-
-/**
- * Cuándo abre la venta.
- *
- * Ojo: esto solo mueve el reloj. Quien de verdad abre la venta es el estado
- * `venta_abierta` del evento en la base, que se prende con
- * `scripts/run-abrir-venta.mjs`. Si el reloj llega a cero y nadie corrió ese
- * comando, la página sigue diciendo que no abre — que es lo correcto, porque
- * de veras no abrió.
- */
-const APERTURA_ISO = "2026-08-19T00:00:00-06:00";
 
 /** Respaldo del precio para cuando la base no responde. */
 const PRECIO_CENTAVOS_RESPALDO = 39_900;
@@ -142,7 +132,7 @@ export default async function InscripcionPage() {
                 La venta abre en
               </p>
               <Countdown
-                targetIso={APERTURA_ISO}
+                targetIso={VENTA_ABRE_ISO}
                 clase="mt-3 font-schabo text-[13vw] text-center leading-none tracking-tight tabular-nums sm:text-[3.6rem] lg:text-[clamp(3.6rem,11vw,12rem)]"
                 // No dice "ya abrió" al llegar a cero: quien abre la venta es
                 // el estado del evento en la base, no este reloj.

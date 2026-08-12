@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLenis } from "lenis/react";
 import { useEffect, useState } from "react";
+import BotonBloqueado from "./BotonBloqueado";
 
 /**
  * Barra fija al pie de la pantalla, para las páginas del Social Run.
@@ -44,6 +45,7 @@ export default function RunNav({
   ctaCorta = "Comprar",
   ctaLarga = "Comprar boleto",
   base = "",
+  bloqueado = false,
 }: {
   ctaHref: string;
   /** Texto del botón hasta 1024. */
@@ -52,6 +54,12 @@ export default function RunNav({
   ctaLarga?: string;
   /** Prefijo de los enlaces. Vacío en la portada, "/run" desde otra página. */
   base?: string;
+  /**
+   * Si es cierto, el CTA se dibuja como un botón inerte con candado y una
+   * cuenta a la apertura de la venta, ignorando `ctaHref`. Sirve mientras
+   * el back se afina.
+   */
+  bloqueado?: boolean;
 }) {
   const enLaPortada = base === "";
   const [activa, setActiva] = useState<string>(
@@ -172,13 +180,20 @@ export default function RunNav({
         </ul>
 
         {/* ── Comprar ──────────────────────────────────────────────── */}
-        <Link
-          href={ctaHref}
-          className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
-        >
-          <span className="lg:hidden">{ctaCorta}</span>
-          <span className="hidden lg:inline">{ctaLarga}</span>
-        </Link>
+        {bloqueado ? (
+          <BotonBloqueado
+            formato="corto"
+            className="flex shrink-0 items-center gap-2 rounded-xl bg-white/10 px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/75 ring-1 ring-inset ring-white/15 sm:px-7"
+          />
+        ) : (
+          <Link
+            href={ctaHref}
+            className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
+          >
+            <span className="lg:hidden">{ctaCorta}</span>
+            <span className="hidden lg:inline">{ctaLarga}</span>
+          </Link>
+        )}
       </div>
     </nav>
   );
