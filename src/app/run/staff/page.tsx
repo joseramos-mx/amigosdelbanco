@@ -7,6 +7,7 @@ import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "./AccionesPanel";
 import Cortesias from "./Cortesias";
 import CapturaFisicos from "./CapturaFisicos";
+import RegistroStaff from "./RegistroStaff";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +37,8 @@ function Dato({
         {etiqueta}
       </p>
       <p
-        className={`mt-2 font-schabo text-4xl uppercase leading-none ${
-          alerta ? "text-run-amber" : "text-white"
-        }`}
+        className={`mt-2 font-schabo text-4xl uppercase leading-none ${alerta ? "text-run-amber" : "text-white"
+          }`}
       >
         {valor}
       </p>
@@ -122,7 +122,9 @@ export default async function PanelPage() {
         <AccionesPanel />
 
         <Cortesias />
-        
+
+        <RegistroStaff />
+
         <CapturaFisicos />
 
         <section className="mt-10">
