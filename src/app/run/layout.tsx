@@ -31,7 +31,7 @@ export default function RunLayout({
 }>) {
   return (
     <div
-      className={`${geist.variable} ${geistMono.variable} ${schabo.variable} font-geist bg-black text-white`}
+      className={`${geist.variable} ${geistMono.variable} ${schabo.variable} font-geist bg-black text-white min-h-screen flex flex-col`}
     >
       <SmoothScroll>
         <MotionProvider>{children}</MotionProvider>

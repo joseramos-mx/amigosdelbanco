@@ -116,6 +116,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
   const [enLinea, setEnLinea] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activo, setActivo] = useState(false);
+  const [folioInput, setFolioInput] = useState("");
 
   useEffect(() => {
     const alCambiar = () => setEnLinea(navigator.onLine);
@@ -237,6 +238,20 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
     [padron, encolar],
   );
 
+  const handleFolioSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!folioInput) return;
+    const folioStr = `GG-${folioInput.padStart(5, "0")}`;
+    const fila = padron.find((f) => f.folio === folioStr);
+    
+    if (fila) {
+      procesar(fila.qr);
+    } else {
+      procesar(`MANUAL-NOT-FOUND-${folioStr}`); // Genera error de desconocido
+    }
+    setFolioInput("");
+  };
+
   useEffect(() => {
     if (!activo) return;
     let flujo: MediaStream | null = null;
@@ -343,6 +358,30 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
           Apagar cámara
         </button>
       )}
+
+      <form onSubmit={handleFolioSubmit} className="flex gap-2">
+        <div className="flex w-full rounded-md shadow-sm">
+          <span className="inline-flex items-center rounded-l-md border border-r-0 border-neutral-700 bg-neutral-800 px-3 font-mono text-neutral-400 sm:text-sm">
+            GG-
+          </span>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="\d+"
+            maxLength={5}
+            value={folioInput}
+            onChange={(e) => setFolioInput(e.target.value.replace(/\D/g, ""))}
+            placeholder="00001"
+            className="block w-full min-w-0 flex-1 rounded-none border-neutral-700 bg-neutral-900 font-mono text-white focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-r-md border border-neutral-700 bg-indigo-500 px-4 py-2 text-sm font-semibold text-black hover:bg-indigo-600 focus:outline-none"
+        >
+          Validar
+        </button>
+      </form>
 
       <ul className="space-y-2">
         {registros.map((r) => (

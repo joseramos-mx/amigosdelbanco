@@ -6,6 +6,7 @@ import { resumen } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "./AccionesPanel";
 import Cortesias from "./Cortesias";
+import CapturaFisicos from "./CapturaFisicos";
 
 export const dynamic = "force-dynamic";
 
@@ -121,6 +122,8 @@ export default async function PanelPage() {
         <AccionesPanel />
 
         <Cortesias />
+        
+        <CapturaFisicos />
 
         <section className="mt-10">
           <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
