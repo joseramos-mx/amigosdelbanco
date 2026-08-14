@@ -10,6 +10,33 @@ const SEXOS: { valor: "F" | "M" | "X"; etiqueta: string }[] = [
   { valor: "X", etiqueta: "Prefiero no decir" },
 ];
 
+const MOODS: { valor: string; etiqueta: string; descripcion: string }[] = [
+  {
+    valor: "rave",
+    etiqueta: "Rave",
+    descripcion:
+      "Electrónica de principio a fin, sin pausa entre canción y canción. Es la zona de quien llegó a bailar y no piensa sentarse en toda la tarde: se entra sabiendo que se sale hasta que apaguen las bocinas, y hasta ahora nadie ha salido antes.",
+  },
+  {
+    valor: "ska",
+    etiqueta: "Ska",
+    descripcion:
+      "Ska del que se brinca, no del que se oye sentado. Metales, coros a todo pulmón y gente que no se conoce entre sí cantando exactamente lo mismo, sin ponerse de acuerdo.",
+  },
+  {
+    valor: "oldies",
+    etiqueta: "Oldies",
+    descripcion:
+      "Baladas y pop en español de las que todo mundo se sabe aunque jure que no. Para cantar con los ojos cerrados y sin pena, que para eso vino.",
+  },
+  {
+    valor: "ranchero",
+    etiqueta: "Ranchero",
+    descripcion:
+      "Norteño, banda y ranchero para cantar hasta quedar ronco. La zona donde nadie pregunta si te sabes la letra, porque se da por hecho que sí.",
+  },
+];
+
 const campo =
   "w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm text-white " +
   "placeholder:text-white/30 focus:border-run-amber focus:outline-none";
@@ -28,6 +55,9 @@ export default function FormActivacion({
   const [error, setError] = useState<string | null>(null);
   const [listo, setListo] = useState(false);
   const [acepta, setAcepta] = useState(false);
+  const [mood, setMood] = useState("");
+
+  const moodElegido = MOODS.find((m) => m.valor === mood);
 
   async function enviar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -140,6 +170,30 @@ export default function FormActivacion({
           <label className={etiqueta} htmlFor="club">Club o equipo (opcional)</label>
           <input id="club" name="club" className={`${campo} mt-2`} />
         </div>
+      </div>
+
+      <div>
+        <label className={etiqueta} htmlFor="mood">Tu mood después de la carrera</label>
+        <select
+          id="mood"
+          name="mood"
+          required
+          value={mood}
+          onChange={(e) => setMood(e.target.value)}
+          className={`${campo} mt-2`}
+        >
+          <option value="" disabled className="bg-black">Selecciona</option>
+          {MOODS.map((m) => (
+            <option key={m.valor} value={m.valor} className="bg-black">
+              {m.etiqueta}
+            </option>
+          ))}
+        </select>
+        {moodElegido && (
+          <p className="mt-2 text-xs leading-relaxed text-white/50">
+            {moodElegido.descripcion}
+          </p>
+        )}
       </div>
 
       {/* Lo que pide servicios médicos el día del evento. */}

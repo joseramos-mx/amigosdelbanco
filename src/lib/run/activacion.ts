@@ -32,6 +32,7 @@ export type DatosCorredor = {
   correo: string;
   telefono?: string;
   tallaPlayera: string;
+  mood: "rave" | "ska" | "oldies" | "ranchero";
   club?: string;
   nacionalidad?: string;
   contactoEmergNombre: string;
@@ -63,7 +64,7 @@ export async function boletoPorToken(token: string): Promise<BoletoParaActivar> 
   const verificado = verificarTokenActivacion(token);
   if (!verificado.ok) throw new TokenInvalido(verificado.motivo);
 
-  const filas = await conReintento(() => db()<BoletoParaActivar[]>`
+  const filas = await conReintento(() => db() <BoletoParaActivar[]>`
     select b.id, b.estado::text as estado, b.nombre, b.apellidos, b.activado_en,
            o.folio,
            e.nombre as evento_nombre, e.fecha_carrera, e.sede,
@@ -130,6 +131,7 @@ export async function activarBoleto(
              correo                = ${datos.correo},
              telefono              = ${datos.telefono ?? null},
              talla_playera         = ${datos.tallaPlayera},
+             mood                  = ${datos.mood},
              club                  = ${datos.club ?? null},
              nacionalidad          = ${datos.nacionalidad ?? null},
              contacto_emerg_nombre = ${datos.contactoEmergNombre},
@@ -167,7 +169,7 @@ export type BoletoCompleto = {
 };
 
 export async function boletoCompleto(boletoId: string): Promise<BoletoCompleto | null> {
-  const filas = await conReintento(() => db()<BoletoCompleto[]>`
+  const filas = await conReintento(() => db() <BoletoCompleto[]>`
     select b.id, b.estado::text as estado, b.nombre, b.apellidos, b.dorsal,
            b.categoria, b.talla_playera,
            o.folio,

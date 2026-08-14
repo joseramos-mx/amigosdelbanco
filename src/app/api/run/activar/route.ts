@@ -12,6 +12,7 @@ export const runtime = "nodejs";
 
 const TALLAS = ["XS", "S", "M", "L", "XL", "XXL"];
 const SEXOS = ["F", "M", "X"];
+const MOODS = ["rave", "ska", "oldies", "ranchero"];
 
 function texto(v: unknown, max = 120): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
@@ -52,6 +53,9 @@ function validar(
   const tallaPlayera = texto(b.tallaPlayera, 4).toUpperCase();
   if (!TALLAS.includes(tallaPlayera)) return { ok: false, error: "Selecciona una talla" };
 
+  const mood = texto(b.mood, 10).toLowerCase();
+  if (!MOODS.includes(mood)) return { ok: false, error: "Selecciona un mood" };
+
   const contactoEmergNombre = texto(b.contactoEmergNombre);
   const contactoEmergTel = texto(b.contactoEmergTel, 20);
   if (contactoEmergNombre.length < 3 || contactoEmergTel.length < 7) {
@@ -74,6 +78,7 @@ function validar(
       correo,
       telefono: texto(b.telefono, 20) || undefined,
       tallaPlayera,
+      mood: mood as "rave" | "ska" | "oldies" | "ranchero",
       club: texto(b.club, 80) || undefined,
       nacionalidad: texto(b.nacionalidad, 60) || undefined,
       contactoEmergNombre,
