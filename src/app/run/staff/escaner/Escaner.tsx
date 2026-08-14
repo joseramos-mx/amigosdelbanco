@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import jsQR from "jsqr";
 import type { FilaPadron } from "@/lib/run/padron";
+import { button } from "motion/react-client";
 
 /**
  * Escáner de entrega de kits.
@@ -243,7 +244,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
     if (!folioInput) return;
     const folioStr = `GG-${folioInput.padStart(5, "0")}`;
     const fila = padron.find((f) => f.folio === folioStr);
-    
+
     if (fila) {
       procesar(fila.qr);
     } else {
@@ -324,6 +325,30 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         )}
       </div>
 
+      <form onSubmit={handleFolioSubmit} className="flex gap-2">
+        <div className="flex w-full items-center rounded-lg border border-neutral-700 bg-neutral-800 focus-within:border-run-amber focus-within:ring-1 focus-within:ring-run-amber transition-colors">
+          <span className="flex self-stretch items-center border-r border-neutral-700 px-3 font-mono text-neutral-400 sm:text-sm">
+            GG-
+          </span>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="\d+"
+            maxLength={5}
+            value={folioInput}
+            onChange={(e) => setFolioInput(e.target.value.replace(/\D/g, ""))}
+            placeholder="00001"
+            className="w-full bg-transparent py-2 px-3 font-mono text-white placeholder:text-neutral-600 focus:outline-none sm:text-sm"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-lg bg-run-amber px-5 py-2 text-sm uppercase tracking-wide text-black"
+        >
+          VALIDAR
+        </button>
+      </form>
+
       <div className="relative overflow-hidden rounded-[20px] border border-white/15 bg-black">
         <video ref={videoRef} playsInline muted className="h-auto w-full" />
         <canvas ref={canvasRef} className="hidden" />
@@ -359,29 +384,6 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         </button>
       )}
 
-      <form onSubmit={handleFolioSubmit} className="flex gap-2">
-        <div className="flex w-full rounded-md shadow-sm">
-          <span className="inline-flex items-center rounded-l-md border border-r-0 border-neutral-700 bg-neutral-800 px-3 font-mono text-neutral-400 sm:text-sm">
-            GG-
-          </span>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="\d+"
-            maxLength={5}
-            value={folioInput}
-            onChange={(e) => setFolioInput(e.target.value.replace(/\D/g, ""))}
-            placeholder="00001"
-            className="block w-full min-w-0 flex-1 rounded-none border-neutral-700 bg-neutral-900 font-mono text-white focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-        </div>
-        <button
-          type="submit"
-          className="rounded-r-md border border-neutral-700 bg-indigo-500 px-4 py-2 text-sm font-semibold text-black hover:bg-indigo-600 focus:outline-none"
-        >
-          Validar
-        </button>
-      </form>
 
       <ul className="space-y-2">
         {registros.map((r) => (
