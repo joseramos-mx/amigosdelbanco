@@ -3,19 +3,14 @@ import { redirect } from "next/navigation";
 import { obtenerEvento } from "@/lib/run/inscripciones";
 import { padronParaEscaner } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
-import Escaner from "./Escaner";
-import BotonSalir from "../BotonSalir";
+import Escaner from "../../escaner/Escaner";
+import BotonSalir from "../../BotonSalir";
 
 export const dynamic = "force-dynamic";
 
-/**
- * El padrón se manda ya renderizado, no se pide desde el cliente: cuando la
- * persona abre esto todavía está en la oficina con wifi, y a partir de ahí el
- * dispositivo trabaja con lo que se llevó.
- */
-export default async function EscanerPage() {
+export default async function AdminEscanerPage() {
   const pase = await paseActual();
-  if (pase?.rol !== "escaner") {
+  if (pase?.rol !== "admin") {
     redirect("/run/staff");
   }
   
@@ -29,10 +24,18 @@ export default async function EscanerPage() {
           <h1 className="font-schabo text-[clamp(2rem,6vw,3rem)] uppercase leading-none">
             Entrega de kits
           </h1>
-          <BotonSalir />
+          <div className="flex items-center gap-4">
+            <BotonSalir />
+            <Link
+              href="/run/staff/admin"
+              className="font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/40 hover:text-run-amber"
+            >
+              Regresar al Panel
+            </Link>
+          </div>
         </div>
         <p className="mt-2 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-          {pase?.nombre}
+          Administrador: {pase?.nombre}
         </p>
 
         <div className="mt-8">

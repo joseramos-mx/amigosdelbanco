@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
  * dorsal que cambia después de eso es un problema en la mesa de entrega.
  */
 export async function POST(request: Request) {
-  const pase = paseDeRequest(request);
+  const pase = await paseDeRequest(request);
   if (!puede(pase, "admin")) {
     return NextResponse.json({ error: "Necesitas un pase de coordinación" }, { status: 401 });
   }

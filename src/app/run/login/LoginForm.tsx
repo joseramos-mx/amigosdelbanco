@@ -50,7 +50,7 @@ export default function LoginForm() {
             const cuerpo = await res.json();
             if (!res.ok) throw new Error(cuerpo.error ?? "No se pudo iniciar sesión");
 
-            router.push(cuerpo.rol === "admin" ? "/run/staff" : "/run/staff/escaner");
+            router.push("/run/staff");
             router.refresh();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Algo salió mal");

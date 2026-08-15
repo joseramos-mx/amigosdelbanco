@@ -115,7 +115,7 @@ function aCsv(filas: Record<string, unknown>[]): string {
 }
 
 export async function GET(request: Request) {
-  const pase = paseDeRequest(request);
+  const pase = await paseDeRequest(request);
   if (!puede(pase, "admin")) {
     return NextResponse.json({ error: "Necesitas un pase de coordinación" }, { status: 401 });
   }

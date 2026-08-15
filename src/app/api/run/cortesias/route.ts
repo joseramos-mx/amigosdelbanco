@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 const MAX_POR_CORTESIA = 50;
 
 export async function POST(request: Request) {
-  const pase = paseDeRequest(request);
+  const pase = await paseDeRequest(request);
   if (!puede(pase, "admin")) {
     return NextResponse.json({ error: "Necesitas un pase de coordinación" }, { status: 401 });
   }

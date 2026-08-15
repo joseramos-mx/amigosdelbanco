@@ -23,7 +23,10 @@ export type DatosCaptura = {
   correo: string;
 };
 
-export async function capturarFisico(datos: DatosCaptura): Promise<{ ok: boolean; ordenId: string }> {
+export async function capturarFisico(
+  datos: DatosCaptura, 
+  vendedorId: string
+): Promise<{ ok: boolean; ordenId: string }> {
   return enTransaccion(async (tx) => {
     // Buscar la orden y bloquearla
     const [orden] = await tx<{ id: string; correo_comprador: string | null }[]>`
@@ -45,7 +48,8 @@ export async function capturarFisico(datos: DatosCaptura): Promise<{ ok: boolean
     await tx`
       update public.orden
          set nombre_comprador = ${datos.nombre},
-             correo_comprador = ${datos.correo}
+             correo_comprador = ${datos.correo},
+             vendedor_id = ${vendedorId}
        where id = ${orden.id}
     `;
 

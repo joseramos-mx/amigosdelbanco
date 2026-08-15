@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 type Entrada = { qr: string; notas?: string };
 
 export async function POST(request: Request) {
-  const pase = paseDeRequest(request);
+  const pase = await paseDeRequest(request);
   if (!puede(pase, "escaner")) {
     return NextResponse.json({ error: "Pase inválido o vencido" }, { status: 401 });
   }
