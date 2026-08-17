@@ -11,7 +11,7 @@ export default async function LoginPage() {
             <div className="w-full max-w-sm">
                 <div className="text-center">
                     <h1 className="font-schabo text-[clamp(2rem,6vw,3rem)] uppercase leading-none">
-                        Acceso staff
+                        Acceso
                     </h1>
                     <p className="mt-2 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
                         Solo personal autorizado
