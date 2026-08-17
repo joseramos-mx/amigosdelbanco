@@ -68,13 +68,12 @@ export async function enviarRecordatorioVencimiento(params: {
           vence el <strong>${vence}</strong>. Si no se registra el pago antes,
           el lugar se libera para alguien más.
         </p>
-        ${
-          params.referencia
-            ? `<p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
+        ${params.referencia
+        ? `<p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
                  Referencia OXXO: <strong style="font-family:monospace;">${params.referencia}</strong>
                </p>`
-            : ""
-        }
+        : ""
+      }
         <p style="font-size:15px;line-height:1.6;color:#525252;margin:0;">
           Si ya pagaste, ignora este correo: la confirmación puede tardar unas horas
           en llegarnos desde la tienda.
@@ -133,11 +132,72 @@ export async function enviarLigasActivacion(params: {
         </p>
         ${ligas}
         <p style="font-size:14px;line-height:1.6;color:#737373;margin:20px 0 0;">
-          ${
-            varias
-              ? "Cada botón es para una persona distinta: reparte las ligas entre tu equipo."
-              : "Al terminar te mandamos tu boleto con el código QR."
-          }
+          ${varias
+        ? "Cada botón es para una persona distinta: reparte las ligas entre tu equipo."
+        : "Al terminar te mandamos tu boleto con el código QR."
+      }
+        </p>
+      `,
+    ),
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/**
+ * Acceso de staff recién dado de alta: contraseña temporal + liga de login.
+ *
+ * Se manda a la persona que se registró (admin, escáner o vendedor), no a
+ * quien la dio de alta. La contraseña va en texto plano porque es la única
+ * forma de entregarla; por eso se le pide cambiarla al entrar.
+ */
+export async function enviarAccesoStaff(params: {
+  correo: string;
+  nombre: string;
+  rol: "admin" | "escaner" | "vendedor";
+  contrasenaTemporal: string;
+}): Promise<Resultado> {
+  if (!resend) return { ok: false, error: "RESEND_API_KEY no configurada" };
+
+  const etiquetaRol: Record<typeof params.rol, string> = {
+    admin: "administrador",
+    escaner: "escáner de kits",
+    vendedor: "punto de venta",
+  };
+
+  const { error } = await resend.emails.send({
+    from: FROM,
+    ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
+    to: params.correo,
+    subject: "Tu acceso al staff del Social Run 2026",
+    html: plantilla(
+      "Ya tienes acceso",
+      `
+        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
+          ${params.nombre}, te dimos de alta como <strong>${etiquetaRol[params.rol]}</strong>
+          para el Social Run 2026. Estos son tus datos para entrar:
+        </p>
+        <table style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+          <tr>
+            <td style="padding:8px 0;font-size:13px;color:#a3a3a3;width:110px;">Correo</td>
+            <td style="padding:8px 0;font-size:15px;color:#171717;font-family:monospace;">${params.correo}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;font-size:13px;color:#a3a3a3;">Contraseña</td>
+            <td style="padding:8px 0;font-size:15px;color:#171717;font-family:monospace;">${params.contrasenaTemporal}</td>
+          </tr>
+        </table>
+        <p style="margin:0 0 20px;">
+          <a href="${origen()}/run/login"
+             style="display:inline-block;background:#e9a62d;color:#0a0a0a;font-weight:700;
+                    text-decoration:none;padding:12px 24px;border-radius:8px;font-size:15px;">
+            Iniciar sesión
+          </a>
+        </p>
+        <p style="font-size:14px;line-height:1.6;color:#737373;margin:0;">
+          Es una contraseña temporal — al entrar te vamos a pedir que la cambies
+          por una tuya. No la compartas por un canal que no controles.
         </p>
       `,
     ),
