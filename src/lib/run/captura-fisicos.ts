@@ -1,5 +1,5 @@
 import "server-only";
-import { enTransaccion } from "@/lib/db";
+import { db, enTransaccion } from "@/lib/db";
 import { enviarLigasActivacion } from "./correos";
 
 export class FolioNoEncontrado extends Error {
@@ -75,4 +75,22 @@ export async function capturarFisico(
 
     return { ok: true, ordenId: orden.id };
   });
+}
+
+export type BoletoCapturado = {
+  folio: string;
+  nombre_comprador: string;
+  correo_comprador: string;
+  telefono: string | null;
+  creada_en: Date;
+};
+
+export async function foliosCapturadosPorVendedor(vendedorId: string): Promise<BoletoCapturado[]> {
+  const sql = db();
+  return sql<BoletoCapturado[]>`
+    select folio, nombre_comprador, correo_comprador, telefono, creada_en
+      from public.orden
+     where vendedor_id = ${vendedorId}
+     order by creada_en desc
+  `;
 }

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { paseActual } from "@/lib/run/staff";
 
+import BannerContrasena from "./BannerContrasena";
+
 export const metadata = { robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
@@ -14,5 +16,11 @@ export const dynamic = "force-dynamic";
 export default async function StaffLayout({ children }: { children: React.ReactNode }) {
   const pase = await paseActual();
   if (!pase) redirect("/run/pase-invalido");
-  return <>{children}</>;
+  
+  return (
+    <>
+      <BannerContrasena requiereCambio={pase.requiereCambioContrasena} />
+      {children}
+    </>
+  );
 }

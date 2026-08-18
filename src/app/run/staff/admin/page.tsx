@@ -6,7 +6,6 @@ import { resumen } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "../AccionesPanel";
 import Cortesias from "../Cortesias";
-import CapturaFisicos from "../CapturaFisicos";
 import RegistroStaff from "../RegistroStaff";
 import BotonSalir from "../BotonSalir";
 
@@ -127,9 +126,6 @@ export default async function PanelPage() {
         <AccionesPanel />
         <Cortesias />
         <RegistroStaff />
-        
-        {/* Captura de Físicos es visible tanto para Admin como para Vendedor */}
-        <CapturaFisicos />
 
         {isAdmin && (
           <section className="mt-10">

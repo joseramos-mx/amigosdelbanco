@@ -8,6 +8,7 @@ export type Pase = {
   id: string;
   rol: RolStaff;
   nombre: string;
+  requiereCambioContrasena: boolean;
 };
 
 export const COOKIE_PASE = "run_pase"; // Mantener por retrocompatibilidad con el escáner offline si es necesario, aunque ahora usaremos la cookie de supabase
@@ -23,8 +24,8 @@ export async function paseActual(): Promise<Pase | null> {
 
   try {
     const sql = db();
-    const [rolData] = await sql<{ rol: string, nombre: string | null }[]>`
-      select rol, nombre from public.usuario_rol where id = ${user.id}
+    const [rolData] = await sql<{ rol: string, nombre: string | null, requiere_cambio_contrasena: boolean }[]>`
+      select rol, nombre, requiere_cambio_contrasena from public.usuario_rol where id = ${user.id}
     `;
 
     if (!rolData) return null;
@@ -35,7 +36,8 @@ export async function paseActual(): Promise<Pase | null> {
     return { 
       id: user.id,
       rol: rolData.rol as RolStaff, 
-      nombre: rolData.nombre || user.email || "Usuario" 
+      nombre: rolData.nombre || user.email || "Usuario",
+      requiereCambioContrasena: rolData.requiere_cambio_contrasena === true
     };
   } catch (err) {
     console.error("Error validando el paseActual:", err);
