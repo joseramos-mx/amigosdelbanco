@@ -166,13 +166,14 @@ export type BoletoCompleto = {
   fecha_carrera: Date;
   sede: string;
   ciudad: string;
+  motivo_cortesia: string | null;
 };
 
 export async function boletoCompleto(boletoId: string): Promise<BoletoCompleto | null> {
   const filas = await conReintento(() => db() <BoletoCompleto[]>`
     select b.id, b.estado::text as estado, b.nombre, b.apellidos, b.dorsal,
            b.categoria, b.talla_playera,
-           o.folio,
+           o.folio, o.motivo_cortesia,
            tb.nombre as tipo_nombre,
            e.nombre as evento_nombre, e.fecha_carrera, e.sede, e.ciudad
       from public.boleto b

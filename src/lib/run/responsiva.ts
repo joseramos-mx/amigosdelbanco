@@ -25,9 +25,9 @@ export type Responsiva = {
 
 const VERSIONES: Responsiva[] = [
   {
-    version: "borrador-2026-01",
-    vigenteDesde: "2026-01-01",
-    borrador: true,
+    version: "1.0",
+    vigenteDesde: "2026-08-18",
+    borrador: false,
     titulo: "Carta responsiva y deslinde de responsabilidad",
     parrafos: [
       "Declaro que participo en el Social Run 2026 de manera libre y voluntaria, por mi propia cuenta y riesgo.",
