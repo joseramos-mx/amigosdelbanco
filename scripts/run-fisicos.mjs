@@ -30,7 +30,7 @@ const args = new Map(
 const cantidad = Number(args.get("cantidad")) || 1;
 if (cantidad < 1 || cantidad > 1000) throw new Error("Cantidad inválida (1-1000)");
 
-const sql = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, onnotice: () => {} });
+const sql = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, onnotice: () => { } });
 
 const b64 = (s) => Buffer.from(s).toString("base64url");
 const firmar = (payload, dominio) =>
@@ -83,10 +83,10 @@ async function main() {
       const [orden] = await tx`
         insert into public.orden (
           evento_id, correo_comprador, nombre_comprador,
-          monto_inscripcion, monto_donativo, estado, expira_en
+          monto_inscripcion, monto_donativo, estado, expira_en, boleto_fisico
         ) values (
           ${evento.id}, 'venta.fisica@bancodurango.org', 'Venta Física',
-          ${evento.precio_centavos}, 0, 'pagada', null
+          ${evento.precio_centavos}, 0, 'pendiente', null, true
         )
         returning id, folio
       `;
@@ -96,18 +96,7 @@ async function main() {
 
       await tx`
         insert into public.boleto (id, evento_id, orden_id, tipo_boleto_id, estado, token_activacion)
-        values (${boletoId}, ${evento.id}, ${orden.id}, ${evento.tipo_id}, 'pagado', ${token})
-      `;
-
-      await tx`
-        insert into public.pago (
-          evento_id, orden_id, proveedor, metodo, idempotency_key,
-          monto_centavos, estado, procesado_en, payload_crudo
-        ) values (
-          ${evento.id}, ${orden.id}, 'cortesia', 'cortesia',
-          ${`fisico:${orden.id}`}, ${evento.precio_centavos}, 'confirmado', now(),
-          '{"origen": "impresion_fisica"}'::jsonb
-        )
+        values (${boletoId}, ${evento.id}, ${orden.id}, ${evento.tipo_id}, 'pendiente', ${token})
       `;
 
       resultados.push({ folio: orden.folio, token });
@@ -120,7 +109,7 @@ async function main() {
   console.log("\n=============================================");
   console.log("🎟️ BOLETOS FÍSICOS GENERADOS CON ÉXITO");
   console.log("=============================================\n");
-  
+
   for (const b of generados) {
     console.log(`Folio: ${b.folio}`);
     console.log(`Liga:  ${baseUrl}/run/activar/${b.token}`);

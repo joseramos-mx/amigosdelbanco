@@ -5,7 +5,7 @@ export default function BotonSalir() {
     <form action={logoutAction}>
       <button 
         type="submit"
-        className="font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/40 hover:text-red-400 transition-colors"
+        className="rounded bg-run-amber px-4 py-2 font-geist-mono text-[10px] uppercase tracking-widest text-black transition hover:opacity-90"
       >
         Cerrar Sesión
       </button>

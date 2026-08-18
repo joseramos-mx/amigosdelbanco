@@ -16,6 +16,13 @@ export class FolioYaCapturado extends Error {
   }
 }
 
+export class FolioAjeno extends Error {
+  constructor() {
+    super("Este folio no pertenece a tu rango asignado de folios.");
+    this.name = "FolioAjeno";
+  }
+}
+
 export type DatosCaptura = {
   folio: string; // Ej: "GG-00001"
   nombre: string;
@@ -29,28 +36,59 @@ export async function capturarFisico(
 ): Promise<{ ok: boolean; ordenId: string }> {
   return enTransaccion(async (tx) => {
     // Buscar la orden y bloquearla
-    const [orden] = await tx<{ id: string; correo_comprador: string | null }[]>`
-      select id, correo_comprador
+    const [orden] = await tx<{ id: string; evento_id: string; monto_inscripcion: number; correo_comprador: string | null; vendedor_id: string | null }[]>`
+      select id, evento_id, monto_inscripcion, correo_comprador, vendedor_id
         from public.orden
        where folio = ${datos.folio}
-         and estado = 'pagada'
+         and estado = 'pendiente'
        for update
     `;
 
     if (!orden) throw new FolioNoEncontrado();
+
+    if (orden.vendedor_id !== vendedorId) {
+      throw new FolioAjeno();
+    }
 
     // Si el correo no es el placeholder, significa que ya fue capturado (o fue venta digital)
     if (orden.correo_comprador !== 'venta.fisica@bancodurango.org') {
       throw new FolioYaCapturado();
     }
 
-    // Actualizar la orden con los datos del comprador
+    // Obtener nombre del vendedor para el registro de pago
+    const [vendedor] = await tx<{ nombre: string }[]>`
+      select nombre from public.usuario_rol where id = ${vendedorId}
+    `;
+    const nombreVendedor = vendedor?.nombre || 'Vendedor Desconocido';
+
+    // Actualizar la orden con los datos del comprador y marcarla pagada
     await tx`
       update public.orden
          set nombre_comprador = ${datos.nombre},
              correo_comprador = ${datos.correo},
-             vendedor_id = ${vendedorId}
+             telefono = ${datos.telefono},
+             vendedor_id = ${vendedorId},
+             estado = 'pagada'
        where id = ${orden.id}
+    `;
+
+    // Marcar el boleto como pagado
+    await tx`
+      update public.boleto
+         set estado = 'pagado'
+       where orden_id = ${orden.id}
+    `;
+
+    // Registrar el pago
+    await tx`
+      insert into public.pago (
+        evento_id, orden_id, proveedor, metodo, idempotency_key,
+        monto_centavos, estado, procesado_en, payload_crudo
+      ) values (
+        ${orden.evento_id}, ${orden.id}, ${nombreVendedor}, 'efectivo',
+        ${`fisico:${orden.id}`}, ${orden.monto_inscripcion}, 'confirmado', now(),
+        '{"origen": "captura_fisica"}'::jsonb
+      )
     `;
 
     // Buscar los tokens de los boletos de esta orden
