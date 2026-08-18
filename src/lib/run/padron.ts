@@ -25,6 +25,9 @@ export type ResumenEvento = {
   entregados: number;
   recaudadoCentavos: number;
   donativosCentavos: number;
+  vendidosDigitales: number;
+  vendidosFisicos: number;
+  cortesias: number;
 };
 
 export async function resumen(slug: string): Promise<ResumenEvento | null> {
@@ -33,7 +36,8 @@ export async function resumen(slug: string): Promise<ResumenEvento | null> {
       id: string; nombre: string; estado: string; fecha_carrera: Date; sede: string;
       cupo_total: number; vendidos: number; pagados: number; activados: number;
       sin_activar: number; pendientes_pago: number; entregados: number;
-      recaudado: number; donativos: number;
+      recaudado: number; donativos: number; vendidos_digitales: number;
+      vendidos_fisicos: number; cortesias_count: number;
     }[]
   >`
     select e.id, e.nombre, e.estado::text as estado, e.fecha_carrera, e.sede,
@@ -44,6 +48,25 @@ export async function resumen(slug: string): Promise<ResumenEvento | null> {
              where b.evento_id = e.id
                and (o.estado = 'pagada'
                     or (o.estado = 'pendiente' and o.expira_en > now())))::int as vendidos,
+
+           (select count(*) from public.boleto b
+              join public.orden o on o.id = b.orden_id
+             where b.evento_id = e.id
+               and (o.estado = 'pagada' or (o.estado = 'pendiente' and o.expira_en > now()))
+               and coalesce(b.boleto_fisico, false) = false
+               and o.motivo_cortesia is null)::int as vendidos_digitales,
+
+           (select count(*) from public.boleto b
+              join public.orden o on o.id = b.orden_id
+             where b.evento_id = e.id
+               and (o.estado = 'pagada' or (o.estado = 'pendiente' and o.expira_en > now()))
+               and b.boleto_fisico = true)::int as vendidos_fisicos,
+
+           (select count(*) from public.boleto b
+              join public.orden o on o.id = b.orden_id
+             where b.evento_id = e.id
+               and (o.estado = 'pagada' or (o.estado = 'pendiente' and o.expira_en > now()))
+               and o.motivo_cortesia is not null)::int as cortesias_count,
 
            (select count(*) from public.boleto b
              where b.evento_id = e.id
@@ -96,6 +119,9 @@ export async function resumen(slug: string): Promise<ResumenEvento | null> {
     entregados: f.entregados,
     recaudadoCentavos: f.recaudado,
     donativosCentavos: f.donativos,
+    vendidosDigitales: f.vendidos_digitales,
+    vendidosFisicos: f.vendidos_fisicos,
+    cortesias: f.cortesias_count,
   };
 }
 

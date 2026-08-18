@@ -92,9 +92,24 @@ export default async function PanelPage() {
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Dato
-            etiqueta="Vendidos"
+            etiqueta="Total Vendidos"
             valor={datos.vendidos}
             nota={`${datos.disponibles} disponibles de ${datos.cupoTotal}`}
+          />
+          <Dato
+            etiqueta="Ventas Digitales"
+            valor={datos.vendidosDigitales}
+            nota="Boletos pagados o apartados en línea"
+          />
+          <Dato
+            etiqueta="Ventas Físicas"
+            valor={datos.vendidosFisicos}
+            nota="Talones de papel para vendedores"
+          />
+          <Dato
+            etiqueta="Por Cortesía"
+            valor={datos.cortesias}
+            nota="Boletos patrocinados (sin costo)"
           />
           <Dato
             etiqueta="Recaudado"

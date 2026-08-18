@@ -83,10 +83,10 @@ async function main() {
       const [orden] = await tx`
         insert into public.orden (
           evento_id, correo_comprador, nombre_comprador,
-          monto_inscripcion, monto_donativo, estado, expira_en, boleto_fisico
+          monto_inscripcion, monto_donativo, estado, expira_en
         ) values (
           ${evento.id}, 'venta.fisica@bancodurango.org', 'Venta Física',
-          ${evento.precio_centavos}, 0, 'pendiente', null, true
+          ${evento.precio_centavos}, 0, 'pendiente', null
         )
         returning id, folio
       `;
@@ -95,8 +95,8 @@ async function main() {
       const token = tokenActivacion(boletoId, expiraToken);
 
       await tx`
-        insert into public.boleto (id, evento_id, orden_id, tipo_boleto_id, estado, token_activacion)
-        values (${boletoId}, ${evento.id}, ${orden.id}, ${evento.tipo_id}, 'pendiente', ${token})
+        insert into public.boleto (id, evento_id, orden_id, tipo_boleto_id, estado, token_activacion, boleto_fisico)
+        values (${boletoId}, ${evento.id}, ${orden.id}, ${evento.tipo_id}, 'pendiente', ${token}, true)
       `;
 
       resultados.push({ folio: orden.folio, token });
