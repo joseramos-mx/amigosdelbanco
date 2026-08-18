@@ -9,4 +9,4 @@
 //
 // Cuando la venta abra de verdad hay que devolver los `<Link>` a los botones
 // que hoy usan <BotonBloqueado> y quitar la prop `bloqueado` de <RunNav>.
-export const VENTA_ABRE_ISO = "2026-08-19T00:00:00-06:00";
+export const VENTA_ABRE_ISO = "2026-08-19T09:00:00-06:00";

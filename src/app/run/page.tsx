@@ -13,9 +13,9 @@ import SeccionQueEs from "./SeccionQueEs";
 import SeccionRuta from "./SeccionRuta";
 
 // ── Datos del evento ────────────────────────────────────────────────────────
-// Viernes 16 de octubre de 2026, 5:00 PM. Durango usa UTC-6 todo el año.
-const EVENT_ISO = "2026-10-16T17:00:00-06:00";
-const EVENT_DATE = "Viernes 16 de octubre, 2026";
+// Viernes 0* de octubre de 2026, 5:00 PM. Durango usa UTC-6 todo el año.
+const EVENT_ISO = "2026-10-09T17:00:00-06:00";
+const EVENT_DATE = "Viernes 09 de octubre, 2026";
 const EVENT_TIME = "05:00 PM";
 const EVENT_VENUE = "Antigua Estación de Ferrocarril";
 
@@ -200,7 +200,7 @@ export default function RunPage() {
             className={`${CARD} col-span-2 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 px-7 py-6 lg:col-span-11 lg:col-start-5 lg:row-start-3 lg:flex-nowrap lg:px-10 lg:py-0`}
           >
             <p className="text-[13px] uppercase leading-[1.35] tracking-wide lg:text-sm">
-              Viernes <span className="font-bold">16 de Oct</span>
+              Viernes <span className="font-bold">09 de Oct</span>
               <br />
               Antigua Estación
               <br />
