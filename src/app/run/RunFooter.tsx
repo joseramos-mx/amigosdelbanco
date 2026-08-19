@@ -1,5 +1,4 @@
 import Link from "next/link";
-import BotonBloqueado from "./BotonBloqueado";
 import Reveal from "./Reveal";
 import GiantWordmark from "./GiantWordmark";
 
@@ -35,6 +34,7 @@ const GROUPS = [
     links: [
       { href: "/progreso", label: "Progreso de obra" },
       { href: "/run", label: "Social Run 2026" },
+      { href: "/run/inscripcion", label: "Comprar acceso" },
     ],
   },
   {
@@ -99,13 +99,15 @@ export default function RunFooter() {
             <p className="text-[15px] text-white/85">
               Asegura tu Founding Member Pass
             </p>
-            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-1.5 pl-4">
+            <Link
+              href="/run/inscripcion"
+              className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-1.5 pl-4 transition-colors hover:border-white/25"
+            >
               <span className="text-sm text-white/45">Cupo limitado</span>
-              <BotonBloqueado
-                formato="corto"
-                className="flex shrink-0 items-center gap-2 rounded-lg bg-white/10 px-4 py-2.5 text-sm font-medium text-white/75 ring-1 ring-inset ring-white/15"
-              />
-            </div>
+              <span className="shrink-0 rounded-lg bg-run-amber px-4 py-2.5 text-sm font-medium text-black">
+                Comprar
+              </span>
+            </Link>
           </Reveal>
         </div>
 
