@@ -11,6 +11,10 @@
      by next/font on the /run wrapper, so these utilities only resolve there. */
   --color-run-amber: #e9a62d;
   --color-run-card: #262626;
+  /* Rojo del botón de compra. Más apagado que un rojo puro a propósito: con
+     texto blanco encima da 5.1:1 de contraste y pasa AA para texto normal,
+     cosa que un #ff0000 no logra. */
+  --color-run-red: #d61f26;
   --font-geist: var(--font-geist-sans);
   --font-geist-mono: var(--font-geist-mono-code);
   --font-schabo: var(--font-schabo-display);
@@ -52,6 +56,19 @@ body {
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(-1deg); }
   50%      { transform: translateY(-6px) rotate(1deg); }
+}
+
+/* Latido del botón de compra. El resplandor base va en la clase y no en el
+   fotograma para que sobreviva al guardián de abajo: con movimiento reducido
+   la animación se corta y el botón se queda con su glow fijo, no sin nada. */
+@keyframes latido-rojo {
+  0%, 100% { box-shadow: 0 0 16px -1px rgba(214, 31, 38, 0.55); }
+  50%      { box-shadow: 0 0 26px 2px rgba(214, 31, 38, 0.9), 0 0 46px rgba(214, 31, 38, 0.3); }
+}
+
+.glow-rojo {
+  box-shadow: 0 0 16px -1px rgba(214, 31, 38, 0.55);
+  animation: latido-rojo 2.4s ease-in-out infinite;
 }
 
 /* Respect user motion preferences */

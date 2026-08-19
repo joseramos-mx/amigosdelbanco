@@ -44,6 +44,7 @@ export default function RunNav({
   ctaCorta = "Comprar",
   ctaLarga = "Comprar boleto",
   base = "",
+  destacado = false,
 }: {
   ctaHref: string;
   /** Texto del botón hasta 1024. */
@@ -52,6 +53,12 @@ export default function RunNav({
   ctaLarga?: string;
   /** Prefijo de los enlaces. Vacío en la portada, "/run" desde otra página. */
   base?: string;
+  /**
+   * Pinta el CTA en rojo con latido en vez de ámbar. Solo para el botón de
+   * compra: en las páginas donde el CTA nada más regresa al evento, el rojo
+   * prometería una acción que ese enlace no hace.
+   */
+  destacado?: boolean;
 }) {
   const enLaPortada = base === "";
   const [activa, setActiva] = useState<string>(
@@ -174,7 +181,11 @@ export default function RunNav({
         {/* ── Comprar ──────────────────────────────────────────────── */}
         <Link
           href={ctaHref}
-          className="shrink-0 rounded-xl bg-run-amber px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-black transition-opacity hover:opacity-85 sm:px-7"
+          className={`shrink-0 rounded-xl px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] transition-opacity hover:opacity-85 sm:px-7 ${
+            destacado
+              ? "glow-rojo bg-run-red text-white"
+              : "bg-run-amber text-black"
+          }`}
         >
           <span className="lg:hidden">{ctaCorta}</span>
           <span className="hidden lg:inline">{ctaLarga}</span>

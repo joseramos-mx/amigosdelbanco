@@ -235,7 +235,7 @@ export default function RunPage() {
 
       <BotonLateral href={TICKETS_URL}>Comprar boleto</BotonLateral>
 
-      <RunNav ctaHref={TICKETS_URL} />
+      <RunNav ctaHref={TICKETS_URL} destacado />
     </>
   );
 }
