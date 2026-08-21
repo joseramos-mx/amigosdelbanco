@@ -99,7 +99,7 @@ export default function RunPage() {
           <Reveal delay={0} className="col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Image
               src="/run/ticket.png"
-              alt="Founding Member Pass del Social Run 2026: festival, concierto, food village y rifa de auto. Viernes 16 de octubre, 5:00 PM, Antigua Estación de Ferrocarril."
+              alt="Founding Member Pass del Social Run 2026: festival, concierto, food village y rifa de auto. Viernes 9 de octubre, 5:00 PM, Antigua Estación de Ferrocarril."
               width={1800}
               height={713}
               priority

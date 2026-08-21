@@ -88,10 +88,10 @@ export default function SeccionKit() {
                 {/* El ticket va contenido y no recortado: es la pieza con
                     texto, y cortarle una orilla la vuelve ilegible. */}
                 <Image
-                  src="/run/kit/ticket.webp"
+                  src="/run/kit/ticket.png"
                   alt="Founding Member Pass del Social Run 2026, con el talón de la rifa desprendible"
-                  width={1600}
-                  height={648}
+                  width={1800}
+                  height={713}
                   sizes="(max-width: 1024px) 100vw, 33vw"
                   className="h-auto w-full"
                 />
