@@ -27,18 +27,32 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  const isStaffRoute = request.nextUrl.pathname.startsWith('/run/staff')
+  const isLoginRoute = request.nextUrl.pathname === '/run/login'
+  
+  // Rutas de API exclusivas para el staff que requieren sesión
+  const protectedApis = ['/api/run/checkin', '/api/run/cortesias', '/api/run/dorsales', '/api/run/export', '/api/run/staff']
+  const isApiAuthRoute = protectedApis.some(route => request.nextUrl.pathname.startsWith(route))
+
+  // 1. Si es una ruta completamente pública que no requiere sesión, 
+  // no hacemos la llamada de red a Supabase para ahorrar latencia.
+  if (!isStaffRoute && !isLoginRoute && !isApiAuthRoute) {
+    return supabaseResponse
+  }
+
+  // 2. Solo para las rutas protegidas, validamos y refrescamos la sesión
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  // Proteger rutas del staff
-  const isStaffRoute = request.nextUrl.pathname.startsWith('/run/staff')
-  const isLoginRoute = request.nextUrl.pathname === '/run/login'
 
   if (isStaffRoute && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/run/login'
     return NextResponse.redirect(url)
+  }
+
+  if (isApiAuthRoute && !user) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
   if (isLoginRoute && user) {

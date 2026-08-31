@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { paseDeRequest, puede } from "@/lib/run/staff";
-import { registrarEntregaKit, type ResultadoCheckin } from "@/lib/run/padron";
+import { registrarCheckin, type ResultadoCheckin } from "@/lib/run/padron";
 import { verificarTokenQr } from "@/lib/run/tokens";
 
 export const runtime = "nodejs";
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
  * primero— así que reenviar la cola completa no rompe nada.
  */
 
-type Entrada = { qr: string; notas?: string };
+type Entrada = { qr: string; tipo: "kit" | "acceso"; notas?: string };
 
 export async function POST(request: Request) {
   const pase = await paseDeRequest(request);
@@ -45,8 +45,9 @@ export async function POST(request: Request) {
     }
 
     try {
-      const r = await registrarEntregaKit(
+      const r = await registrarCheckin(
         verificado.boletoId,
+        escaneo.tipo ?? "kit",
         pase!.nombre || pase!.rol,
         escaneo.notas,
       );

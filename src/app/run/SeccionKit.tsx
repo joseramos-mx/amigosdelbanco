@@ -101,41 +101,6 @@ export default function SeccionKit() {
           </div>
         </Reveal>
 
-        {/* ── La rifa ────────────────────────────────────────────────── */}
-        <Reveal delay={120}>
-          <div className="mt-3 grid gap-3 lg:mt-4 lg:h-[340px] lg:grid-cols-2 lg:gap-4">
-            {/* Tarjeta blanca porque la foto del auto trae su sombra
-                pintada, hecha para fondo claro: sobre oscuro se ve como un
-                manchón gris debajo de las llantas. */}
-            <div className="flex h-[220px] items-center justify-center rounded-[20px] bg-white px-6 sm:h-[280px] lg:h-full lg:px-10">
-              <Image
-                src="/run/kit/byd.webp"
-                alt="BYD Dolphin Mini eléctrico en color verde limón"
-                width={945}
-                height={479}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="h-auto w-full"
-              />
-            </div>
-
-            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-9 sm:px-10 lg:px-12">
-              <p className="font-geist-mono text-[10px] uppercase tracking-[0.22em] text-black/55">
-                Y además
-              </p>
-              <h3 className="mt-3 font-geist text-[clamp(1.7rem,3.4vw,2.9rem)] font-bold uppercase leading-[0.95] tracking-tight text-black/85">
-                Entras a la rifa de un BYD Dolphin Mini
-              </h3>
-              <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed text-black/70">
-                Tu boleto trae un talón desprendible. Lo depositas en la urna
-                el día del festival y con eso quedas dentro de la rifa del
-                auto.
-              </p>
-              <p className="mt-4 font-geist-mono text-[10px] uppercase tracking-[0.14em] text-black/45">
-                Aplican términos y condiciones
-              </p>
-            </div>
-          </div>
-        </Reveal>
       </div>
     </section>
   );

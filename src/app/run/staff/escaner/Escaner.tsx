@@ -26,15 +26,22 @@ const EVENTO_COLA = "run:cola";
  * escaneo, y si el navegador se cierra a media entrega, lo pendiente sigue
  * ahí al volver.
  */
-function leerCola(): string[] {
+type ModoCheckin = "kit" | "acceso";
+type ColaItem = { qr: string; tipo: ModoCheckin };
+
+function leerCola(): ColaItem[] {
   try {
-    return JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]");
+    const raw = JSON.parse(localStorage.getItem(CLAVE_COLA) ?? "[]");
+    // Migración de formato viejo (solo string) a nuevo objeto
+    return raw.map((item: any) =>
+      typeof item === "string" ? { qr: item, tipo: "kit" } : item
+    );
   } catch {
     return [];
   }
 }
 
-function guardarCola(cola: string[]): void {
+function guardarCola(cola: ColaItem[]): void {
   try {
     localStorage.setItem(CLAVE_COLA, JSON.stringify(cola));
   } catch {
@@ -98,6 +105,14 @@ const TITULOS: Record<Veredicto, string> = {
 };
 
 export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[] }) {
+  const [modo, setModo] = useState<ModoCheckin>("kit");
+
+  useEffect(() => {
+    const guardado = localStorage.getItem("run_modo_checkin");
+    if (guardado === "acceso") {
+      setModo("acceso");
+    }
+  }, []);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ultimoRef = useRef<{ qr: string; hora: number }>({ qr: "", hora: 0 });
@@ -130,8 +145,8 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
     };
   }, []);
 
-  const encolar = useCallback((qr: string) => {
-    guardarCola([...leerCola(), qr]);
+  const encolar = useCallback((qr: string, tipo: ModoCheckin) => {
+    guardarCola([...leerCola(), { qr, tipo }]);
   }, []);
 
   const sincronizar = useCallback(async () => {
@@ -142,7 +157,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
       const res = await fetch("/api/run/checkin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ escaneos: cola.map((qr) => ({ qr })) }),
+        body: JSON.stringify({ escaneos: cola }),
       });
       if (!res.ok) return; // se conserva la cola y se reintenta
 
@@ -210,8 +225,18 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         return;
       }
 
-      const yaEntregadoAqui = fila.entregado || vistosRef.current.has(qr);
-      const veredicto: Veredicto = yaEntregadoAqui ? "repetido" : "entregado";
+      const claveVisto = `${modo}:${qr}`;
+      const yaEntregadoPadron = modo === "kit" ? fila.entregado : fila.accedio;
+      const yaEntregadoAqui = yaEntregadoPadron || vistosRef.current.has(claveVisto);
+
+      let veredicto: Veredicto;
+      if (fila.estado === "pagado") {
+        veredicto = "sin_activar";
+      } else if (yaEntregadoAqui) {
+        veredicto = "repetido";
+      } else {
+        veredicto = "entregado";
+      }
 
       const registro: Registro = {
         qr,
@@ -228,15 +253,15 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
       setRegistros((r) => [registro, ...r].slice(0, 60));
 
       if (veredicto === "entregado") {
-        vistosRef.current.add(qr);
+        vistosRef.current.add(claveVisto);
         guardarVistos(vistosRef.current);
-        encolar(qr);
+        encolar(qr, modo);
         if (navigator.vibrate) navigator.vibrate(60);
       } else if (navigator.vibrate) {
         navigator.vibrate([40, 60, 40]);
       }
     },
-    [padron, encolar],
+    [padron, encolar, modo],
   );
 
   const handleFolioSubmit = (e: React.FormEvent) => {
@@ -318,11 +343,28 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
           {enLinea ? "En línea" : "Sin conexión"}
         </span>
         <span className="text-white/50">
-          {padron.length} inscritos en memoria · {entregados} entregados aquí
+          {padron.length} inscritos en memoria · {entregados} registrados aquí
         </span>
         {pendientes > 0 && (
           <span className="text-amber-300">{pendientes} por sincronizar</span>
         )}
+      </div>
+
+      <div className="flex rounded-lg bg-neutral-800 p-1">
+        <button
+          onClick={() => { setModo("kit"); setRegistros([]); localStorage.setItem("run_modo_checkin", "kit"); }}
+          className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${modo === "kit" ? "bg-run-amber text-black shadow-sm" : "text-white/60 hover:text-white"
+            }`}
+        >
+          Entrega de Kits
+        </button>
+        <button
+          onClick={() => { setModo("acceso"); setRegistros([]); localStorage.setItem("run_modo_checkin", "acceso"); }}
+          className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${modo === "acceso" ? "bg-run-amber text-black shadow-sm" : "text-white/60 hover:text-white"
+            }`}
+        >
+          Día del Evento
+        </button>
       </div>
 
       <form onSubmit={handleFolioSubmit} className="flex gap-2">

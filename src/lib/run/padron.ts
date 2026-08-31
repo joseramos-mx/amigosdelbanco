@@ -135,6 +135,7 @@ export type FilaPadron = {
   estado: string;
   folio: string;
   entregado: boolean;
+  accedio: boolean;
   qr: string;
 };
 
@@ -152,7 +153,9 @@ export async function padronParaEscaner(eventoId: string): Promise<FilaPadron[]>
     select b.id, b.dorsal, b.nombre, b.apellidos, b.correo, b.talla_playera,
            b.estado::text as estado, o.folio,
            exists (select 1 from public.checkin c
-                    where c.boleto_id = b.id and c.tipo = 'kit') as entregado
+                    where c.boleto_id = b.id and c.tipo = 'kit') as entregado,
+           exists (select 1 from public.checkin c
+                    where c.boleto_id = b.id and c.tipo = 'acceso') as accedio
       from public.boleto b
       join public.orden o on o.id = b.orden_id
      where b.evento_id = ${eventoId}
@@ -180,8 +183,9 @@ export type ResultadoCheckin = {
  * persona que volvió a mostrar el QR, pero a veces es alguien intentando
  * recoger dos veces, y esa distinción la hace un humano, no el software.
  */
-export async function registrarEntregaKit(
+export async function registrarCheckin(
   boletoId: string,
+  tipo: "kit" | "acceso",
   registradoPor: string,
   notas?: string,
 ): Promise<ResultadoCheckin> {
@@ -204,7 +208,7 @@ export async function registrarEntregaKit(
 
     const previo = await tx<{ registrado_en: Date }[]>`
       select registrado_en from public.checkin
-       where boleto_id = ${boletoId} and tipo = 'kit'
+       where boleto_id = ${boletoId} and tipo = ${tipo}
     `;
     if (previo.length) {
       return {
@@ -218,12 +222,16 @@ export async function registrarEntregaKit(
 
     await tx`
       insert into public.checkin (evento_id, boleto_id, tipo, registrado_por, notas)
-      values (${boleto.evento_id}, ${boletoId}, 'kit', ${registradoPor}, ${notas ?? null})
+      values (${boleto.evento_id}, ${boletoId}, ${tipo}, ${registradoPor}, ${notas ?? null})
     `;
-    await tx`
-      update public.boleto set estado = 'entregado'
-       where id = ${boletoId} and estado in ('activado','dorsal_asignado')
-    `;
+    
+    // Si el tipo de checkin es kit y ya estaba activado, marcarlo como entregado
+    if (tipo === 'kit') {
+      await tx`
+        update public.boleto set estado = 'entregado'
+         where id = ${boletoId} and estado in ('activado','dorsal_asignado')
+      `;
+    }
 
     return { boletoId, resultado: "entregado", nombre, dorsal: boleto.dorsal };
   });

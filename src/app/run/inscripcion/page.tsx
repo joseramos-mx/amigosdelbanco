@@ -7,6 +7,7 @@ import { formatMxn } from "@/lib/donation";
 import { hayBaseDeDatos } from "@/lib/db";
 import { cupoDisponible, obtenerEvento, obtenerTiposBoleto } from "@/lib/run/inscripciones";
 import FormInscripcion, { type OpcionBoleto } from "./FormInscripcion";
+import ImagenAleatoria from "./ImagenAleatoria";
 
 /**
  * Cuándo abre la venta.
@@ -175,26 +176,21 @@ export default async function InscripcionPage() {
   return (
     <>
       <Marco>
-        <h1 className="mt-8 font-schabo text-[clamp(2.5rem,7vw,4.5rem)] uppercase leading-[0.9]">
-          Compra tu <span className="text-run-amber">acceso</span>
-        </h1>
-        <p className="mt-4 font-geist-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-white/45">
-          {fecha} · {datos.sede} · {datos.ciudad}
-        </p>
+        {/* Tarjeta de Precio (Ancho completo) */}
 
         {unSoloTipo ? (
           <>
             <div className="mt-10">
               <Precio centavos={precioCentavos} />
             </div>
-            <p className="mt-4 text-sm text-white/50">
+            <p className="mt-4 text-center lg:text-left text-sm text-white/50">
               {datos.opciones[0].disponibles > 0
                 ? `${datos.opciones[0].disponibles} lugares disponibles`
                 : "Agotado"}
             </p>
           </>
         ) : (
-          <div className="mt-8 space-y-2">
+          <div className="mt-8 space-y-2 text-center lg:text-left">
             {datos.opciones.map((o) => (
               <p key={o.id} className="text-sm text-white/60">
                 <span className="text-white">{o.nombre}</span> —{" "}
@@ -205,11 +201,26 @@ export default async function InscripcionPage() {
           </div>
         )}
 
-        {/* La forma no se va a lo ancho aunque el marco sí: campos de 1500
-            píxeles se leen mal y el ojo pierde el renglón entre uno y otro. */}
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="max-w-2xl w-full">
-            <FormInscripcion opciones={datos.opciones} />
+        {/* Grid 50/50 para Formulario e Imagen */}
+        <div className="mt-12 grid lg:grid-cols-2 gap-8 lg:gap-16 pb-20 max-w-[1150px] mx-auto">
+          <div className="w-full flex flex-col justify-center">
+            <div>
+              <h1 className="font-schabo text-[clamp(4rem,7vw,5.5rem)] uppercase leading-[0.8] text-center">
+                COMPRA TU ACCESO
+              </h1>
+              <p className="mt-4 font-geist-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-white/50 text-center">
+                POR FAVOR REGISTRE SUS DATOS
+              </p>
+            </div>
+            
+            <div className="mt-8">
+              <FormInscripcion opciones={datos.opciones} />
+            </div>
+          </div>
+
+          {/* Lado derecho (Imagen aleatoria) */}
+          <div className="hidden lg:block relative w-full h-[750px] overflow-hidden bg-[#111]">
+            <ImagenAleatoria />
           </div>
         </div>
       </Marco>

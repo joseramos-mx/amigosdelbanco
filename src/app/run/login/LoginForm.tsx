@@ -82,7 +82,7 @@ export default function LoginForm() {
                         type={mostrarContrasena ? "text" : "password"}
                         required
                         autoComplete="current-password"
-                        className={`${campo} pr-11`}
+                        className={`${campo} pr-11 [&::-ms-reveal]:hidden`}
                         placeholder="••••••••"
                     />
                     <button
