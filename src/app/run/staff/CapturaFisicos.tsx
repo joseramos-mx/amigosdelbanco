@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { capturarFisicoAction } from "./capturaFisicosActions";
+import type { MetodoPago } from "@/lib/run/captura-fisicos";
 
 const campo =
   "w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white " +
@@ -13,25 +14,39 @@ export default function CapturaFisicos() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [correo, setCorreo] = useState("");
+  const [tipoPago, setTipoPago] = useState<MetodoPago | "">("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (tipoPago === "") {
+      setError("Selecciona el tipo de pago.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(false);
 
     const folioFormat = `GG-${folio.padStart(5, "0")}`;
 
-    const res = await capturarFisicoAction({ folio: folioFormat, nombre, telefono, correo });
+    const res = await capturarFisicoAction({
+      folio: folioFormat,
+      nombre,
+      telefono,
+      correo,
+      tipoPago,
+    });
     if (res.ok) {
       setSuccess(true);
       setFolio("");
       setNombre("");
       setTelefono("");
       setCorreo("");
+      setTipoPago("");
     } else {
       setError(res.error || "Error al capturar el folio.");
     }
@@ -122,6 +137,37 @@ export default function CapturaFisicos() {
                 className={`${campo} mt-2`}
                 placeholder="juan@ejemplo.com"
               />
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className={etiqueta} htmlFor="tipoPagoFisico">Tipo de Pago</label>
+              <div className="relative mt-2">
+                <select
+                  id="tipoPagoFisico"
+                  required
+                  value={tipoPago}
+                  onChange={(e) => setTipoPago(e.target.value as MetodoPago | "")}
+                  className={`${campo} appearance-none pr-9 ${tipoPago === "" ? "text-white/30" : "text-white"}`}
+                >
+                  <option value="" disabled className="bg-run-card text-white/50">
+                    Selecciona una opción
+                  </option>
+                  <option value="efectivo" className="bg-run-card text-white">
+                    Efectivo
+                  </option>
+                  <option value="transferencia" className="bg-run-card text-white">
+                    Transferencia
+                  </option>
+                  <option value="deposito" className="bg-run-card text-white">
+                    Depósito
+                  </option>
+                </select>
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-white/40">
+                  ▾
+                </span>
+              </div>
             </div>
           </div>
 

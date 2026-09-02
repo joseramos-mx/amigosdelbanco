@@ -23,15 +23,18 @@ export class FolioAjeno extends Error {
   }
 }
 
+export type MetodoPago = "efectivo" | "transferencia" | "deposito";
+
 export type DatosCaptura = {
   folio: string; // Ej: "GG-00001"
   nombre: string;
   telefono: string;
   correo: string;
+  tipoPago: MetodoPago;
 };
 
 export async function capturarFisico(
-  datos: DatosCaptura, 
+  datos: DatosCaptura,
   vendedorId: string
 ): Promise<{ ok: boolean; ordenId: string }> {
   return enTransaccion(async (tx) => {
@@ -85,7 +88,7 @@ export async function capturarFisico(
         evento_id, orden_id, proveedor, metodo, idempotency_key,
         monto_centavos, estado, procesado_en, payload_crudo
       ) values (
-        ${orden.evento_id}, ${orden.id}, ${nombreVendedor}, 'efectivo',
+        ${orden.evento_id}, ${orden.id}, ${nombreVendedor}, ${datos.tipoPago},
         ${`fisico:${orden.id}`}, ${orden.monto_inscripcion}, 'confirmado', now(),
         '{"origen": "captura_fisica"}'::jsonb
       )
