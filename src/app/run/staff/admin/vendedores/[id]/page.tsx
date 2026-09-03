@@ -81,7 +81,7 @@ export default async function HistorialVendedorPage({
                     <div className="flex items-center gap-4">
                         <Link
                             href="/run/staff/admin"
-                            className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white"
+                            className="rounded bg-run-amber px-4 py-2 font-geist-mono text-[10px] uppercase tracking-widest text-black transition hover:opacity-90"
                         >
                             Volver al panel
                         </Link>
