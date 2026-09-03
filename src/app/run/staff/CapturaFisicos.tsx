@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { capturarFisicoAction } from "./capturaFisicosActions";
 import type { MetodoPago } from "@/lib/run/captura-fisicos";
 
@@ -10,6 +11,8 @@ const campo =
 const etiqueta = "font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40";
 
 export default function CapturaFisicos() {
+  const router = useRouter();
+
   const [folio, setFolio] = useState("");
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -47,6 +50,7 @@ export default function CapturaFisicos() {
       setTelefono("");
       setCorreo("");
       setTipoPago("");
+      router.refresh(); 
     } else {
       setError(res.error || "Error al capturar el folio.");
     }
