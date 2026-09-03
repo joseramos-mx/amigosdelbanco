@@ -88,6 +88,7 @@ type Registro = {
   detalle?: string;
   hora: number;
   sincronizado: boolean;
+  modo: ModoCheckin;
 };
 
 const COLORES: Record<Veredicto, string> = {
@@ -97,11 +98,30 @@ const COLORES: Record<Veredicto, string> = {
   desconocido: "border-red-500/50 bg-red-500/10 text-red-200",
 };
 
-const TITULOS: Record<Veredicto, string> = {
-  entregado: "Kit entregado",
-  repetido: "Ya se había entregado",
-  sin_activar: "Faltan sus datos",
-  desconocido: "No reconocido",
+// Los títulos cambian según el tipo de escaneo: en la entrega de kits se
+// habla de "kit" (tono de mostrador/logística); en el acceso del día del
+// evento se habla de "acceso" (tono de control de entrada).
+const TITULOS: Record<ModoCheckin, Record<Veredicto, string>> = {
+  kit: {
+    entregado: "Kit entregado",
+    repetido: "Kit ya entregado",
+    sin_activar: "Inscripción sin activar",
+    desconocido: "No reconocido",
+  },
+  acceso: {
+    entregado: "Acceso permitido",
+    repetido: "Acceso ya registrado",
+    sin_activar: "Inscripción sin activar",
+    desconocido: "No reconocido",
+  },
+};
+
+// Detalle contextual para un escaneo repetido: en kits se verifica que no se
+// haya entregado ya; en acceso se verifica que la persona no haya ingresado
+// ya con ese mismo boleto.
+const DETALLE_REPETIDO: Record<ModoCheckin, string> = {
+  kit: "Verifica con la persona antes de entregar de nuevo",
+  acceso: "Verifica con la persona antes de dejarla pasar de nuevo",
 };
 
 export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[] }) {
@@ -220,6 +240,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         const desconocido: Registro = {
           qr, boletoId: "", nombre: "—", dorsal: null, veredicto: "desconocido",
           detalle: "No está en el padrón de este evento", hora: ahora, sincronizado: false,
+          modo,
         };
         setRegistros((r) => [desconocido, ...r].slice(0, 60));
         return;
@@ -244,11 +265,12 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
         nombre: [fila.nombre, fila.apellidos].filter(Boolean).join(" ") || fila.folio,
         dorsal: fila.dorsal,
         veredicto,
-        detalle: veredicto === "repetido" ? "Verifica con la persona" : fila.talla_playera
+        detalle: veredicto === "repetido" ? DETALLE_REPETIDO[modo] : fila.talla_playera
           ? `Talla ${fila.talla_playera}`
           : undefined,
         hora: ahora,
         sincronizado: false,
+        modo,
       };
       setRegistros((r) => [registro, ...r].slice(0, 60));
 
@@ -434,7 +456,7 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
             className={`rounded-xl border px-4 py-3 ${COLORES[r.veredicto]}`}
           >
             <div className="flex items-baseline justify-between gap-3">
-              <span className="font-medium">{TITULOS[r.veredicto]}</span>
+              <span className="font-medium">{TITULOS[r.modo][r.veredicto]}</span>
               <span className="font-geist-mono text-[10px] opacity-70">
                 {new Date(r.hora).toLocaleTimeString("es-MX")}
                 {!r.sincronizado && pendientes > 0 ? " · en cola" : ""}
