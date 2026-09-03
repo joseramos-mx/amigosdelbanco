@@ -8,7 +8,7 @@ const campo =
     "w-full rounded-lg border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white " +
     "placeholder:text-white/30 focus:border-run-amber focus:outline-none";
 
-export default function HistorialClient({ boletos }: { boletos: BoletoCapturado[] }) {
+export default function BoletosCapturadosClient({ boletos }: { boletos: BoletoCapturado[] }) {
     const [filtroFolio, setFiltroFolio] = useState("");
     const [filtroEstado, setFiltroEstado] = useState<string>("todos");
     const [pagina, setPagina] = useState(1);
@@ -29,7 +29,7 @@ export default function HistorialClient({ boletos }: { boletos: BoletoCapturado[
     const etiquetaEstado = (estado: string) => {
         const est = estado.toLowerCase();
         if (est === "pendiente") return "Disponible";
-        if (est === "pagada" || est === "pagado") return "Vendido";
+        if (est === "pagada" || est === "pagado") return "Pagado";
         return estado.charAt(0).toUpperCase() + estado.slice(1);
     };
 
@@ -51,7 +51,7 @@ export default function HistorialClient({ boletos }: { boletos: BoletoCapturado[
 
     return (
         <section className="mt-10">
-            <h2 className={etiqueta}>Boletos Vendidos</h2>
+            <h2 className={etiqueta}>Boletos Capturados ({boletos.length})</h2>
             <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-run-card">
                 <div className="flex flex-col gap-3 border-b border-white/10 p-5 sm:flex-row sm:items-center">
                     <input
@@ -83,7 +83,11 @@ export default function HistorialClient({ boletos }: { boletos: BoletoCapturado[
                 </div>
 
                 {filtrados.length === 0 ? (
-                    <p className="px-5 py-6 text-xs text-white/40">No hay boletos que coincidan con la búsqueda.</p>
+                    <p className="px-5 py-6 text-xs text-white/40">
+                        {boletos.length === 0
+                            ? "Aún no has capturado ningún boleto físico."
+                            : "No hay boletos que coincidan con la búsqueda."}
+                    </p>
                 ) : (
                     <>
                         {/* Móvil: tarjetas apiladas */}
