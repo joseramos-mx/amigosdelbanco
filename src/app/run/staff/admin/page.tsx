@@ -138,9 +138,9 @@ export default async function PanelPage() {
           <Dato etiqueta="Boletos pagados" valor={datos.pagados} />
         </div>
 
+        <RegistroStaff />
         <AccionesPanel />
         <Cortesias />
-        <RegistroStaff />
 
         {isAdmin && (
           <section className="mt-10">

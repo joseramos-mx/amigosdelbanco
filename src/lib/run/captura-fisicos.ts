@@ -124,12 +124,13 @@ export type BoletoCapturado = {
   correo_comprador: string;
   telefono: string | null;
   creada_en: Date;
+  estado: string;
 };
 
 export async function foliosCapturadosPorVendedor(vendedorId: string): Promise<BoletoCapturado[]> {
   const sql = db();
   return sql<BoletoCapturado[]>`
-    select folio, nombre_comprador, correo_comprador, telefono, creada_en
+    select folio, nombre_comprador, correo_comprador, telefono, creada_en, estado
       from public.orden
      where vendedor_id = ${vendedorId}
      order by creada_en desc
