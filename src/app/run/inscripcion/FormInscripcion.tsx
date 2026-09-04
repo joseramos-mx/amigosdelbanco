@@ -68,7 +68,7 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
   const [donativo, setDonativo] = useState(0);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Estado para el modal de confirmación
   const [mostrarModal, setMostrarModal] = useState(false);
 
@@ -209,9 +209,8 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
                 key={m}
                 type="button"
                 onClick={() => setDonativo(m)}
-                className={`rounded-full px-5 py-2.5 text-xs transition-colors ${
-                  donativo === m ? "bg-run-amber text-black" : "bg-white/10 text-white/70 hover:bg-white/20"
-                }`}
+                className={`rounded-full px-5 py-2.5 text-xs transition-colors ${donativo === m ? "bg-run-amber text-black" : "bg-white/10 text-white/70 hover:bg-white/20"
+                  }`}
               >
                 {m === 0 ? "No donar" : formatMxn(m * 100)}
               </button>
@@ -221,11 +220,11 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
 
         <div className="flex items-center justify-between border-t border-white/10 pt-5">
           <div>
-            <p className="text-sm text-white/50 mb-2">
-              Inscripción {formatMxn(inscripcion)}
-              {donativo > 0 && ` + donativo ${formatMxn(donativo * 100)}`}
+            <p className="font-schabo text-3xl leading-none text-white">
+              Subtotal
+              <span className="ml-2">{formatMxn(total)}</span>
             </p>
-            <p className="font-schabo text-3xl uppercase leading-none text-white">{formatMxn(total)}</p>
+
           </div>
           <button
             type="submit"
@@ -251,7 +250,7 @@ export default function FormInscripcion({ opciones }: { opciones: OpcionBoleto[]
               ¿Comprar {cantidadReal} accesos?
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/60">
-              Estás a punto de iniciar el pago para <strong>{cantidadReal} accesos</strong>. 
+              Estás a punto de iniciar el pago para <strong>{cantidadReal} accesos</strong>.
               Al finalizar, se te enviará una liga especial donde cada miembro de tu equipo deberá registrar sus datos y talla.
             </p>
             <div className="mt-8 flex gap-4">

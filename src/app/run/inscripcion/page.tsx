@@ -84,12 +84,6 @@ function Marco({ children }: { children: React.ReactNode }) {
   return (
     <main className="px-4 pt-10 pb-3 sm:px-6 lg:px-12 lg:pt-16 lg:pb-4">
       <div className="mx-auto max-w-[1500px]">
-        <Link
-          href="/run"
-          className="font-geist-mono text-[11px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-run-amber"
-        >
-          ← Social Run 2026
-        </Link>
         {children}
       </div>
     </main>
@@ -176,33 +170,10 @@ export default async function InscripcionPage() {
   return (
     <>
       <Marco>
-        {/* Tarjeta de Precio (Ancho completo) */}
 
-        {unSoloTipo ? (
-          <>
-            <div className="mt-10">
-              <Precio centavos={precioCentavos} />
-            </div>
-            <p className="mt-4 text-center lg:text-left text-sm text-white/50">
-              {datos.opciones[0].disponibles > 0
-                ? `${datos.opciones[0].disponibles} lugares disponibles`
-                : "Agotado"}
-            </p>
-          </>
-        ) : (
-          <div className="mt-8 space-y-2 text-center lg:text-left">
-            {datos.opciones.map((o) => (
-              <p key={o.id} className="text-sm text-white/60">
-                <span className="text-white">{o.nombre}</span> —{" "}
-                {formatMxn(o.precioCentavos)} ·{" "}
-                {o.disponibles > 0 ? `${o.disponibles} lugares disponibles` : "agotado"}
-              </p>
-            ))}
-          </div>
-        )}
 
         {/* Grid 50/50 para Formulario e Imagen */}
-        <div className="mt-12 grid lg:grid-cols-2 gap-8 lg:gap-16 pb-20 max-w-[1150px] mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 pb-20 max-w-[1150px] mx-auto">
           <div className="w-full flex flex-col justify-center">
             <div>
               <h1 className="font-schabo text-[clamp(4rem,7vw,5.5rem)] uppercase leading-[0.8] text-center">
