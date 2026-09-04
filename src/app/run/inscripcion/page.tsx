@@ -173,7 +173,7 @@ export default async function InscripcionPage() {
 
 
         {/* Grid 50/50 para Formulario e Imagen */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 pb-20 max-w-[1150px] mx-auto">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 pb-20 max-w-[1150px] mx-auto" id="form">
           <div className="w-full flex flex-col justify-center">
             <div>
               <h1 className="font-schabo text-[clamp(4rem,7vw,5.5rem)] uppercase leading-[0.8] text-center">
@@ -183,8 +183,8 @@ export default async function InscripcionPage() {
                 POR FAVOR REGISTRE SUS DATOS
               </p>
             </div>
-            
-            <div className="mt-8">
+
+            <div className="mt-8" >
               <FormInscripcion opciones={datos.opciones} />
             </div>
           </div>
