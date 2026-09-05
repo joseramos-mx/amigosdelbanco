@@ -33,7 +33,7 @@ export const META: Punto = PUNTOS[PUNTOS.length - 1];
 export const PROVISIONAL = false;
 
 /** Kilómetros medidos sobre el trazo del GPX. */
-export const DISTANCIA_KM = 6.3;
+export const DISTANCIA_KM = 5;
 
 /**
  * Desnivel acumulado, en metros.
