@@ -44,6 +44,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  const body = await request.json().catch(() => ({}));
+  const ordenIds: string[] = Array.isArray(body.ordenIds) ? body.ordenIds : [];
+
+  if (ordenIds.length === 0) {
+    return NextResponse.json({ error: "Ninguna orden seleccionada" }, { status: 400 });
+  }
+
   const rows = await db()<
     {
       orden_id: string;
@@ -63,6 +70,7 @@ export async function POST(request: Request) {
      where (o.estado = 'pagada' or b.estado = 'pagado')
        and b.activado_en is null
        and o.correo_comprador is not null
+       and o.id = any(${ordenIds})
      group by o.id, o.folio, o.correo_comprador, o.nombre_comprador
   `;
 

@@ -13,6 +13,7 @@ type Pendiente = {
 export default function ReenvioLigasPanel() {
   const [estado, setEstado] = useState<"listo" | "cargando_lista" | "confirmando" | "enviando">("listo");
   const [pendientes, setPendientes] = useState<Pendiente[]>([]);
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +33,7 @@ export default function ReenvioLigasPanel() {
       }
       
       setPendientes(datos.pendientes);
+      setSeleccionados(new Set(datos.pendientes.map((p: Pendiente) => p.orden_id)));
       setEstado("confirmando");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Algo salió mal");
@@ -43,7 +45,11 @@ export default function ReenvioLigasPanel() {
     setEstado("enviando");
     setError(null);
     try {
-      const res = await fetch("/api/run/reenvio-ligas", { method: "POST" });
+      const res = await fetch("/api/run/reenvio-ligas", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ordenIds: Array.from(seleccionados) })
+      });
       const datos = await res.json();
       if (!res.ok) throw new Error(datos.error ?? "Ocurrió un error al enviar correos");
       
@@ -53,12 +59,31 @@ export default function ReenvioLigasPanel() {
     } finally {
       setEstado("listo");
       setPendientes([]);
+      setSeleccionados(new Set());
     }
   }
 
   function cancelar() {
     setEstado("listo");
     setPendientes([]);
+    setSeleccionados(new Set());
+  }
+
+  function toggleSeleccion(ordenId: string) {
+    setSeleccionados(prev => {
+      const next = new Set(prev);
+      if (next.has(ordenId)) next.delete(ordenId);
+      else next.add(ordenId);
+      return next;
+    });
+  }
+
+  function toggleTodos() {
+    if (seleccionados.size === pendientes.length) {
+      setSeleccionados(new Set());
+    } else {
+      setSeleccionados(new Set(pendientes.map(p => p.orden_id)));
+    }
   }
 
   return (
@@ -105,6 +130,14 @@ export default function ReenvioLigasPanel() {
               <table className="w-full text-left text-sm text-white/70">
                 <thead className="sticky top-0 border-b border-white/10 bg-run-card/95 font-geist-mono text-[10px] uppercase tracking-wider backdrop-blur">
                   <tr>
+                    <th className="px-4 py-3 w-10">
+                      <input 
+                        type="checkbox" 
+                        checked={pendientes.length > 0 && seleccionados.size === pendientes.length}
+                        onChange={toggleTodos}
+                        className="rounded border-white/20 bg-transparent"
+                      />
+                    </th>
                     <th className="px-4 py-3">Folio</th>
                     <th className="px-4 py-3">Comprador</th>
                     <th className="px-4 py-3">Correo</th>
@@ -113,7 +146,19 @@ export default function ReenvioLigasPanel() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {pendientes.map((p) => (
-                    <tr key={p.orden_id} className="hover:bg-white/5">
+                    <tr 
+                      key={p.orden_id} 
+                      className={`hover:bg-white/5 cursor-pointer ${seleccionados.has(p.orden_id) ? "bg-white/5" : ""}`}
+                      onClick={() => toggleSeleccion(p.orden_id)}
+                    >
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        <input 
+                          type="checkbox" 
+                          checked={seleccionados.has(p.orden_id)}
+                          onChange={() => toggleSeleccion(p.orden_id)}
+                          className="rounded border-white/20 bg-transparent"
+                        />
+                      </td>
                       <td className="px-4 py-3 font-mono text-white">{p.folio}</td>
                       <td className="px-4 py-3">{p.nombre_comprador || "Sin nombre"}</td>
                       <td className="px-4 py-3">{p.correo_comprador}</td>
@@ -138,10 +183,10 @@ export default function ReenvioLigasPanel() {
               <button
                 type="button"
                 onClick={confirmarEnvio}
-                disabled={estado === "enviando"}
+                disabled={estado === "enviando" || seleccionados.size === 0}
                 className="rounded-md bg-run-amber px-4 py-2 text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85 disabled:opacity-50"
               >
-                {estado === "enviando" ? "Enviando..." : "Enviar correos"}
+                {estado === "enviando" ? "Enviando..." : `Enviar correos (${seleccionados.size})`}
               </button>
             </div>
           </div>
