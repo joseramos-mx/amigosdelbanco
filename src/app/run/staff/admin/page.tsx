@@ -5,6 +5,7 @@ import { EVENTO_SLUG } from "@/lib/run/inscripciones";
 import { resumen } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "../AccionesPanel";
+import ReenvioLigasPanel from "./ReenvioLigasPanel";
 import Cortesias from "../Cortesias";
 import RegistroStaff from "../RegistroStaff";
 import BotonSalir from "../BotonSalir";
@@ -139,6 +140,7 @@ export default async function PanelPage() {
         </div>
 
         <RegistroStaff />
+        <ReenvioLigasPanel />
         <AccionesPanel />
         <Cortesias />
 

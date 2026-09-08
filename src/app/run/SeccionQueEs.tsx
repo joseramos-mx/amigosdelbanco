@@ -26,25 +26,26 @@ export default function SeccionQueEs() {
     <section id="quees" className="px-4 pb-16 sm:px-6 lg:px-12 lg:pb-24">
       <div className="mx-auto max-w-[1500px]">
         <Reveal>
-          <div className="grid gap-3 lg:h-[500px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.69fr)]">
+          <div className="grid gap-3 lg:min-h-[500px] lg:grid-cols-[minmax(0,1.69fr)_minmax(0,1fr)]">
             <div className="relative h-[320px] overflow-hidden rounded-[20px] bg-white sm:h-[420px] lg:h-full">
               <Image
                 src="/run/quees.webp"
                 alt="Corredora estirando el cuádriceps antes de salir"
                 fill
-                sizes="(max-width: 1024px) 100vw, 37vw"
+                sizes="(max-width: 1024px) 100vw, 63vw"
                 className="object-cover"
+                priority
               />
             </div>
 
-            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-10 sm:px-10 lg:px-16">
-              <h2 className="font-geist text-[clamp(2.1rem,4.6vw,4.4rem)] font-bold uppercase leading-none tracking-tight text-black/85">
+            <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-10 sm:px-10 lg:px-12">
+              <h2 className="font-geist text-[clamp(2.1rem,4vw,3.8rem)] font-bold uppercase leading-none tracking-tight text-black/85">
                 Social Run 5K
               </h2>
 
               <div className="mt-7 max-w-[62ch] space-y-4 text-[16px] leading-relaxed text-black/70">
                 <p>
-                  El Social Run es una carrera para todo el mundo. Cualquier
+                  El Social Run es un festival para todo el mundo. Cualquier
                   persona, del nivel que sea, puede participar: no hay marca que
                   alcanzar ni clasificación previa, y el recorrido es el mismo
                   para todos. Se puede correr, trotar o caminar completo lo
@@ -77,7 +78,7 @@ export default function SeccionQueEs() {
               <div className="mt-8 flex flex-wrap gap-8">
                 <div>
                   <p className="font-geist text-3xl font-bold text-black/85">
-                    9,000
+                    5,000
                   </p>
                   <p className="text-sm text-black/60">cupos</p>
                 </div>

@@ -24,6 +24,15 @@ const resend = apiKey ? new Resend(apiKey) : null;
  */
 const RESPONDER_A = process.env.RESEND_REPLY_TO;
 
+/**
+ * Buzones internos para alertas de fallos en flujos críticos (dinero, cupo).
+ * Acepta uno o varios correos separados por coma, p. ej.:
+ *   DEV_ALERT_EMAIL="dev1@dondesea.com,dev2@dondesea.com"
+ */
+const DEV_ALERT_EMAILS = (process.env.DEV_ALERT_EMAIL ?? "")
+  .split(",")
+  .map((c) => c.trim())
+  .filter(Boolean);
 
 type Resultado = { ok: boolean; error?: string };
 
@@ -250,4 +259,51 @@ export async function enviarBoleto(params: {
 
   if (error) return { ok: false, error: error.message };
   return { ok: true };
+}
+
+/**
+ * Alerta interna para un desarrollador cuando algo falla en un flujo
+ * crítico (dinero, cupo). No va al comprador — va a `DEV_ALERT_EMAIL`.
+ *
+ * Se traga sus propios errores a propósito: una alerta que falla no debe
+ * tumbar el webhook o el proceso que la disparó. Si no hay Resend o no hay
+ * buzón configurado, al menos queda en los logs del servidor.
+ */
+export async function enviarAlertaDev(params: {
+  asunto: string;
+  contexto: Record<string, unknown>;
+}): Promise<void> {
+  if (!resend || DEV_ALERT_EMAILS.length === 0) {
+    console.error("[alerta-dev]", params.asunto, params.contexto);
+    return;
+  }
+
+  const filas = Object.entries(params.contexto)
+    .map(
+      ([k, v]) => `
+        <tr>
+          <td style="padding:4px 12px 4px 0;color:#a3a3a3;vertical-align:top;white-space:nowrap;">${k}</td>
+          <td style="padding:4px 0;font-family:monospace;font-size:13px;word-break:break-all;">${String(v)}</td>
+        </tr>`,
+    )
+    .join("");
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM,
+      to: DEV_ALERT_EMAILS,
+      subject: `[Alerta] ${params.asunto}`,
+      html: `
+        <div style="font-family:system-ui,-apple-system,sans-serif;padding:16px;">
+          <h2 style="margin:0 0 12px;font-size:16px;">${params.asunto}</h2>
+          <table style="border-collapse:collapse;">${filas}</table>
+        </div>
+      `,
+    });
+    if (error) {
+      console.error("[alerta-dev] Resend rechazó la alerta:", error.message, params);
+    }
+  } catch (err) {
+    console.error("[alerta-dev] no se pudo mandar la alerta:", err, params);
+  }
 }

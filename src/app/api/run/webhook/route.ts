@@ -4,7 +4,7 @@ import { hasStripeKey, stripe } from "@/lib/stripe";
 import { db, enTransaccion } from "@/lib/db";
 import { aplicarTransicionOrden, type EstadoOrden } from "@/lib/run/estados";
 import { datosParaActivacion, extenderReserva } from "@/lib/run/inscripciones";
-import { enviarLigasActivacion } from "@/lib/run/correos";
+import { enviarLigasActivacion, enviarAlertaDev } from "@/lib/run/correos";
 import { getRunWebhookSecret, metodoDesdeStripe } from "@/lib/run/stripe";
 
 export const runtime = "nodejs";
@@ -116,7 +116,7 @@ async function registrarPago(
   d: Decision,
   referencia: { numero: string | null; vence: Date | null },
 ): Promise<{ duplicado: boolean }> {
-  const filas = await db()<{ id: string }[]>`
+  const filas = await db() <{ id: string }[]>`
     insert into public.pago (
       evento_id, orden_id, proveedor, metodo, referencia_externa,
       idempotency_key, monto_centavos, estado, vencimiento_ref,
@@ -215,6 +215,17 @@ export async function POST(request: Request) {
         console.warn(
           `[run/webhook] transición no permitida ${resultado.actual} → ${decision.destinoOrden} (orden ${decision.ordenId})`,
         );
+        if (decision.destinoOrden === "pagada") {
+          await enviarAlertaDev({
+            asunto: "Pago confirmado contra una orden bloqueada",
+            contexto: {
+              ordenId: decision.ordenId,
+              estadoActual: resultado.actual ?? "desconocido",
+              eventoStripeId: evento.id,
+              eventoStripeTipo: evento.type,
+            },
+          });
+        }
       }
     }
 
@@ -225,13 +236,49 @@ export async function POST(request: Request) {
     }
 
     // Correo con las ligas de activación, solo cuando el pago se acaba de
-    // confirmar. Va después de responder en lo que importa —el estado ya
-    // quedó guardado— y sin await bloqueante: si Resend falla, el pago sigue
-    // registrado y la liga se puede reenviar a mano.
+    // confirmar. Se hace con await para que el entorno serverless no mate 
+    // el proceso antes de que salga el correo. Si Resend falla, el catch
+    // evita que el webhook truene (y el pago sigue registrado).
     if (decision.destinoOrden === "pagada" && aplicoElPago) {
-      datosParaActivacion(decision.ordenId)
-        .then((datos) => (datos ? enviarLigasActivacion(datos) : null))
-        .catch((err) => console.error("[run/webhook] no se pudo enviar la liga:", err));
+      try {
+        const datos = await datosParaActivacion(decision.ordenId);
+        if (datos) {
+          const resultadoCorreo = await enviarLigasActivacion(datos);
+          if (!resultadoCorreo.ok) {
+            console.error(
+              `[run/webhook] Resend no pudo enviar la liga (orden ${decision.ordenId}):`,
+              resultadoCorreo.error,
+            );
+            await enviarAlertaDev({
+              asunto: "No se pudo enviar la liga de activación",
+              contexto: {
+                ordenId: decision.ordenId,
+                eventoStripeId: evento.id,
+                razon: resultadoCorreo.error ?? "desconocida",
+              },
+            });
+          }
+        } else {
+          // Orden pagada pero sin boletos activables — no debería pasar.
+          console.error(
+            `[run/webhook] orden pagada sin datos de activación (orden ${decision.ordenId})`,
+          );
+          await enviarAlertaDev({
+            asunto: "Orden pagada sin boletos activables",
+            contexto: { ordenId: decision.ordenId, eventoStripeId: evento.id },
+          });
+        }
+      } catch (err) {
+        console.error("[run/webhook] no se pudo enviar la liga:", err);
+        await enviarAlertaDev({
+          asunto: "Excepción al enviar la liga de activación",
+          contexto: {
+            ordenId: decision.ordenId,
+            eventoStripeId: evento.id,
+            error: err instanceof Error ? err.message : String(err),
+          },
+        });
+      }
     }
 
     // Fase 3 engancha aquí la asignación de dorsales.
@@ -241,6 +288,14 @@ export async function POST(request: Request) {
     // 500 a propósito: Stripe reintenta y la clave de idempotencia hace que
     // el reintento sea seguro.
     console.error("[run/webhook]", err);
+    await enviarAlertaDev({
+      asunto: "Webhook de pagos de la carrera falló (Stripe reintentará)",
+      contexto: {
+        eventoStripeId: evento.id,
+        eventoStripeTipo: evento.type,
+        error: err instanceof Error ? err.message : String(err),
+      },
+    });
     return NextResponse.json({ error: "Error al procesar" }, { status: 500 });
   }
 }
