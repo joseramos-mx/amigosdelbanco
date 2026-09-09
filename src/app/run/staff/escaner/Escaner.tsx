@@ -120,8 +120,8 @@ const TITULOS: Record<ModoCheckin, Record<Veredicto, string>> = {
 // haya entregado ya; en acceso se verifica que la persona no haya ingresado
 // ya con ese mismo boleto.
 const DETALLE_REPETIDO: Record<ModoCheckin, string> = {
-  kit: "Verifica con la persona antes de entregar de nuevo",
-  acceso: "Verifica con la persona antes de dejarla pasar de nuevo",
+  kit: "Verifica con la persona antes de entregar",
+  acceso: "Verifica con la persona antes de dejarla pasar",
 };
 
 export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[] }) {

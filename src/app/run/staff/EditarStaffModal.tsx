@@ -13,6 +13,8 @@ export type StaffItem = {
     correo: string;
     rol: Rol;
     rangos: (RangoFolio & { id: string })[];
+    activo?: boolean;
+    deletedAt?: string | null;
 };
 
 const campo =

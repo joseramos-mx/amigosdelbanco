@@ -23,6 +23,14 @@ const campo =
     "placeholder:text-white/30 focus:border-run-amber focus:outline-none";
 const etiqueta = "font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40";
 
+const accionBase =
+    "cursor-pointer transition-colors disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-current";
+const claseHistorial = `text-emerald-400 hover:text-emerald-300 ${accionBase}`;
+const claseEditar = `text-run-amber hover:text-amber-300 ${accionBase}`;
+const claseEliminar = `text-red-300 hover:text-red-200 ${accionBase}`;
+const badgeInactivo =
+    "rounded-full border border-red-400/30 bg-red-400/10 px-2 py-0.5 font-geist-mono text-[9px] uppercase tracking-wide text-red-300";
+
 function IconoEditar() {
     return (
         <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -215,7 +223,7 @@ export default function RegistroStaff() {
                                         setPagina(1);
                                     }}
                                     style={{ colorScheme: "dark" }}
-                                    className={`${campo} sm:max-w-[160px]`}
+                                    className={`${campo} sm:max-w-40`}
                                 >
                                     <option className="bg-run-card text-white" value="todos">Todos los roles</option>
                                     <option className="bg-run-card text-white" value="escaner">Escáner</option>
@@ -231,103 +239,40 @@ export default function RegistroStaff() {
                                     {/* Móvil: tarjetas apiladas */}
                                     <ul className="divide-y divide-white/5 sm:hidden">
                                         {listaPaginada.map((s) => (
-                                    <li key={s.id} className="px-5 py-4">
-                                        <div className="flex items-start justify-between gap-3">
-                                            <div className="min-w-0">
-                                                <p className="truncate text-sm text-white">{s.nombre}</p>
-                                                <p className="mt-0.5 truncate text-xs text-white/50">{s.correo}</p>
-                                            </div>
-                                            <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
-                                                {ETIQUETA_ROL[s.rol]}
-                                            </span>
-                                        </div>
-
-                                        <div className="mt-3 flex items-end justify-between gap-4">
-                                            {s.rol === "vendedor" && s.rangos.length > 0 ? (
-                                                <ul className="space-y-1 font-geist-mono text-[11px] text-white/50">
-                                                    {s.rangos.map((r) => (
-                                                        <li key={`${r.folioDesde}-${r.folioHasta}`}>
-                                                            {r.folioDesde} a {r.folioHasta}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <div />
-                                            )}
-
-                                            <div className="flex items-center gap-4">
-                                                {s.rol === "vendedor" && (
-                                                    <Link
-                                                        href={`/run/staff/admin/vendedores/${s.id}`}
-                                                        className="text-white/60 transition-colors hover:text-run-amber"
-                                                        title="Historial de ventas"
-                                                    >
-                                                        <IconoHistorial />
-                                                    </Link>
-                                                )}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setEditando(s)}
-                                                    className="text-run-amber transition-opacity hover:opacity-80"
-                                                    title="Editar"
-                                                >
-                                                    <IconoEditar />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setPorEliminar(s)}
-                                                    className="text-red-300 transition-opacity hover:opacity-80"
-                                                    title="Eliminar"
-                                                >
-                                                    <IconoEliminar />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            {/* Escritorio: tabla */}
-                            <div className="hidden overflow-x-auto sm:block">
-                                <table className="w-full min-w-160 text-left text-sm">
-                                    <thead>
-                                        <tr className="border-b border-white/10">
-                                            <th className={`${etiqueta} px-5 py-3 font-normal`}>Nombre</th>
-                                            <th className={`${etiqueta} px-5 py-3 font-normal`}>Correo</th>
-                                            <th className={`${etiqueta} px-5 py-3 font-normal`}>Rol</th>
-                                            <th className={`${etiqueta} px-5 py-3 font-normal`}>Rangos de boletos</th>
-                                            <th className={`${etiqueta} px-5 py-3 font-normal`} style={{ textAlign: "right" }}>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {listaPaginada.map((s) => (
-                                            <tr key={s.id} className="border-b border-white/5 last:border-0">
-                                                <td className="px-5 py-3 text-white">{s.nombre}</td>
-                                                <td className="px-5 py-3 text-white/60">{s.correo}</td>
-                                                <td className="px-5 py-3">
-                                                    <span className="rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
+                                            <li key={s.id} className="px-5 py-4">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="truncate text-sm text-white">{s.nombre}</p>
+                                                            {s.activo === false && (
+                                                                <span className={badgeInactivo}>Inactivo</span>
+                                                            )}
+                                                        </div>
+                                                        <p className="mt-0.5 truncate text-xs text-white/50">{s.correo}</p>
+                                                    </div>
+                                                    <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
                                                         {ETIQUETA_ROL[s.rol]}
                                                     </span>
-                                                </td>
-                                                <td className="px-5 py-3 font-geist-mono text-xs text-white/50">
+                                                </div>
+
+                                                <div className="mt-3 flex items-end justify-between gap-4">
                                                     {s.rol === "vendedor" && s.rangos.length > 0 ? (
-                                                        <ul className="space-y-1">
+                                                        <ul className="space-y-1 font-geist-mono text-[11px] text-white/50">
                                                             {s.rangos.map((r) => (
                                                                 <li key={`${r.folioDesde}-${r.folioHasta}`}>
-                                                                    {r.folioDesde} a {r.folioHasta}
+                                                                    {r.folioHasta ? `${r.folioDesde} a ${r.folioHasta}` : r.folioDesde}
                                                                 </li>
                                                             ))}
                                                         </ul>
                                                     ) : (
-                                                        "—"
+                                                        <div />
                                                     )}
-                                                </td>
-                                                <td className="px-5 py-3" style={{ textAlign: "right" }}>
-                                                    <div className="flex items-center justify-end gap-4">
+
+                                                    <div className="flex items-center gap-4">
                                                         {s.rol === "vendedor" && (
                                                             <Link
                                                                 href={`/run/staff/admin/vendedores/${s.id}`}
-                                                                className="text-white/60 transition-colors hover:text-run-amber"
+                                                                className={claseHistorial}
                                                                 title="Historial de ventas"
                                                             >
                                                                 <IconoHistorial />
@@ -336,53 +281,132 @@ export default function RegistroStaff() {
                                                         <button
                                                             type="button"
                                                             onClick={() => setEditando(s)}
-                                                            className="text-run-amber transition-opacity hover:opacity-80"
-                                                            title="Editar"
+                                                            disabled={s.activo === false}
+                                                            className={claseEditar}
+                                                            title={s.activo === false ? "Usuario inactivo" : "Editar"}
                                                         >
                                                             <IconoEditar />
                                                         </button>
                                                         <button
                                                             type="button"
                                                             onClick={() => setPorEliminar(s)}
-                                                            className="text-red-300 transition-opacity hover:opacity-80"
-                                                            title="Eliminar"
+                                                            disabled={s.activo === false}
+                                                            className={claseEliminar}
+                                                            title={s.activo === false ? "Usuario inactivo" : "Eliminar"}
                                                         >
                                                             <IconoEliminar />
                                                         </button>
                                                     </div>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </li>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </ul>
 
-                            {/* Controles de paginación */}
-                            {totalPaginas > 1 && (
-                                <div className="flex items-center justify-between border-t border-white/10 px-5 py-4">
-                                    <button
-                                        onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                                        disabled={pagina === 1}
-                                        className="cursor-pointer font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white disabled:cursor-default disabled:opacity-50 disabled:hover:text-white/60"
-                                    >
-                                        Anterior
-                                    </button>
-                                    <span className="font-geist-mono text-xs text-white/40">
-                                        Página {pagina} de {totalPaginas}
-                                    </span>
-                                    <button
-                                        onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                                        disabled={pagina === totalPaginas}
-                                        className="cursor-pointer font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white disabled:cursor-default disabled:opacity-50 disabled:hover:text-white/60"
-                                    >
-                                        Siguiente
-                                    </button>
-                                </div>
+                                    {/* Escritorio: tabla */}
+                                    <div className="hidden overflow-x-auto sm:block">
+                                        <table className="w-full min-w-160 text-left text-sm">
+                                            <thead>
+                                                <tr className="border-b border-white/10">
+                                                    <th className={`${etiqueta} px-5 py-3 font-normal`}>Nombre</th>
+                                                    <th className={`${etiqueta} px-5 py-3 font-normal`}>Correo</th>
+                                                    <th className={`${etiqueta} px-5 py-3 font-normal`}>Rol</th>
+                                                    <th className={`${etiqueta} px-5 py-3 font-normal`}>Rangos de boletos</th>
+                                                    <th className={`${etiqueta} px-5 py-3 font-normal`} style={{ textAlign: "right" }}>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {listaPaginada.map((s) => (
+                                                    <tr key={s.id} className="border-b border-white/5 last:border-0">
+                                                        <td className="px-5 py-3 text-white">
+                                                            <div className="flex items-center gap-2">
+                                                                <span>{s.nombre}</span>
+                                                                {s.activo === false && (
+                                                                    <span className={badgeInactivo}>Inactivo</span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-5 py-3 text-white/60">{s.correo}</td>
+                                                        <td className="px-5 py-3">
+                                                            <span className="rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
+                                                                {ETIQUETA_ROL[s.rol]}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-5 py-3 font-geist-mono text-xs text-white/50">
+                                                            {s.rol === "vendedor" && s.rangos.length > 0 ? (
+                                                                <ul className="space-y-1">
+                                                                    {s.rangos.map((r) => (
+                                                                        <li key={`${r.folioDesde}-${r.folioHasta}`}>
+                                                                            {r.folioHasta ? `${r.folioDesde} a ${r.folioHasta}` : r.folioDesde}
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            ) : (
+                                                                "—"
+                                                            )}
+                                                        </td>
+                                                        <td className="px-5 py-3" style={{ textAlign: "right" }}>
+                                                            <div className="flex items-center justify-end gap-4">
+                                                                {s.rol === "vendedor" && (
+                                                                    <Link
+                                                                        href={`/run/staff/admin/vendedores/${s.id}`}
+                                                                        className={claseHistorial}
+                                                                        title="Historial de ventas"
+                                                                    >
+                                                                        <IconoHistorial />
+                                                                    </Link>
+                                                                )}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setEditando(s)}
+                                                                    disabled={s.activo === false}
+                                                                    className={claseEditar}
+                                                                    title={s.activo === false ? "Usuario inactivo" : "Editar"}
+                                                                >
+                                                                    <IconoEditar />
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setPorEliminar(s)}
+                                                                    disabled={s.activo === false}
+                                                                    className={claseEliminar}
+                                                                    title={s.activo === false ? "Usuario inactivo" : "Eliminar"}
+                                                                >
+                                                                    <IconoEliminar />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Controles de paginación */}
+                                    {totalPaginas > 1 && (
+                                        <div className="flex items-center justify-between border-t border-white/10 px-5 py-4">
+                                            <button
+                                                onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                                                disabled={pagina === 1}
+                                                className="cursor-pointer font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white disabled:cursor-default disabled:opacity-50 disabled:hover:text-white/60"
+                                            >
+                                                Anterior
+                                            </button>
+                                            <span className="font-geist-mono text-xs text-white/40">
+                                                Página {pagina} de {totalPaginas}
+                                            </span>
+                                            <button
+                                                onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                                                disabled={pagina === totalPaginas}
+                                                className="cursor-pointer font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white disabled:cursor-default disabled:opacity-50 disabled:hover:text-white/60"
+                                            >
+                                                Siguiente
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}
-                    </>
-                )}
                 </div>
             </section>
 
@@ -470,7 +494,7 @@ export default function RegistroStaff() {
                 mensaje={
                     datosPendientes
                         ? `¿Estás seguro de que deseas crear este usuario?\n\nNombre: ${datosPendientes.nombre}\nCorreo: ${datosPendientes.correo}\nRol: ${ETIQUETA_ROL[datosPendientes.rol]}${datosPendientes.rangos.length > 0
-                            ? `\nRangos: ${datosPendientes.rangos.map((r) => `${r.folioDesde}–${r.folioHasta}`).join(", ")}`
+                            ? `\nRangos: ${datosPendientes.rangos.map((r) => r.folioHasta ? `${r.folioDesde}–${r.folioHasta}` : r.folioDesde).join(", ")}`
                             : ""
                         }`
                         : ""

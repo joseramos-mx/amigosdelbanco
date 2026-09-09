@@ -198,7 +198,7 @@ export async function GET() {
 
     const { data: staff, error: errorStaff } = await admin
         .from("usuario_rol")
-        .select("id, nombre, correo, rol, creado_en")
+        .select("id, nombre, correo, rol, creado_en, activo, deleted_at")
         .order("creado_en", { ascending: false });
 
     if (errorStaff) {
@@ -221,6 +221,8 @@ export async function GET() {
         nombre: s.nombre,
         correo: s.correo,
         rol: s.rol as Rol,
+        activo: s.activo,
+        deletedAt: s.deleted_at,
         rangos: (rangos ?? [])
             .filter((r) => r.vendedor_id === s.id)
             .map((r) => ({ id: r.id, folioDesde: r.folio_desde, folioHasta: r.folio_hasta })),
