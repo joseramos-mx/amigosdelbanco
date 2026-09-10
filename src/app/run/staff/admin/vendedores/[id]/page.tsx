@@ -34,8 +34,8 @@ export default async function HistorialVendedorPage({
     if (pase?.rol !== "admin") return redirect("/run/staff");
 
     const sql = db();
-    const [vendedor] = await sql<{ nombre: string; correo: string; rol: string }[]>`
-        select nombre, correo, rol from public.usuario_rol where id = ${id}
+    const [vendedor] = await sql<{ nombre: string; correo: string; rol: string; activo: boolean }[]>`
+        select nombre, correo, rol, activo from public.usuario_rol where id = ${id}
     `;
 
     if (!vendedor) {
@@ -94,7 +94,14 @@ export default async function HistorialVendedorPage({
                     <div className="px-5 py-4 sm:hidden">
                         <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                                <p className="truncate text-sm text-white">{vendedor.nombre}</p>
+                                <div className="flex items-center gap-2">
+                                    <p className="truncate text-sm text-white">{vendedor.nombre}</p>
+                                    {vendedor.activo === false && (
+                                        <span className="rounded-full border border-red-400/30 bg-red-400/10 px-2 py-0.5 font-geist-mono text-[9px] uppercase tracking-wide text-red-300">
+                                            Inactivo
+                                        </span>
+                                    )}
+                                </div>
                                 <p className="mt-0.5 truncate text-xs text-white/50">{vendedor.correo}</p>
                             </div>
                             <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
@@ -106,7 +113,9 @@ export default async function HistorialVendedorPage({
                                 <ul className="space-y-1 font-geist-mono text-[11px] text-white/50">
                                     {rangos.map((r) => (
                                         <li key={`${r.folio_desde}-${r.folio_hasta}`}>
-                                            {r.folio_desde} a {r.folio_hasta}
+                                            {r.folio_hasta && r.folio_hasta !== r.folio_desde 
+                                                ? `${r.folio_desde} a ${r.folio_hasta}` 
+                                                : r.folio_desde}
                                         </li>
                                     ))}
                                 </ul>
@@ -129,7 +138,16 @@ export default async function HistorialVendedorPage({
                             </thead>
                             <tbody>
                                 <tr className="border-b border-white/5 last:border-0">
-                                    <td className="px-5 py-4 text-white">{vendedor.nombre}</td>
+                                    <td className="px-5 py-4 text-white">
+                                        <div className="flex items-center gap-2">
+                                            <span>{vendedor.nombre}</span>
+                                            {vendedor.activo === false && (
+                                                <span className="rounded-full border border-red-400/30 bg-red-400/10 px-2 py-0.5 font-geist-mono text-[9px] uppercase tracking-wide text-red-300">
+                                                    Inactivo
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-5 py-4 text-white/60">{vendedor.correo}</td>
                                     <td className="px-5 py-4">
                                         <span className="rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
@@ -141,7 +159,9 @@ export default async function HistorialVendedorPage({
                                             <ul className="space-y-1">
                                                 {rangos.map((r) => (
                                                     <li key={`${r.folio_desde}-${r.folio_hasta}`}>
-                                                        {r.folio_desde} a {r.folio_hasta}
+                                                        {r.folio_hasta && r.folio_hasta !== r.folio_desde 
+                                                            ? `${r.folio_desde} a ${r.folio_hasta}` 
+                                                            : r.folio_desde}
                                                     </li>
                                                 ))}
                                             </ul>
