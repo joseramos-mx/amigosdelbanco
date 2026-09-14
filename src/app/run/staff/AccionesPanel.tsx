@@ -37,7 +37,7 @@ export default function AccionesPanel() {
   }
 
   return (
-    <section className="mt-10">
+    <section>
       <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
         Acciones
       </h2>

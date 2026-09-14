@@ -196,7 +196,7 @@ export default function RegistroStaff() {
 
     return (
         <>
-            <section className="mt-10">
+            <section>
                 <h2 className={etiqueta}>Staff</h2>
                 <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-run-card">
                     {cargandoLista ? (

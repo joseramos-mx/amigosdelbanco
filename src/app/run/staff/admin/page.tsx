@@ -9,6 +9,8 @@ import ReenvioLigasPanel from "./ReenvioLigasPanel";
 import Cortesias from "../Cortesias";
 import RegistroStaff from "../RegistroStaff";
 import BotonSalir from "../BotonSalir";
+import TabsAdmin from "./TabsAdmin";
+import ListaVentas from "./ListaVentas";
 
 export const dynamic = "force-dynamic";
 
@@ -91,83 +93,97 @@ export default async function PanelPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Dato
-            etiqueta="Total Vendidos"
-            valor={datos.vendidos}
-            nota={`${datos.disponibles} disponibles de ${datos.cupoTotal}`}
-          />
-          <Dato
-            etiqueta="Ventas Digitales"
-            valor={datos.vendidosDigitales}
-            nota="Boletos pagados o apartados en línea"
-          />
-          <Dato
-            etiqueta="Ventas Físicas"
-            valor={datos.vendidosFisicos}
-            nota="Talones de papel para vendedores"
-          />
-          <Dato
-            etiqueta="Por Cortesía"
-            valor={datos.cortesias}
-            nota="Boletos patrocinados (sin costo)"
-          />
-          <Dato
-            etiqueta="Recaudado"
-            valor={formatMxn(datos.recaudadoCentavos)}
-            nota={`incluye ${formatMxn(datos.donativosCentavos)} en donativos`}
-          />
-          <Dato
-            etiqueta="Sin llenar datos"
-            valor={datos.sinActivar}
-            nota="pagaron y falta su activación"
-            alerta={datos.sinActivar > 0}
-          />
-          <Dato
-            etiqueta="Kits entregados"
-            valor={datos.entregados}
-            nota={`de ${datos.activados} activados`}
-          />
-        </div>
+        <TabsAdmin 
+          ventas={
+            <>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Dato
+                  etiqueta="Total Vendidos"
+                  valor={datos.vendidos}
+                  nota={`${datos.disponibles} disponibles de ${datos.cupoTotal}`}
+                />
+                <Dato
+                  etiqueta="Ventas Digitales"
+                  valor={datos.vendidosDigitales}
+                  nota="Boletos pagados o apartados en línea"
+                />
+                <Dato
+                  etiqueta="Ventas Físicas"
+                  valor={datos.vendidosFisicos}
+                  nota="Talones de papel para vendedores"
+                />
+                <Dato
+                  etiqueta="Por Cortesía"
+                  valor={datos.cortesias}
+                  nota="Boletos patrocinados (sin costo)"
+                />
+                <Dato
+                  etiqueta="Recaudado"
+                  valor={formatMxn(datos.recaudadoCentavos)}
+                  nota={`incluye ${formatMxn(datos.donativosCentavos)} en donativos`}
+                />
+                <Dato
+                  etiqueta="Sin llenar datos"
+                  valor={datos.sinActivar}
+                  nota="pagaron y falta su activación"
+                  alerta={datos.sinActivar > 0}
+                />
+                <Dato
+                  etiqueta="Kits entregados"
+                  valor={datos.entregados}
+                  nota={`de ${datos.activados} activados`}
+                />
+              </div>
 
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Dato
-            etiqueta="Pendientes de pago"
-            valor={datos.pendientesDePago}
-            nota="referencias vivas, apartando cupo"
-          />
-          <Dato etiqueta="Boletos pagados" valor={datos.pagados} />
-        </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Dato
+                  etiqueta="Pendientes de pago"
+                  valor={datos.pendientesDePago}
+                  nota="referencias vivas, apartando cupo"
+                />
+                <Dato etiqueta="Boletos pagados" valor={datos.pagados} />
+              </div>
 
-        <RegistroStaff />
-        <ReenvioLigasPanel />
-        <AccionesPanel />
-        <Cortesias />
-
-        {isAdmin && (
-          <section className="mt-10">
-            <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-              Exportaciones
-            </h2>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {EXPORTS.map((e) => (
-                <a
-                  key={e.tipo}
-                  href={`/api/run/export?tipo=${e.tipo}`}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-run-card px-4 py-3 transition-colors hover:border-run-amber/50"
-                >
-                  <span>
-                    <span className="block text-sm text-white">{e.nombre}</span>
-                    <span className="block text-xs text-white/40">{e.para}</span>
-                  </span>
-                  <span className="font-geist-mono text-[10px] uppercase tracking-[0.16em] text-run-amber">
-                    CSV
-                  </span>
-                </a>
-              ))}
+              <ListaVentas />
+            </>
+          }
+          staff={<RegistroStaff />}
+          acciones={
+            <div className="space-y-6">
+              <ReenvioLigasPanel />
+              <AccionesPanel />
             </div>
-          </section>
-        )}
+          }
+          cortesias={<Cortesias />}
+          exportaciones={
+            isAdmin ? (
+              <section>
+                <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+                  Exportaciones
+                </h2>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {EXPORTS.map((e) => (
+                    <a
+                      key={e.tipo}
+                      href={`/api/run/export?tipo=${e.tipo}`}
+                      className="flex items-center justify-between rounded-xl border border-white/10 bg-run-card px-4 py-3 transition-colors hover:border-run-amber/50"
+                    >
+                      <span>
+                        <span className="block text-sm text-white">{e.nombre}</span>
+                        <span className="block text-xs text-white/40">{e.para}</span>
+                      </span>
+                      <span className="font-geist-mono text-[10px] uppercase tracking-[0.16em] text-run-amber">
+                        CSV
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <p className="text-white/60">No tienes permisos para exportar.</p>
+            )
+          }
+        />
       </div>
     </main>
   );

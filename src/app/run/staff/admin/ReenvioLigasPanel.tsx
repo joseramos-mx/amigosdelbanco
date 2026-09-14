@@ -87,7 +87,7 @@ export default function ReenvioLigasPanel() {
   }
 
   return (
-    <section className="mt-10">
+    <section>
       <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
         Correos de Activación
       </h2>

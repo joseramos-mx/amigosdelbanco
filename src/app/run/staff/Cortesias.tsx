@@ -48,7 +48,7 @@ export default function Cortesias() {
   }
 
   return (
-    <section className="mt-10">
+    <section>
       <h2 className={etiqueta}>Cortesías</h2>
       <div className="mt-4 rounded-xl border border-white/10 bg-run-card px-5 py-5">
         <p className="text-xs leading-relaxed text-white/40">
