@@ -11,6 +11,7 @@ import { validarSinTraslapesInternos, type RangoFolio } from "@/lib/run/folios";
 type Rol = "admin" | "escaner" | "vendedor";
 
 type Resultado = {
+    nombre?: string;
     correo: string;
     rol: Rol;
     contrasenaTemporal: string;
@@ -128,11 +129,17 @@ export default function RegistroStaff() {
 
         const datos = Object.fromEntries(new FormData(e.currentTarget).entries()) as {
             nombre: string;
-            correo: string;
+            correo?: string;
             rol: Rol;
         };
 
         if (esVendedor) {
+            const nombreLimpio = datos.nombre
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/gi, "")
+                .toLowerCase();
+            datos.correo = `${nombreLimpio || "vendedor"}@vendedor`;
             if (rangos.length === 0) {
                 setError("Agrega al menos un rango de folios para este punto de venta");
                 return;
@@ -144,7 +151,7 @@ export default function RegistroStaff() {
             }
         }
 
-        setDatosPendientes({ ...datos, rangos: esVendedor ? rangos : [] });
+        setDatosPendientes({ ...datos, correo: datos.correo!, rangos: esVendedor ? rangos : [] });
     }
 
     async function confirmarRegistro() {
@@ -436,17 +443,19 @@ export default function RegistroStaff() {
                                     placeholder={esVendedor ? "Farmacia Plaza Norte" : "Ana López"}
                                 />
                             </div>
-                            <div>
-                                <label className={etiqueta} htmlFor="correo">Correo</label>
-                                <input
-                                    id="correo"
-                                    name="correo"
-                                    type="email"
-                                    required
-                                    className={`${campo} mt-2`}
-                                    placeholder="ejemplo@gmail.com"
-                                />
-                            </div>
+                            {!esVendedor && (
+                                <div>
+                                    <label className={etiqueta} htmlFor="correo">Correo</label>
+                                    <input
+                                        id="correo"
+                                        name="correo"
+                                        type="email"
+                                        required
+                                        className={`${campo} mt-2`}
+                                        placeholder="ejemplo@gmail.com"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -511,10 +520,12 @@ export default function RegistroStaff() {
                 titulo="Usuario creado correctamente"
                 mensaje={
                     resultadoExito
-                        ? `${resultadoExito.correo} ya puede entrar como ${ETIQUETA_ROL[resultadoExito.rol]}.\n\nContraseña temporal: ${resultadoExito.contrasenaTemporal}\n${resultadoExito.correoEnviado
-                            ? "Ya le llegó por correo junto con la liga de inicio de sesión."
-                            : "El correo no se pudo enviar; compártesela tú por un canal seguro."
-                        }`
+                        ? resultadoExito.rol === "vendedor"
+                            ? `El punto de venta "${resultadoExito.nombre || resultadoExito.correo}" ha sido registrado correctamente y sus folios ya están listos para ser capturados.`
+                            : `${resultadoExito.correo} ya puede entrar como ${ETIQUETA_ROL[resultadoExito.rol]}.\n\nContraseña temporal: ${resultadoExito.contrasenaTemporal}\n${resultadoExito.correoEnviado
+                                ? "Ya le llegó por correo junto con la liga de inicio de sesión."
+                                : "El correo no se pudo enviar; compártesela tú por un canal seguro."
+                            }`
                         : ""
                 }
                 onAceptar={terminarRegistro}

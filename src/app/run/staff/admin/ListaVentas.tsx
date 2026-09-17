@@ -66,7 +66,7 @@ export default async function ListaVentas() {
   return (
     <section className="mt-10">
       <h2 className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-        Listado de usuarios pagados
+        Información de boletos comprados
       </h2>
       <TablaVentasClient boletos={boletosSerializables} />
     </section>

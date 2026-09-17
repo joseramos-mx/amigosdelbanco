@@ -163,18 +163,19 @@ export async function POST(req: Request) {
             }
         }
 
-        // El usuario ya quedó creado y funcional aunque el correo falle, así
-        // que esto no forma parte del rollback: si Resend no responde, el
-        // registro sigue siendo válido y solo avisamos que hay que repartir
-        // la contraseña a mano.
-        const { ok: correoEnviado } = await enviarAccesoStaff({
-            correo,
-            nombre,
-            rol,
-            contrasenaTemporal,
-        });
+        let correoEnviado = false;
+        if (rol !== "vendedor") {
+            const resCorreo = await enviarAccesoStaff({
+                correo,
+                nombre,
+                rol,
+                contrasenaTemporal,
+            });
+            correoEnviado = resCorreo.ok;
+        }
 
         return NextResponse.json({
+            nombre,
             correo,
             rol,
             contrasenaTemporal,
