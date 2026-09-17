@@ -11,6 +11,7 @@ import RegistroStaff from "../RegistroStaff";
 import BotonSalir from "../BotonSalir";
 import TabsAdmin from "./TabsAdmin";
 import ListaVentas from "./ListaVentas";
+import CapturaFisicosAdmin from "../CapturaFisicosAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -93,7 +94,7 @@ export default async function PanelPage() {
           </div>
         </div>
 
-        <TabsAdmin 
+        <TabsAdmin
           ventas={
             <>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -150,6 +151,7 @@ export default async function PanelPage() {
           staff={<RegistroStaff />}
           acciones={
             <div className="space-y-6">
+              <CapturaFisicosAdmin />
               <ReenvioLigasPanel />
               <AccionesPanel />
             </div>
