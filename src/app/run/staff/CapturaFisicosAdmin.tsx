@@ -136,7 +136,9 @@ export default function CapturaFisicosAdmin() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label className={etiqueta} htmlFor="folioFisico">Folio Físico</label>
+                            <label className={etiqueta} htmlFor="folioFisico">
+                                Folio Físico
+                            </label>
                             <div className="mt-2 flex rounded-lg border border-white/15 bg-white/5 focus-within:border-run-amber transition-colors">
                                 <span className="inline-flex items-center pl-4 pr-1 font-geist-mono text-sm text-white/50">
                                     GG-
@@ -146,16 +148,17 @@ export default function CapturaFisicosAdmin() {
                                     type="text"
                                     required
                                     inputMode="numeric"
-                                    pattern="\d+"
+                                    pattern="\d{5}"
                                     maxLength={5}
+                                    minLength={5}
                                     value={folio}
                                     onChange={(e) => setFolio(e.target.value.replace(/\D/g, ""))}
                                     className="w-full bg-transparent py-2.5 pr-4 text-sm font-geist-mono text-white placeholder:text-white/30 focus:outline-none"
                                     placeholder="00001"
                                 />
                             </div>
-                            <p className="mt-1 font-geist-mono text-[9px] uppercase tracking-widest text-white/30">
-                                Solo ingresa los números.
+                            <p className="mt-1 font-geist-mono text-[9px] uppercase tracking-widest text-white/40">
+                                Ingresa solo los 5 dígitos (ej. 00012)
                             </p>
 
                             {estadoVendedor === "buscando" && (
