@@ -64,7 +64,13 @@ export async function capturarFisico(
         const [vendedor] = await tx<{ nombre: string }[]>`
       select nombre from public.usuario_rol where id = ${orden.vendedor_id}
     `;
-        const nombreVendedor = vendedor?.nombre || 'Vendedor Desconocido';
+
+        // Si el id de vendedor no corresponde a nadie real (p. ej. se borró
+        // su cuenta), tratamos el folio igual que si no tuviera vendedor:
+        // no se debe poder capturar.
+        if (!vendedor) throw new FolioSinVendedor();
+
+        const nombreVendedor = vendedor.nombre;
 
         // Actualizar la orden con los datos del comprador y marcarla pagada.
         // Nota: NO se toca vendedor_id — debe conservar al vendedor original
