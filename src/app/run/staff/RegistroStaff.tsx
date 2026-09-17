@@ -141,7 +141,7 @@ export default function RegistroStaff() {
                 .toLowerCase();
             datos.correo = `${nombreLimpio || "vendedor"}@vendedor`;
             if (rangos.length === 0) {
-                setError("Agrega al menos un rango de folios para este punto de venta");
+                setError("Agrega al menos un rango de folios para este vendedor.");
                 return;
             }
             const errorTraslapes = validarSinTraslapesInternos(rangos);
@@ -421,8 +421,7 @@ export default function RegistroStaff() {
                 <h2 className={etiqueta}>Registro de Staff</h2>
                 <div className="mt-4 rounded-xl border border-white/10 bg-run-card px-5 py-5">
                     <p className="text-xs leading-relaxed text-white/40">
-                        Da de alta a quien necesite entrar al panel, al escáner de kits o
-                        vender en punto de venta. El rol{" "}
+                        Da de alta a quien necesite entrar al panel, al escáner de kits o vender. El rol{" "}
                         <strong className="text-white/60">admin</strong> ve el panel
                         completo; <strong className="text-white/60">escáner</strong> solo
                         puede entregar kits; <strong className="text-white/60">vendedor</strong>{" "}
@@ -521,7 +520,7 @@ export default function RegistroStaff() {
                 mensaje={
                     resultadoExito
                         ? resultadoExito.rol === "vendedor"
-                            ? `El punto de venta "${resultadoExito.nombre || resultadoExito.correo}" ha sido registrado correctamente y sus folios ya están listos para ser capturados.`
+                            ? `El vendedor "${resultadoExito.nombre || resultadoExito.correo}" ha sido registrado correctamente y sus folios ya están listos para ser capturados.`
                             : `${resultadoExito.correo} ya puede entrar como ${ETIQUETA_ROL[resultadoExito.rol]}.\n\nContraseña temporal: ${resultadoExito.contrasenaTemporal}\n${resultadoExito.correoEnviado
                                 ? "Ya le llegó por correo junto con la liga de inicio de sesión."
                                 : "El correo no se pudo enviar; compártesela tú por un canal seguro."
