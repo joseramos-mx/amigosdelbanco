@@ -157,6 +157,7 @@ export default function CapturaFisicosAdmin() {
                                     placeholder="00001"
                                 />
                             </div>
+                            {/* aclaración */}
                             <p className="mt-1 font-geist-mono text-[9px] uppercase tracking-widest text-white/40">
                                 Ingresa solo los 5 dígitos (ej. 00012)
                             </p>
