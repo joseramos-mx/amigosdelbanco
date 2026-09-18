@@ -255,7 +255,9 @@ export default function RegistroStaff() {
                                                                 <span className={badgeInactivo}>Inactivo</span>
                                                             )}
                                                         </div>
-                                                        <p className="mt-0.5 truncate text-xs text-white/50">{s.correo}</p>
+                                                        <p className="mt-0.5 truncate text-xs text-white/50">
+                                                            {s.rol === "vendedor" ? "—" : s.correo}
+                                                        </p>
                                                     </div>
                                                     <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
                                                         {ETIQUETA_ROL[s.rol]}
@@ -332,7 +334,9 @@ export default function RegistroStaff() {
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className="px-5 py-3 text-white/60">{s.correo}</td>
+                                                        <td className="px-5 py-3 text-white/60">
+                                                            {s.rol === "vendedor" ? "—" : s.correo}
+                                                        </td>
                                                         <td className="px-5 py-3">
                                                             <span className="rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
                                                                 {ETIQUETA_ROL[s.rol]}

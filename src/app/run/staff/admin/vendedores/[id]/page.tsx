@@ -102,7 +102,6 @@ export default async function HistorialVendedorPage({
                                         </span>
                                     )}
                                 </div>
-                                <p className="mt-0.5 truncate text-xs text-white/50">{vendedor.correo}</p>
                             </div>
                             <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
                                 VENDEDOR
@@ -131,7 +130,6 @@ export default async function HistorialVendedorPage({
                             <thead>
                                 <tr className="border-b border-white/10">
                                     <th className={`${etiqueta} px-5 py-3 font-normal`}>Vendedor</th>
-                                    <th className={`${etiqueta} px-5 py-3 font-normal`}>Correo</th>
                                     <th className={`${etiqueta} px-5 py-3 font-normal`}>Rol</th>
                                     <th className={`${etiqueta} px-5 py-3 font-normal`}>Rangos de boletos</th>
                                 </tr>
@@ -148,7 +146,6 @@ export default async function HistorialVendedorPage({
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-5 py-4 text-white/60">{vendedor.correo}</td>
                                     <td className="px-5 py-4">
                                         <span className="rounded-full border border-white/15 px-2.5 py-1 font-geist-mono text-[10px] uppercase tracking-wide text-white/60">
                                             VENDEDOR
