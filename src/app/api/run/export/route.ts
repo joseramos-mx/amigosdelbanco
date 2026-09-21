@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
  * Excel y tienen que entenderlo sin traducir.
  */
 
-type Tipo = "cronometraje" | "tallas" | "emergencias" | "seguro" | "no-activados" | "pendientes";
+type Tipo = "cronometraje" | "tallas" | "emergencias" | "seguro" | "no-activados" | "pendientes" | "boletos";
 
 const CONSULTAS: Record<Tipo, (eventoId: string) => Promise<Record<string, unknown>[]>> = {
   // Padrón para el cronometrista. Sin dorsal no sirve, así que solo van los
@@ -87,6 +87,37 @@ const CONSULTAS: Record<Tipo, (eventoId: string) => Promise<Record<string, unkno
      where o.evento_id = ${id}
        and o.estado = 'pendiente' and o.expira_en > now()
      order by o.expira_en
+  `,
+
+  // Detalle completo de cada boleto: para quien necesita ver todo junto
+  // (nombre, contacto, talla, emergencia, dorsal) en un solo archivo.
+  boletos: (id) => db()`
+    select o.folio as "Folio",
+           coalesce(b.nombre, o.nombre_comprador) as "Nombre",
+           coalesce(b.apellidos, '') as "Apellidos",
+           to_char(b.fecha_nacimiento, 'DD/MM/YYYY') as "Fecha de nacimiento",
+           coalesce(b.sexo::text, '') as "Sexo",
+           coalesce(b.correo, o.correo_comprador) as "Correo",
+           coalesce(b.telefono, '') as "Telefono",
+           coalesce(b.talla_playera, '') as "Talla",
+           coalesce(b.club, '') as "Club",
+           coalesce(b.contacto_emerg_nombre, '') as "Contacto de emergencia",
+           coalesce(b.contacto_emerg_tel, '') as "Telefono de emergencia",
+           coalesce(b.tipo_sangre, '') as "Tipo de sangre",
+           coalesce(b.condiciones_medicas, '') as "Condiciones medicas",
+           coalesce(b.categoria, '') as "Categoria",
+           coalesce(b.dorsal::text, '') as "Dorsal",
+           coalesce(b.mood, '') as "Mood",
+           case
+             when o.motivo_cortesia is not null then 'Cortes\u00eda'
+             when o.vendedor_id is not null then 'F\u00edsico'
+             else 'Digital'
+           end as "Tipo de boleto"
+      from public.boleto b
+      join public.orden o on o.id = b.orden_id
+     where b.evento_id = ${id}
+       and b.estado in ('pagado', 'activado', 'dorsal_asignado', 'entregado')
+     order by o.folio asc
   `,
 };
 

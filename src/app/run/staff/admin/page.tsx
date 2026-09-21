@@ -16,12 +16,13 @@ import CapturaFisicosAdmin from "../CapturaFisicosAdmin";
 export const dynamic = "force-dynamic";
 
 const EXPORTS: { tipo: string; nombre: string; para: string }[] = [
-  { tipo: "cronometraje", nombre: "Padrón de cronometraje", para: "Cronometrista" },
+  { tipo: "boletos", nombre: "Información de boletos comprados", para: "Staff" },
   { tipo: "tallas", nombre: "Conteo de tallas", para: "Proveedor de playeras" },
   { tipo: "emergencias", nombre: "Contactos de emergencia", para: "Servicios médicos" },
-  { tipo: "seguro", nombre: "Padrón para seguro", para: "Aseguradora" },
   { tipo: "no-activados", nombre: "Pagaron y no llenaron datos", para: "Soporte" },
-  { tipo: "pendientes", nombre: "Pendientes de pago", para: "Soporte" },
+  // { tipo: "seguro", nombre: "Padrón para seguro", para: "Aseguradora" },
+  // { tipo: "cronometraje", nombre: "Padrón de cronometraje", para: "Cronometrista" },
+  // { tipo: "pendientes", nombre: "Pendientes de pago", para: "Soporte" },
 ];
 
 function Dato({
@@ -80,7 +81,7 @@ export default async function PanelPage() {
               Panel del evento
             </h1>
             <p className="mt-2 font-geist-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
-              {fecha} · {datos.evento.sede} · venta {datos.evento.estado.replace("_", " ")}
+              {fecha} · {datos.evento.sede} · {datos.evento.estado.replace("_", " ")}
             </p>
           </div>
           <div className="flex items-center gap-4">
