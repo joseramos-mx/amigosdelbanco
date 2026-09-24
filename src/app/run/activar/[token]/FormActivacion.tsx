@@ -48,13 +48,12 @@ export default function FormActivacion({
   yaActivado,
 }: {
   token: string;
-  responsiva: Responsiva;
+  responsiva?: Responsiva;
   yaActivado: boolean;
 }) {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [listo, setListo] = useState(false);
-  const [acepta, setAcepta] = useState(false);
   const [mood, setMood] = useState("");
 
   const moodElegido = MOODS.find((m) => m.valor === mood);
@@ -70,7 +69,7 @@ export default function FormActivacion({
       const res = await fetch("/api/run/activar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...datos, token, aceptaResponsiva: acepta }),
+        body: JSON.stringify({ ...datos, token, aceptaResponsiva: true }),
       });
       const cuerpo = await res.json();
       if (!res.ok) throw new Error(cuerpo.error ?? "No pudimos guardar tus datos.");
@@ -196,71 +195,9 @@ export default function FormActivacion({
         )}
       </div>
 
-      {/* Lo que pide servicios médicos el día del evento. */}
-      <fieldset className="rounded-lg border border-white/15 bg-white/5 p-4">
-        <legend className={`${etiqueta} px-2`}>En caso de emergencia</legend>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label className={etiqueta} htmlFor="contactoEmergNombre">A quién llamamos</label>
-            <input
-              id="contactoEmergNombre"
-              name="contactoEmergNombre"
-              required
-              className={`${campo} mt-2`}
-            />
-          </div>
-          <div>
-            <label className={etiqueta} htmlFor="contactoEmergTel">Su teléfono</label>
-            <input
-              id="contactoEmergTel"
-              name="contactoEmergTel"
-              type="tel"
-              required
-              className={`${campo} mt-2`}
-            />
-          </div>
-        </div>
-        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          <div>
-            <label className={etiqueta} htmlFor="tipoSangre">Tipo de sangre (opcional)</label>
-            <input id="tipoSangre" name="tipoSangre" className={`${campo} mt-2`} placeholder="O+" />
-          </div>
-          <div>
-            <label className={etiqueta} htmlFor="condicionesMedicas">
-              Condiciones médicas o alergias (opcional)
-            </label>
-            <input id="condicionesMedicas" name="condicionesMedicas" className={`${campo} mt-2`} />
-          </div>
-        </div>
-      </fieldset>
-
-      {/* Versionada: se guarda cuál aceptaste, cuándo y desde qué IP. */}
-      <div className="rounded-lg border border-white/15 bg-white/5 p-4">
-        <p className={etiqueta}>{responsiva.titulo}</p>
-        {responsiva.borrador && (
-          <p className="mt-3 rounded border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
-            Texto en borrador, pendiente de revisión legal. No publicar así.
-          </p>
-        )}
-        <div className="mt-3 max-h-44 space-y-2 overflow-y-auto pr-2 text-xs leading-relaxed text-white/55">
-          {responsiva.parrafos.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
-        <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm text-white/80">
-          <input
-            type="checkbox"
-            checked={acepta}
-            onChange={(e) => setAcepta(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-run-amber"
-          />
-          <span>He leído y acepto la carta responsiva ({responsiva.version}).</span>
-        </label>
-      </div>
-
       <button
         type="submit"
-        disabled={enviando || !acepta}
+        disabled={enviando}
         className="w-full rounded-md bg-run-amber py-3.5 text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85 disabled:opacity-40"
       >
         {enviando ? "Guardando…" : yaActivado ? "Actualizar mis datos" : "Guardar y recibir mi boleto"}

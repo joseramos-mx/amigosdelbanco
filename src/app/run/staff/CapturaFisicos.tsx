@@ -63,8 +63,7 @@ export default function CapturaFisicos() {
       <div className="mt-4 rounded-xl border border-white/10 bg-run-card px-5 py-5">
         <p className="text-xs leading-relaxed text-white/40">
           Transcribe aquí los talones de papel que te entreguen los vendedores. Al capturarlos, el
-          sistema enviará automáticamente un correo al corredor para que pueda llenar su responsiva
-          médica, elegir su talla y descargar su boleto digital.
+          sistema marcará la orden como pagada.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
@@ -72,7 +71,7 @@ export default function CapturaFisicos() {
           {success && (
             <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4">
               <p className="text-sm text-emerald-200">
-                Boleto capturado con éxito. El correo de activación ya fue enviado al corredor.
+                Boleto capturado con éxito.
               </p>
             </div>
           )}
@@ -118,11 +117,10 @@ export default function CapturaFisicos() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={etiqueta} htmlFor="telefonoFisico">Teléfono</label>
+              <label className={etiqueta} htmlFor="telefonoFisico">Teléfono (Opcional)</label>
               <input
                 id="telefonoFisico"
                 type="tel"
-                required
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
                 className={`${campo} mt-2`}
@@ -131,11 +129,10 @@ export default function CapturaFisicos() {
             </div>
 
             <div>
-              <label className={etiqueta} htmlFor="correoFisico">Correo Electrónico</label>
+              <label className={etiqueta} htmlFor="correoFisico">Correo Electrónico (Opcional)</label>
               <input
                 id="correoFisico"
                 type="email"
-                required
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
                 className={`${campo} mt-2`}
@@ -181,7 +178,7 @@ export default function CapturaFisicos() {
               disabled={loading}
               className="rounded-md bg-run-amber px-5 py-2.5 text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85 disabled:opacity-50"
             >
-              {loading ? "Capturando..." : "Capturar e Invitar"}
+              {loading ? "Capturando..." : "Capturar Boleto"}
             </button>
           </div>
         </form>

@@ -76,9 +76,12 @@ export async function resumen(slug: string): Promise<ResumenEvento | null> {
              where b.evento_id = e.id and b.activado_en is not null)::int as activados,
 
            (select count(*) from public.boleto b
+              join public.orden o on o.id = b.orden_id
              where b.evento_id = e.id
                and b.estado in ('pagado','dorsal_asignado')
-               and b.activado_en is null)::int as sin_activar,
+               and b.activado_en is null
+               and coalesce(b.boleto_fisico, false) = false
+               and o.vendedor_id is null)::int as sin_activar,
 
            (select count(*) from public.orden o
              where o.evento_id = e.id

@@ -58,14 +58,6 @@ function validar(
 
   const contactoEmergNombre = texto(b.contactoEmergNombre);
   const contactoEmergTel = texto(b.contactoEmergTel, 20);
-  if (contactoEmergNombre.length < 3 || contactoEmergTel.length < 7) {
-    return { ok: false, error: "Falta el contacto de emergencia" };
-  }
-
-  // La responsiva no es una casilla decorativa: sin ella no hay activación.
-  if (b.aceptaResponsiva !== true) {
-    return { ok: false, error: "Hay que aceptar la carta responsiva" };
-  }
 
   return {
     ok: true,
@@ -81,8 +73,8 @@ function validar(
       mood: mood as "rave" | "ska" | "oldies" | "ranchero",
       club: texto(b.club, 80) || undefined,
       nacionalidad: texto(b.nacionalidad, 60) || undefined,
-      contactoEmergNombre,
-      contactoEmergTel,
+      contactoEmergNombre: contactoEmergNombre || undefined,
+      contactoEmergTel: contactoEmergTel || undefined,
       tipoSangre: texto(b.tipoSangre, 8) || undefined,
       condicionesMedicas: texto(b.condicionesMedicas, 500) || undefined,
     },

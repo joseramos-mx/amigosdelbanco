@@ -10,6 +10,7 @@ export default async function ListaVentas() {
   const boletos = await sql`
     SELECT 
       o.folio,
+      v.nombre as vendedor_nombre,
       coalesce(b.nombre, o.nombre_comprador) as nombre,
       b.apellidos,
       to_char(b.fecha_nacimiento, 'DD/MM/YYYY') as fecha_nacimiento,
@@ -32,6 +33,7 @@ export default async function ListaVentas() {
       end as tipo_boleto
     FROM public.boleto b
     JOIN public.orden o ON o.id = b.orden_id
+    LEFT JOIN public.usuario_rol v ON v.id = o.vendedor_id
     WHERE b.evento_id = ${evento.id}
       AND b.estado IN ('pagado', 'activado', 'dorsal_asignado', 'entregado')
     ORDER BY o.folio ASC
@@ -45,6 +47,7 @@ export default async function ListaVentas() {
   // aunque Postgresjs ya devuelve strings para cosas complejas y la consulta hace to_char de la fecha.
   const boletosSerializables = boletos.map(b => ({
     folio: b.folio,
+    vendedor: b.vendedor_nombre || "",
     nombre: b.nombre || "",
     apellidos: b.apellidos || "",
     fecha_nacimiento: b.fecha_nacimiento || "",

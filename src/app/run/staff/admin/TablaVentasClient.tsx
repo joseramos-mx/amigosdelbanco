@@ -4,6 +4,7 @@ import { useState } from "react";
 
 type BoletoRow = {
   folio: string;
+  vendedor: string;
   tipo_boleto: string;
   nombre: string;
   apellidos: string;
@@ -24,6 +25,7 @@ type BoletoRow = {
 
 export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] }) {
   const [filtroFolio, setFiltroFolio] = useState("");
+  const [filtroVendedor, setFiltroVendedor] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos");
   const [filtroMood, setFiltroMood] = useState("Todos");
   const [filtroTalla, setFiltroTalla] = useState("Todas");
@@ -37,11 +39,12 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
 
   const filtrados = boletos.filter((b) => {
     const coincideFolio = b.folio.toLowerCase().includes(filtroFolio.toLowerCase());
+    const coincideVendedor = b.vendedor.toLowerCase().includes(filtroVendedor.toLowerCase());
     const coincideTipo = filtroTipo === "Todos" || b.tipo_boleto === filtroTipo;
     const coincideMood = filtroMood === "Todos" || b.mood === filtroMood;
     const coincideTalla = filtroTalla === "Todas" || b.talla_playera === filtroTalla;
-    
-    return coincideFolio && coincideTipo && coincideMood && coincideTalla;
+
+    return coincideFolio && coincideVendedor && coincideTipo && coincideMood && coincideTalla;
   });
 
   const totalPaginas = Math.ceil(filtrados.length / POR_PAGINA);
@@ -68,7 +71,15 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
           onChange={handleFiltroCambio(setFiltroFolio)}
           className={`${campo} sm:w-40`}
         />
-        
+
+        <input
+          type="text"
+          placeholder="Buscar vendedor..."
+          value={filtroVendedor}
+          onChange={handleFiltroCambio(setFiltroVendedor)}
+          className={`${campo} sm:w-40`}
+        />
+
         <select
           value={filtroTipo}
           onChange={handleFiltroCambio(setFiltroTipo)}
@@ -104,7 +115,7 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
             <option key={t} className="bg-run-card text-white" value={t}>{t}</option>
           ))}
         </select>
-        
+
         <div className="ml-auto text-xs text-white/40">
           Mostrando {filtrados.length} de {boletos.length}
         </div>
@@ -115,8 +126,9 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
           <thead className="border-b border-white/10 font-geist-mono text-[10px] uppercase tracking-wider text-white/50">
             <tr>
               <th className={th}>Folio</th>
+              <th className={th}>Vendedor</th>
               <th className={th}>Tipo</th>
-              <th className={th}>Nombre</th>
+              <th className={th}>Corredor</th>
               <th className={th}>Apellidos</th>
               <th className={th}>Fecha Nacimiento</th>
               <th className={th}>Sexo</th>
@@ -136,7 +148,7 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
           <tbody className="divide-y divide-white/5">
             {paginaActual.length === 0 ? (
               <tr>
-                <td colSpan={17} className="px-4 py-8 text-center text-white/40">
+                <td colSpan={18} className="px-4 py-8 text-center text-white/40">
                   No se encontraron resultados
                 </td>
               </tr>
@@ -144,10 +156,13 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
               paginaActual.map((b, i) => (
                 <tr key={i} className="hover:bg-white/5">
                   <td className={`${td} font-mono text-run-amber`}>{b.folio}</td>
+                  <td className={`${td} ${b.vendedor ? "text-cyan-400 font-medium" : "text-white/30"}`}>
+                    {b.vendedor || "-"}
+                  </td>
                   <td className={td}>
-                      <span className="rounded-full border border-white/15 px-2 py-0.5 font-geist-mono text-[9px] uppercase tracking-wide">
-                          {b.tipo_boleto}
-                      </span>
+                    <span className="rounded-full border border-white/15 px-2 py-0.5 font-geist-mono text-[9px] uppercase tracking-wide">
+                      {b.tipo_boleto}
+                    </span>
                   </td>
                   <td className={td}>{b.nombre || "-"}</td>
                   <td className={td}>{b.apellidos || "-"}</td>
@@ -169,7 +184,7 @@ export default function TablaVentasClient({ boletos }: { boletos: BoletoRow[] })
             )}
           </tbody>
         </table>
-        
+
         {/* Paginación */}
         {totalPaginas > 1 && (
           <div className="flex items-center justify-between border-t border-white/10 px-5 py-4">

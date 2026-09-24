@@ -29,7 +29,7 @@ export type DatosCaptura = {
   folio: string; // Ej: "GG-00001"
   nombre: string;
   telefono: string;
-  correo: string;
+  correo?: string;
   tipoPago: MetodoPago;
 };
 
@@ -68,8 +68,8 @@ export async function capturarFisico(
     await tx`
       update public.orden
          set nombre_comprador = ${datos.nombre},
-             correo_comprador = ${datos.correo},
-             telefono = ${datos.telefono},
+             correo_comprador = ${datos.correo || null},
+             telefono = ${datos.telefono || null},
              vendedor_id = ${vendedorId},
              estado = 'pagada'
        where id = ${orden.id}
@@ -103,15 +103,17 @@ export async function capturarFisico(
 
     if (boletos.length === 0) throw new FolioNoEncontrado();
 
-    // Enviar el correo con las ligas de activación
-    const res = await enviarLigasActivacion({
-      folio: datos.folio,
-      correo: datos.correo,
-      tokens: boletos.map((b) => b.token_activacion),
-    });
+    // Enviar el correo con las ligas de activación solo si se ingresó un correo
+    if (datos.correo && datos.correo.trim().length > 0) {
+      const res = await enviarLigasActivacion({
+        folio: datos.folio,
+        correo: datos.correo,
+        tokens: boletos.map((b) => b.token_activacion),
+      });
 
-    if (!res.ok) {
-      console.error(`Error enviando correo de captura física a ${datos.correo}: ${res.error}`);
+      if (!res.ok) {
+        console.error(`Error enviando correo de captura física a ${datos.correo}: ${res.error}`);
+      }
     }
 
     return { ok: true, ordenId: orden.id };

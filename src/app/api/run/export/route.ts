@@ -72,6 +72,8 @@ const CONSULTAS: Record<Tipo, (eventoId: string) => Promise<Record<string, unkno
      where b.evento_id = ${id}
        and b.activado_en is null
        and b.estado in ('pagado','dorsal_asignado')
+       and coalesce(b.boleto_fisico, false) = false
+       and o.vendedor_id is null
      order by o.creada_en
   `,
 

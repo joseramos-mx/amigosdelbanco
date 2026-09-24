@@ -35,8 +35,8 @@ export type DatosCorredor = {
   mood: "rave" | "ska" | "oldies" | "ranchero";
   club?: string;
   nacionalidad?: string;
-  contactoEmergNombre: string;
-  contactoEmergTel: string;
+  contactoEmergNombre?: string;
+  contactoEmergTel?: string;
   tipoSangre?: string;
   condicionesMedicas?: string;
 };
@@ -134,8 +134,8 @@ export async function activarBoleto(
              mood                  = ${datos.mood},
              club                  = ${datos.club ?? null},
              nacionalidad          = ${datos.nacionalidad ?? null},
-             contacto_emerg_nombre = ${datos.contactoEmergNombre},
-             contacto_emerg_tel    = ${datos.contactoEmergTel},
+             contacto_emerg_nombre = ${datos.contactoEmergNombre ?? null},
+             contacto_emerg_tel    = ${datos.contactoEmergTel ?? null},
              tipo_sangre           = ${datos.tipoSangre ?? null},
              condiciones_medicas   = ${datos.condicionesMedicas ?? null},
              responsiva_version    = ${responsiva.version},
