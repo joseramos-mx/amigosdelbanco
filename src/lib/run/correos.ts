@@ -137,7 +137,7 @@ export async function enviarLigasActivacion(params: {
         <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 20px;">
           Listo, tu lugar quedó apartado con el folio <strong>${params.folio}</strong>.
           Falta un paso: llenar los datos de ${varias ? "cada corredor" : "corredor"}
-          —nombre, talla, contacto de emergencia y la carta responsiva—.
+          —nombre y talla—.
         </p>
         ${ligas}
         <p style="font-size:14px;line-height:1.6;color:#737373;margin:20px 0 0;">

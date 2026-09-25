@@ -38,8 +38,7 @@ export default function GraciasPage() {
           </li>
           <li>
             <strong className="text-white">Después del pago</strong> te enviamos la liga
-            para llenar los datos de cada corredor: nombre, talla, contacto de
-            emergencia y la carta responsiva.
+            para llenar los datos de cada corredor: nombre y talla.
           </li>
         </ul>
 
