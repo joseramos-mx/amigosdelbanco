@@ -72,13 +72,15 @@ export async function capturarFisico(
 
         const nombreVendedor = vendedor.nombre;
 
+        const correoComprador = datos.correo?.trim() || "sin.correo@bancodurango.org";
+
         // Actualizar la orden con los datos del comprador y marcarla pagada.
         // Nota: NO se toca vendedor_id — debe conservar al vendedor original
         // al que ya estaba asignado el folio, no al admin que captura.
         await tx`
       update public.orden
          set nombre_comprador = ${datos.nombre},
-             correo_comprador = ${datos.correo || null},
+             correo_comprador = ${correoComprador},
              telefono = ${datos.telefono || null},
              estado = 'pagada'
        where id = ${orden.id}

@@ -64,11 +64,13 @@ export async function capturarFisico(
     `;
     const nombreVendedor = vendedor?.nombre || 'Vendedor Desconocido';
 
+    const correoComprador = datos.correo?.trim() || "sin.correo@bancodurango.org";
+
     // Actualizar la orden con los datos del comprador y marcarla pagada
     await tx`
       update public.orden
          set nombre_comprador = ${datos.nombre},
-             correo_comprador = ${datos.correo || null},
+             correo_comprador = ${correoComprador},
              telefono = ${datos.telefono || null},
              vendedor_id = ${vendedorId},
              estado = 'pagada'

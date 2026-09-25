@@ -52,7 +52,7 @@ export default async function ListaVentas() {
     apellidos: b.apellidos || "",
     fecha_nacimiento: b.fecha_nacimiento || "",
     sexo: b.sexo || "",
-    correo: b.correo || "",
+    correo: (b.correo && !b.correo.includes("@bancodurango.org")) ? b.correo : "",
     telefono: b.telefono || "",
     talla_playera: b.talla_playera || "",
     club: b.club || "",
