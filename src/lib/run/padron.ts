@@ -31,7 +31,7 @@ export type ResumenEvento = {
 };
 
 export async function resumen(slug: string): Promise<ResumenEvento | null> {
-  const filas = await conReintento(() => db()<
+  const filas = await conReintento(() => db() <
     {
       id: string; nombre: string; estado: string; fecha_carrera: Date; sede: string;
       cupo_total: number; vendidos: number; pagados: number; activados: number;
@@ -76,12 +76,9 @@ export async function resumen(slug: string): Promise<ResumenEvento | null> {
              where b.evento_id = e.id and b.activado_en is not null)::int as activados,
 
            (select count(*) from public.boleto b
-              join public.orden o on o.id = b.orden_id
              where b.evento_id = e.id
                and b.estado in ('pagado','dorsal_asignado')
-               and b.activado_en is null
-               and coalesce(b.boleto_fisico, false) = false
-               and o.vendedor_id is null)::int as sin_activar,
+               and b.activado_en is null)::int as sin_activar,
 
            (select count(*) from public.orden o
              where o.evento_id = e.id
@@ -139,6 +136,7 @@ export type FilaPadron = {
   folio: string;
   entregado: boolean;
   accedio: boolean;
+  boleto_fisico: boolean;
   qr: string;
 };
 
@@ -150,11 +148,12 @@ export type FilaPadron = {
  * siempre falla; pedirle al servidor por cada persona es garantía de fila.
  */
 export async function padronParaEscaner(eventoId: string): Promise<FilaPadron[]> {
-  const filas = await conReintento(() => db()<
+  const filas = await conReintento(() => db() <
     Omit<FilaPadron, "qr">[]
   >`
     select b.id, b.dorsal, b.nombre, b.apellidos, b.correo, b.talla_playera,
            b.estado::text as estado, o.folio,
+           coalesce(b.boleto_fisico, false) as boleto_fisico,
            exists (select 1 from public.checkin c
                     where c.boleto_id = b.id and c.tipo = 'kit') as entregado,
            exists (select 1 from public.checkin c
@@ -194,8 +193,10 @@ export async function registrarCheckin(
 ): Promise<ResultadoCheckin> {
   return enTransaccion(async (tx) => {
     const [boleto] = await tx<
-      { id: string; evento_id: string; estado: string; nombre: string | null;
-        apellidos: string | null; dorsal: number | null; activado_en: Date | null }[]
+      {
+        id: string; evento_id: string; estado: string; nombre: string | null;
+        apellidos: string | null; dorsal: number | null; activado_en: Date | null
+      }[]
     >`
       select id, evento_id, estado::text as estado, nombre, apellidos, dorsal, activado_en
         from public.boleto where id = ${boletoId} for update
@@ -227,7 +228,7 @@ export async function registrarCheckin(
       insert into public.checkin (evento_id, boleto_id, tipo, registrado_por, notas)
       values (${boleto.evento_id}, ${boletoId}, ${tipo}, ${registradoPor}, ${notas ?? null})
     `;
-    
+
     // Si el tipo de checkin es kit y ya estaba activado, marcarlo como entregado
     if (tipo === 'kit') {
       await tx`
@@ -244,7 +245,7 @@ export class SinRangoDeDorsales extends Error {
   constructor() {
     super(
       "El tipo de boleto no tiene rango de dorsales configurado. Lo define el " +
-        "cronometrista; cárgalo con run:abrir --dorsales=1000-1999 antes de asignar.",
+      "cronometrista; cárgalo con run:abrir --dorsales=1000-1999 antes de asignar.",
     );
     this.name = "SinRangoDeDorsales";
   }

@@ -292,6 +292,26 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
     const folioStr = `GG-${folioInput.padStart(5, "0")}`;
     const fila = padron.find((f) => f.folio === folioStr);
 
+    if (fila && !fila.boleto_fisico) {
+      // Los boletos digitales solo se validan escaneando el QR: por folio no
+      // hay forma de comprobar que quien lo presenta realmente lo tiene.
+      const bloqueado: Registro = {
+        qr: "",
+        boletoId: fila.id,
+        nombre: [fila.nombre, fila.apellidos].filter(Boolean).join(" ") || fila.folio,
+        dorsal: fila.dorsal,
+        veredicto: "desconocido",
+        detalle: "Boleto digital: debe escanearse el QR, no se acepta por folio",
+        hora: Date.now(),
+        sincronizado: false,
+        modo,
+      };
+      setRegistros((r) => [bloqueado, ...r].slice(0, 60));
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+      setFolioInput("");
+      return;
+    }
+
     if (fila) {
       procesar(fila.qr);
     } else {
@@ -479,4 +499,4 @@ export default function Escaner({ padronInicial }: { padronInicial: FilaPadron[]
       )}
     </div>
   );
-}
+} 

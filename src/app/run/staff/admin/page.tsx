@@ -90,7 +90,7 @@ export default async function PanelPage() {
               href="/run/staff/admin/escaner"
               className="rounded-md bg-run-amber px-5 py-2.5 text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
             >
-              Escanear kits
+              Escanear
             </Link>
           </div>
         </div>
