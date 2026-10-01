@@ -31,6 +31,9 @@ export async function GET(request: Request) {
      where (o.estado = 'pagada' or b.estado = 'pagado')
        and b.activado_en is null
        and o.correo_comprador is not null
+       and coalesce(b.boleto_fisico, false) = false
+       and o.vendedor_id is null
+       and o.correo_comprador not like '%@bancodurango.org'
      group by o.id, o.folio, o.correo_comprador, o.nombre_comprador
      order by o.folio desc
   `;
@@ -70,6 +73,9 @@ export async function POST(request: Request) {
      where (o.estado = 'pagada' or b.estado = 'pagado')
        and b.activado_en is null
        and o.correo_comprador is not null
+       and coalesce(b.boleto_fisico, false) = false
+       and o.vendedor_id is null
+       and o.correo_comprador not like '%@bancodurango.org'
        and o.id = any(${ordenIds})
      group by o.id, o.folio, o.correo_comprador, o.nombre_comprador
   `;

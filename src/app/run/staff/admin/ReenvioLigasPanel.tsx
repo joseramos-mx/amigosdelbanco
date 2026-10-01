@@ -25,13 +25,13 @@ export default function ReenvioLigasPanel() {
       const res = await fetch("/api/run/reenvio-ligas");
       const datos = await res.json();
       if (!res.ok) throw new Error(datos.error ?? "No se pudo obtener la lista");
-      
+
       if (datos.pendientes.length === 0) {
         setMensaje("No hay compradores pendientes por activar sus datos.");
         setEstado("listo");
         return;
       }
-      
+
       setPendientes(datos.pendientes);
       setSeleccionados(new Set(datos.pendientes.map((p: Pendiente) => p.orden_id)));
       setEstado("confirmando");
@@ -45,14 +45,14 @@ export default function ReenvioLigasPanel() {
     setEstado("enviando");
     setError(null);
     try {
-      const res = await fetch("/api/run/reenvio-ligas", { 
+      const res = await fetch("/api/run/reenvio-ligas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ordenIds: Array.from(seleccionados) })
       });
       const datos = await res.json();
       if (!res.ok) throw new Error(datos.error ?? "Ocurrió un error al enviar correos");
-      
+
       setMensaje(`Se enviaron correos a ${datos.enviados} compradores (${datos.fallidos} fallidos).`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Algo salió mal");
@@ -94,7 +94,7 @@ export default function ReenvioLigasPanel() {
       <div className="mt-4 rounded-xl border border-white/10 bg-run-card px-5 py-4">
         <p className="text-sm text-white">Reenviar correos para llenar datos</p>
         <p className="mt-1 text-xs leading-relaxed text-white/40">
-          Reenvía el correo de activación a todos los compradores que ya pagaron pero que aún no han llenado los datos de sus corredores (responsiva, tallas, etc).
+          Reenvía el correo de activación a todos los compradores que ya pagaron pero que aún no han llenado los datos.
         </p>
         <button
           onClick={revisarPendientes}
@@ -131,8 +131,8 @@ export default function ReenvioLigasPanel() {
                 <thead className="sticky top-0 border-b border-white/10 bg-run-card/95 font-geist-mono text-[10px] uppercase tracking-wider backdrop-blur">
                   <tr>
                     <th className="px-4 py-3 w-10">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={pendientes.length > 0 && seleccionados.size === pendientes.length}
                         onChange={toggleTodos}
                         className="rounded border-white/20 bg-transparent"
@@ -146,14 +146,14 @@ export default function ReenvioLigasPanel() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {pendientes.map((p) => (
-                    <tr 
-                      key={p.orden_id} 
+                    <tr
+                      key={p.orden_id}
                       className={`hover:bg-white/5 cursor-pointer ${seleccionados.has(p.orden_id) ? "bg-white/5" : ""}`}
                       onClick={() => toggleSeleccion(p.orden_id)}
                     >
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           checked={seleccionados.has(p.orden_id)}
                           onChange={() => toggleSeleccion(p.orden_id)}
                           className="rounded border-white/20 bg-transparent"
