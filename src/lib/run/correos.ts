@@ -309,12 +309,10 @@ export async function enviarAlertaDev(params: {
 }
 /**
  * Aviso de cambio: el evento pasó a ser gratuito.
- *
- * Se manda a quien ya había pagado. Les avisamos que se les reembolsa el
- * dinero y que sus cortesías las recogen en el Estadio Caliente.
- * `detalleReembolso` es opcional: sirve para precisar plazo o método de
- * devolución sin tocar la plantilla.
  */
+const ESTADIO_CALIENTE_URL =
+  process.env.ESTADIO_CALIENTE_URL ?? "https://www.google.com/maps/search/?api=1&query=Estadio+Caliente+Durango";
+
 export async function enviarAvisoEventoGratuito(params: {
   correo: string;
   folio: string;
@@ -323,52 +321,85 @@ export async function enviarAvisoEventoGratuito(params: {
 }): Promise<Resultado> {
   if (!resend) return { ok: false, error: "RESEND_API_KEY no configurada" };
 
+  const img = (archivo: string) => `${origen()}/correos/${archivo}`;
+  const p = "font-size:15px;line-height:1.6;color:#171717;margin:0 0 16px;";
+  const hora = (h: string, t: string) => `
+    <tr>
+      <td style="vertical-align:top;padding:0 10px 10px 0;color:#e9a62d;font-size:18px;line-height:1.3;">•</td>
+      <td style="padding:0 0 10px;font-size:15px;line-height:1.55;color:#404040;">
+        <strong style="color:#171717;">${h}</strong> — ${t}
+      </td>
+    </tr>`;
+
+  const html = `
+    <div style="background:#ffffff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;border-collapse:collapse;">
+
+        <!-- 1. Encabezado -->
+        <tr><td>
+          <img src="${img("gratuito-header.png")}" width="560" alt="9 de octubre — Festival de la Generosidad + Social Run"
+               style="display:block;width:100%;max-width:560px;height:auto;border:0;" />
+        </td></tr>
+
+        <tr><td style="padding:24px 24px 0;">
+          <p style="${p}">
+            Tenemos buenas noticias: el <strong>Festival de la Generosidad + Social Run</strong>
+            del <strong>9 de octubre</strong> ahora es <strong>totalmente gratuito</strong>.
+          </p>
+          <p style="${p}">
+            Por eso te vamos a <strong>reembolsar el dinero</strong> de tu inscripción
+            (folio <strong>${params.folio}</strong>, <strong>${formatMxn(params.totalCentavos)}</strong>).
+            ${params.detalleReembolso ?? "Te lo regresaremos por transferencia a la misma cuenta desde la que hiciste el depósito; no necesitas hacer ningún trámite."}
+          </p>
+        </td></tr>
+
+        <!-- 2. Botón Estadio Caliente -->
+        <tr><td align="center" style="padding:8px 24px 24px;">
+          <a href="${ESTADIO_CALIENTE_URL}" target="_blank" style="display:inline-block;">
+            <img src="${img("gratuito-estadio.png")}" width="360"
+                 alt="Visita el Estadio Caliente para obtener tus cortesías"
+                 style="display:block;width:360px;max-width:100%;height:auto;border:0;" />
+          </a>
+        </td></tr>
+
+        <tr><td style="padding:0 24px;">
+          <p style="font-size:16px;margin:0 0 12px;color:#171717;"><strong>Así será el día:</strong></p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+            ${hora("5:00 PM", "Concentración en la antigua Estación de Ferrocarril.")}
+            ${hora("6:00 PM", "Corremos juntos a ritmo moderado, acompañados de música. Circuito de 3 km y 6 km sobre Avenida Gómez Morín.")}
+            ${hora("7:00 – 10:00 PM", "Festival de la Generosidad: música en vivo (rave, ska, oldies y ranchero), comida y más.")}
+          </table>
+
+          <p style="${p}">
+            Te invitamos a hacer una acción buena (ayudar a alguien) ese día y subir una foto
+            a redes con el hashtag <strong>#GGDURANGO</strong>, etiquetando a
+            <strong>@bda_durango</strong>. La meta: que el 9 de octubre sea el día duranguense
+            de la generosidad.
+          </p>
+          <p style="font-size:14px;line-height:1.6;color:#737373;margin:0 0 24px;">
+             Más información en
+            <a href="https://bancodurango.org" style="color:#737373;">bancodurango.org</a>.<br />
+            Gracias por apoyar la construcción del Banco de Alimentos.
+          </p>
+        </td></tr>
+
+        <!-- 3. Franja de patrocinadores -->
+        <tr><td>
+          <img src="${img("gratuito-patrocinadores.png")}" width="560"
+               alt="Banco de Alimentos de Durango y patrocinadores"
+               style="display:block;width:100%;max-width:560px;height:auto;border:0;" />
+        </td></tr>
+
+      </table>
+    </div>
+  `;
+
   const { error } = await resend.emails.send({
     from: FROM,
     ...(RESPONDER_A ? { replyTo: RESPONDER_A } : {}),
     to: params.correo,
     subject: `¡El Social Run ahora es gratuito! Te devolvemos tu pago — folio ${params.folio}`,
-    html: plantilla(
-      "¡Ahora el evento es gratuito!",
-      `
-        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
-          Tenemos buenas noticias: el <strong>Festival de la Generosidad + Social Run</strong>
-          del <strong>9 de octubre</strong> ahora es <strong>totalmente gratuito</strong>.
-        </p>
-        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
-          Por eso te vamos a <strong>reembolsar el dinero</strong> de tu inscripción
-          (folio <strong>${params.folio}</strong>, <strong>${formatMxn(params.totalCentavos)}</strong>).
-          ${params.detalleReembolso ?? "Te lo regresaremos por transferencia a la misma cuenta desde la que hiciste el depósito; no necesitas hacer ningún trámite."}
-        </p>
-        <div style="background:#fff7e6;border:1px solid #e9a62d;border-radius:8px;padding:16px;margin:0 0 20px;">
-          <p style="font-size:15px;line-height:1.6;color:#171717;margin:0;">
-            <strong>Recoge tus boletos de cortesía</strong> en el
-            <strong>Estadio Caliente</strong>.
-          </p>
-        </div>
-        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 8px;">
-          <strong>Así será el día:</strong>
-        </p>
-        <ul style="font-size:15px;line-height:1.7;color:#525252;margin:0 0 20px;padding-left:20px;">
-          <li><strong>5:00 PM</strong> — Concentración en la antigua Estación de Ferrocarril.</li>
-          <li><strong>6:00 PM</strong> — Corremos juntos a ritmo moderado, acompañados de música.
-              Circuito de 3 km y 6 km sobre Avenida Gómez Morín.</li>
-          <li><strong>7:00 – 10:00 PM</strong> — Festival de la Generosidad: música en vivo
-              (rave, ska, oldies y ranchero), comida y más.</li>
-        </ul>
-        <p style="font-size:15px;line-height:1.6;color:#525252;margin:0 0 16px;">
-          Te invitamos a hacer una acción buena (ayudar a alguien) ese día y subir una foto
-          a redes con el hashtag <strong>#GGDURANGO</strong>, etiquetando a
-          <strong>@bda_durango</strong>. La meta: que el 9 de octubre sea el día duranguense
-          de la generosidad.
-        </p>
-        <p style="font-size:14px;line-height:1.6;color:#737373;margin:0;">
-          Más información en
-          <a href="https://bancodurango.org" style="color:#737373;">bancodurango.org</a>.
-          Gracias por apoyar la construcción del Banco de Alimentos.
-        </p>
-      `,
-    ),
+    html,
   });
 
   if (error) return { ok: false, error: error.message };
