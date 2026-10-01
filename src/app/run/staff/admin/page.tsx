@@ -17,9 +17,9 @@ export const dynamic = "force-dynamic";
 
 const EXPORTS: { tipo: string; nombre: string; para: string }[] = [
   { tipo: "boletos", nombre: "Información de boletos comprados", para: "Staff" },
-  { tipo: "tallas", nombre: "Conteo de tallas", para: "Proveedor de playeras" },
-  { tipo: "emergencias", nombre: "Contactos de emergencia", para: "Servicios médicos" },
   { tipo: "no-activados", nombre: "Pagaron y no llenaron datos", para: "Soporte" },
+  // { tipo: "tallas", nombre: "Conteo de tallas", para: "Proveedor de playeras" },
+  // { tipo: "emergencias", nombre: "Contactos de emergencia", para: "Servicios médicos" },
   // { tipo: "seguro", nombre: "Padrón para seguro", para: "Aseguradora" },
   // { tipo: "cronometraje", nombre: "Padrón de cronometraje", para: "Cronometrista" },
   // { tipo: "pendientes", nombre: "Pendientes de pago", para: "Soporte" },

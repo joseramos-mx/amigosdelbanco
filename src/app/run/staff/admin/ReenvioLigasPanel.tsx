@@ -171,7 +171,7 @@ export default function ReenvioLigasPanel() {
               </table>
             </div>
 
-            <div className="mt-6 flex flex-shrink-0 justify-end gap-3">
+            <div className="mt-6 flex shrink-0 justify-end gap-3">
               <button
                 type="button"
                 onClick={cancelar}

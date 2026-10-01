@@ -72,8 +72,6 @@ const CONSULTAS: Record<Tipo, (eventoId: string) => Promise<Record<string, unkno
      where b.evento_id = ${id}
        and b.activado_en is null
        and b.estado in ('pagado','dorsal_asignado')
-       and coalesce(b.boleto_fisico, false) = false
-       and o.vendedor_id is null
      order by o.creada_en
   `,
 
@@ -114,9 +112,11 @@ const CONSULTAS: Record<Tipo, (eventoId: string) => Promise<Record<string, unkno
              when o.motivo_cortesia is not null then 'Cortes\u00eda'
              when o.vendedor_id is not null then 'F\u00edsico'
              else 'Digital'
-           end as "Tipo de boleto"
+           end as "Tipo de boleto",
+           coalesce(ur.nombre, '') as "Vendedor"
       from public.boleto b
       join public.orden o on o.id = b.orden_id
+      left join public.usuario_rol ur on ur.id = o.vendedor_id
      where b.evento_id = ${id}
        and b.estado in ('pagado', 'activado', 'dorsal_asignado', 'entregado')
      order by o.folio asc
