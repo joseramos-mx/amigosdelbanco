@@ -6,6 +6,7 @@ import { resumen } from "@/lib/run/padron";
 import { paseActual } from "@/lib/run/staff";
 import AccionesPanel from "../AccionesPanel";
 import ReenvioLigasPanel from "./ReenvioLigasPanel";
+import AvisoGratuitoPanel from "./AvisoGratuitoPanel";
 import Cortesias from "../Cortesias";
 import RegistroStaff from "../RegistroStaff";
 import BotonSalir from "../BotonSalir";
@@ -154,6 +155,7 @@ export default async function PanelPage() {
             <div className="space-y-6">
               <CapturaFisicosAdmin />
               <ReenvioLigasPanel />
+              <AvisoGratuitoPanel />
               <AccionesPanel />
             </div>
           }
