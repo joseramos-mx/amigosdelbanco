@@ -362,6 +362,12 @@ export async function enviarAvisoEventoGratuito(params: {
           </a>
         </td></tr>
 
+        <tr><td style="padding:0 24px 20px;">
+          <p style="font-size:14px;line-height:1.6;color:#171717;margin:0;padding:12px 16px;background:#fff7e6;border-left:4px solid #e9a62d;border-radius:4px;">
+            <strong>Importante:</strong> la cortesía da acceso al evento, pero <strong>no incluye el kit</strong> del corredor.
+          </p>
+        </td></tr>
+
         <tr><td style="padding:0 24px;">
           <p style="font-size:16px;margin:0 0 12px;color:#171717;"><strong>Así será el día:</strong></p>
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
