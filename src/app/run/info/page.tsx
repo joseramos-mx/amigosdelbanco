@@ -196,7 +196,7 @@ export default function InfoRunPage() {
                   <span className="text-run-amber underline">no incluye el kit del corredor</span>.
                 </p>
                 <p className="text-xs sm:text-sm text-white/70">
-                  La playera conmemorativa, tote bag y pulsera del evento se reservan para quienes realizan un donativo a beneficio del Banco de Alimentos.
+                  El kit incluye: playera conmemorativa, tote bag, pulsera oficial y ticket de consumo.
                 </p>
               </div>
               <div className="flex shrink-0 gap-3">
@@ -288,11 +288,6 @@ export default function InfoRunPage() {
               ))}
             </div>
 
-            <div className="mt-8 rounded-xl bg-white/5 p-4 text-center">
-              <p className="text-xs sm:text-sm text-white/75">
-                🎉 Además de música continua durante la carrera, el festival contará con área de alimentos, stands de patrocinadores y dinámicas para toda la familia.
-              </p>
-            </div>
           </Reveal>
 
           {/* ── Dinámica: Día Duranguense de la Generosidad ────────────── */}

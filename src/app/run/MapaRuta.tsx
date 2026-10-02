@@ -6,7 +6,7 @@ import type { Map as MapaLibre } from "maplibre-gl";
 // ejecución hace que el bundler sirva HTML en lugar del archivo. Pesa poco y
 // no arrastra el JS de la librería, que sigue siendo diferido.
 import "maplibre-gl/dist/maplibre-gl.css";
-import { HIDRATACION, PUNTOS, SALIDA, encuadre, type Punto } from "@/lib/run/ruta";
+import { PUNTOS, SALIDA, encuadre, type Punto } from "@/lib/run/ruta";
 
 /**
  * Mapa de la ruta.
@@ -159,21 +159,6 @@ export default function MapaRuta() {
 
           new maplibre.Marker({ element: nodoSM, anchor: "right" })
             .setLngLat(SALIDA)
-            .addTo(mapa);
-
-          // Marcador Punto de Hidratación
-          const nodoH = document.createElement("div");
-          nodoH.className =
-            "relative rounded-full bg-[#10b981] px-3.5 py-1.5 font-geist-mono " +
-            "text-[10px] uppercase tracking-[0.16em] text-white shadow-lg font-semibold";
-          nodoH.textContent = "Hidratación";
-          const colaH = document.createElement("span");
-          colaH.className =
-            "absolute -right-1 bottom-1 h-3 w-3 rotate-45 rounded-[2px] bg-[#10b981]";
-          nodoH.appendChild(colaH);
-
-          new maplibre.Marker({ element: nodoH, anchor: "right" })
-            .setLngLat(HIDRATACION)
             .addTo(mapa);
 
           // El ajuste va en el cuadro siguiente, no aquí: "load" puede

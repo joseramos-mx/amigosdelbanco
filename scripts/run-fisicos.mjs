@@ -28,7 +28,7 @@ const args = new Map(
 );
 
 const cantidad = Number(args.get("cantidad")) || 1;
-if (cantidad < 1 || cantidad > 1000) throw new Error("Cantidad inválida (1-1000)");
+if (cantidad < 1 || cantidad > 10000) throw new Error("Cantidad inválida (1-10000)");
 
 const sql = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, onnotice: () => { } });
 

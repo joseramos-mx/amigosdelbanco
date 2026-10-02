@@ -30,7 +30,6 @@ export const PUNTOS: Punto[] = [
 
 export const SALIDA: Punto = [-104.675367, 24.036361];
 export const META: Punto = [-104.675367, 24.036361];
-export const HIDRATACION: Punto = [-104.672, 24.0367];
 
 /** El trazo ya es el recorrido real por calles, no una recta entre extremos. */
 export const PROVISIONAL = false;
