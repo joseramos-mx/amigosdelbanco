@@ -11,34 +11,36 @@ export const metadata: Metadata = {
     "Toda la información del Festival de la Generosidad y Social Run 2026: evento gratuito, cortesías en Estadio Caliente, circuito 3K y 6K, música en vivo y dinámicas.",
 };
 
-const GENEROS_MUSICA = [
+const MOODS_MUSICA = [
   {
-    nombre: "RAVE",
-    color: "from-fuchsia-600 to-purple-800",
-    borde: "border-fuchsia-500/40",
-    textoColor: "text-fuchsia-400",
-    desc: "Energía pura, beats electrónicos y una atmósfera electrizante para vibrar al máximo.",
-  },
-  {
-    nombre: "SKA",
-    color: "from-lime-500 to-emerald-700",
-    borde: "border-lime-500/40",
-    textoColor: "text-lime-400",
-    desc: "Metales, ritmo bailable y el ambiente festivo que pondrá a brincar a toda la comunidad.",
-  },
-  {
-    nombre: "OLDIES",
-    color: "from-sky-500 to-blue-800",
-    borde: "border-sky-500/40",
-    textoColor: "text-sky-300",
-    desc: "Los grandes clásicos nostálgicos que todos conocemos, cantamos y disfrutamos juntos.",
-  },
-  {
-    nombre: "RANCHERO",
-    color: "from-amber-600 to-orange-800",
+    nombre: "Norteño",
     borde: "border-amber-500/40",
     textoColor: "text-amber-400",
-    desc: "La fuerza de nuestra tradición, orgullo duranguense y pasión que une corazones.",
+    desc: "Acordeón, bajo sexto y canciones populares para cantar a todo pulmón.",
+  },
+  {
+    nombre: "Electrónica",
+    borde: "border-fuchsia-500/40",
+    textoColor: "text-fuchsia-400",
+    desc: "Beats continuos y DJs en vivo para bailar sin pausa toda la tarde.",
+  },
+  {
+    nombre: "Mariachi",
+    borde: "border-rose-500/40",
+    textoColor: "text-rose-400",
+    desc: "Trompetas, violines y los grandes clásicos de la música tradicional mexicana.",
+  },
+  {
+    nombre: "Ska",
+    borde: "border-lime-500/40",
+    textoColor: "text-lime-400",
+    desc: "Metales en vivo, coros y ritmos bailables para brincar con toda la energía.",
+  },
+  {
+    nombre: "Oldies",
+    borde: "border-sky-500/40",
+    textoColor: "text-sky-300",
+    desc: "Grandes clásicos nostálgicos en vivo con el grupo Octava Década.",
   },
 ];
 
@@ -258,7 +260,7 @@ export default function InfoRunPage() {
             </div>
           </Reveal>
 
-          {/* ── Música en Vivo: 4 Géneros ─────────────────────────────── */}
+          {/* ── Música en Vivo: 5 Moods ──────────────────────────────── */}
           <Reveal delay={200} className="mt-16 rounded-[24px] bg-run-card p-7 sm:p-10 border border-white/10">
             <div className="text-center">
               <span className="inline-block rounded-full bg-run-amber/15 px-4 py-1 font-geist-mono text-xs uppercase tracking-widest text-run-amber">
@@ -268,26 +270,30 @@ export default function InfoRunPage() {
                 Música en Vivo
               </h2>
               <p className="mt-2 font-geist-mono text-xs sm:text-sm uppercase tracking-wider text-white/60">
-                4 géneros que harán temblar el festival
+                5 moods musicales que harán temblar el festival
               </p>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {GENEROS_MUSICA.map((gen) => (
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 sm:gap-4">
+              {MOODS_MUSICA.map((mood) => (
                 <div
-                  key={gen.nombre}
-                  className={`rounded-[18px] border ${gen.borde} bg-linear-to-b from-white/5 to-black/40 p-6 backdrop-blur-xs transition-transform hover:-translate-y-1`}
+                  key={mood.nombre}
+                  className={`flex flex-col justify-between rounded-[18px] border ${mood.borde} bg-linear-to-b from-white/5 to-black/40 p-4 sm:p-5 backdrop-blur-xs transition-transform hover:-translate-y-1`}
                 >
-                  <p className={`font-geist text-3xl font-black tracking-tight ${gen.textoColor}`}>
-                    {gen.nombre}
-                  </p>
-                  <p className="mt-3 text-xs sm:text-sm text-white/70 leading-relaxed">
-                    {gen.desc}
-                  </p>
+                  <div>
+                    <span className="mb-1 block font-geist-mono text-[10px] font-semibold uppercase tracking-widest text-white/45">
+                      Mood
+                    </span>
+                    <p className={`font-geist text-xl font-black uppercase tracking-tight sm:text-2xl ${mood.textoColor}`}>
+                      {mood.nombre}
+                    </p>
+                    <p className="mt-2.5 text-xs leading-relaxed text-white/70 sm:text-[13px]">
+                      {mood.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
-
           </Reveal>
 
           {/* ── Dinámica: Día Duranguense de la Generosidad ────────────── */}
