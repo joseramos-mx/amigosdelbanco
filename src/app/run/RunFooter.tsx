@@ -34,7 +34,7 @@ const GROUPS = [
     links: [
       { href: "/progreso", label: "Progreso de obra" },
       { href: "/run", label: "Social Run 2026" },
-      { href: "/run/inscripcion", label: "Comprar acceso" },
+      { href: "/donar", label: "Hacer un donativo" },
     ],
   },
   {
@@ -97,15 +97,15 @@ export default function RunFooter() {
 
           <Reveal delay={280} className="sm:col-span-2 lg:col-span-1">
             <p className="text-[15px] text-white/85">
-              Asegura tu Founding Member Pass
+              Apoya la causa con tu donativo
             </p>
             <Link
-              href="/run/inscripcion"
+              href="/donar"
               className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/5 p-1.5 pl-4 transition-colors hover:border-white/25"
             >
-              <span className="text-sm text-white/45">Cupo limitado</span>
+              <span className="text-sm text-white/45">Banco de Alimentos</span>
               <span className="shrink-0 rounded-lg bg-run-amber px-4 py-2.5 text-sm font-medium text-black">
-                Comprar
+                Donar
               </span>
             </Link>
           </Reveal>

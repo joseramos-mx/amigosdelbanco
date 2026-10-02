@@ -18,9 +18,8 @@ const EVENT_DATE = "Viernes 09 de octubre, 2026";
 const EVENT_TIME = "05:00 PM";
 const EVENT_VENUE = "Antigua Estación de Ferrocarril";
 
-// Checkout propio del evento. La inscripción es contraprestación, no donativo:
-// no debe cobrarse por /donar, que emite recibos deducibles.
-const TICKETS_URL = "/run/inscripcion#form";
+// Enlace a donaciones voluntarias:
+const DONAR_URL = "/donar";
 
 const DESCRIPTION = `Social Run 2026 de Generous Generation: festival, concierto, food village y rifa de auto. ${EVENT_DATE}, ${EVENT_TIME}, ${EVENT_VENUE} en Durango. Powered by Banco de Alimentos de Durango.`;
 
@@ -93,8 +92,44 @@ export default function RunPage() {
           {EVENT_VENUE}, Durango.
         </h1>
 
+        {/* ── Banner: Participación gratuita y cortesías en Estadio Caliente ── */}
+        <Reveal delay={0} className="mx-auto mb-6 flex max-w-[1500px] flex-col items-center justify-center text-center sm:mb-8">
+          <p className="font-geist text-[clamp(1.4rem,3.4vw,2.8rem)] font-medium uppercase tracking-wider text-white">
+            ¡TU PARTICIPACIÓN ES <span className="font-black text-white">GRATUITA!</span>
+          </p>
+          <div className="mt-3 w-full max-w-[620px] px-2 sm:mt-4">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Estadio+Caliente+Durango"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block w-full transition-transform hover:scale-[1.02] active:scale-[0.99]"
+              title="Visita el Estadio Caliente para obtener tus cortesías"
+            >
+              <Image
+                src="/run/assets/asset3.png"
+                alt="Visita el Estadio Caliente para obtener tus cortesías"
+                width={747}
+                height={166}
+                priority
+                className="h-auto w-full object-contain drop-shadow-xl"
+              />
+            </a>
+          </div>
+          <p className="mt-4 max-w-[640px] px-4 text-center text-xs leading-relaxed text-white/80 sm:text-sm">
+            <span className="font-semibold text-run-amber">Nota:</span> La participación es totalmente gratuita, pero puedes apoyar la causa del Banco de Alimentos realizando una donación voluntaria utilizando los botones de donar.
+          </p>
+          <div className="mt-3">
+            <Link
+              href="/run/info"
+              className="inline-flex items-center gap-1.5 font-geist-mono text-xs uppercase tracking-wider text-run-amber underline underline-offset-4 transition-colors hover:text-white sm:text-sm"
+            >
+              Más información <span>→</span>
+            </Link>
+          </div>
+        </Reveal>
+
         {/* Retícula de 15 columnas: 7/4/4 · 4/7/4 · 4/11 */}
-        <div id="inicio" className="mx-auto grid max-w-[1500px] grid-cols-2 gap-3 lg:h-[calc(100svh-6rem)] lg:grid-cols-15 lg:grid-rows-[1.95fr_2.5fr_1fr]">
+        <div id="inicio" className="mx-auto grid max-w-[1500px] grid-cols-2 gap-3 lg:grid-cols-15 lg:grid-rows-[1.95fr_2.5fr_1fr]">
           {/* ── Boleto: PNG suelto, sin tarjeta ni fondo ───────────────── */}
           <Reveal delay={0} className="col-span-2 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Image
@@ -113,7 +148,7 @@ export default function RunPage() {
             <Countdown targetIso={EVENT_ISO} />
           </Reveal>
 
-          {/* ── Compra tu acceso ──────────────────────────────────────── */}
+          {/* ── Hacer una donación ────────────────────────────────────── */}
           <Reveal
             delay={120}
             className={`${CARD} relative col-span-2 flex flex-col justify-center overflow-hidden px-6 py-8 lg:col-span-4 lg:col-start-1 lg:row-start-2 lg:px-9`}
@@ -132,15 +167,15 @@ export default function RunPage() {
 
             <div className="relative">
               <p className="text-center text-[clamp(1.9rem,3.1vw,2.9rem)] uppercase leading-[1.02] tracking-tight">
-                <span className="block font-bold">Compra tu</span>
-                <span className="block">Acceso</span>
+                <span className="block font-bold">Hacer una</span>
+                <span className="block">Donación</span>
               </p>
 
               <Link
-                href={TICKETS_URL}
-                className="mt-7 block rounded-md bg-run-amber py-3 text-center text-sm uppercase tracking-wide text-black transition-opacity hover:opacity-85"
+                href={DONAR_URL}
+                className="mt-7 block rounded-md bg-run-amber py-3 text-center text-sm font-semibold uppercase tracking-wide text-black transition-opacity hover:opacity-85"
               >
-                Comprar
+                Donar
               </Link>
             </div>
           </Reveal>
@@ -233,9 +268,9 @@ export default function RunPage() {
       {/* Hueco para que la barra fija no se coma el final del pie. */}
       <div aria-hidden className="h-24 sm:h-28" />
 
-      <BotonLateral href={TICKETS_URL}>Comprar boleto</BotonLateral>
+      <BotonLateral href={DONAR_URL}>Donar</BotonLateral>
 
-      <RunNav ctaHref={TICKETS_URL} destacado />
+      <RunNav ctaHref={DONAR_URL} destacado />
     </>
   );
 }

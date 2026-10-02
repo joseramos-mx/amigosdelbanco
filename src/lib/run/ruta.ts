@@ -1,39 +1,42 @@
 /**
- * Trazo de la ruta.
+ * Trazo de la ruta (circuito 3K y 6K).
  *
- * Sale del GPX de la organización (`generous-generation/ruta/`): 172 puntos
- * de traza, simplificados a 20 con Douglas-Peucker a 6 metros de tolerancia.
- * El trazo dibujado difiere del real en 5 metros —invisible a cualquier
- * zoom— y pesa 88% menos.
- *
- * Para cambiarlo, vuelve a exportar el GPX y repite ese mismo proceso. Dos
- * cuidados: lee solo los `<trkpt>` (los `<wpt>` del final son los alfileres
- * de salida y meta, y colarlos duplica el recorrido en el cálculo de
- * distancia), y recuerda que las coordenadas van en [longitud, latitud], al
- * revés de como se leen en Google Maps.
+ * Circuito urbano con salida y meta en la Antigua Estación de Ferrocarril
+ * (24.036361, -104.675367).
+ * Tramos largos: Boulevard Felipe Pescador y Boulevard Estación Central.
+ * Tramos cortos conectores: Calle Laureano Roncal y Av. Dolores del Río.
  */
 
 /** [longitud, latitud] — el orden de GeoJSON, no el de Google Maps. */
 export type Punto = [number, number];
 
 export const PUNTOS: Punto[] = [
-  [-104.67253, 24.03658], [-104.67166, 24.03664], [-104.66936, 24.03646],
-  [-104.66318, 24.03692], [-104.66026, 24.03734], [-104.65750, 24.03759],
-  [-104.65796, 24.04069], [-104.65840, 24.04608], [-104.65836, 24.04708],
-  [-104.65603, 24.06024], [-104.65493, 24.06607], [-104.65419, 24.06878],
-  [-104.65419, 24.06929], [-104.65430, 24.06960], [-104.65460, 24.06998],
-  [-104.65738, 24.07181], [-104.65858, 24.07024], [-104.66208, 24.07175],
-  [-104.66260, 24.07165], [-104.66376, 24.07099],
+  [-104.67537, 24.03636],
+  [-104.67569, 24.03476],
+  [-104.67527, 24.03452],
+  [-104.65995, 24.03562],
+  [-104.66044, 24.03676],
+  [-104.66055, 24.03733],
+  [-104.66923, 24.03657],
+  [-104.67181, 24.03673],
+  [-104.67567, 24.03631],
+  [-104.68095, 24.03604],
+  [-104.68009, 24.03481],
+  [-104.67987, 24.03363],
+  [-104.67574, 24.03407],
+  [-104.67550, 24.03436],
+  [-104.67537, 24.03636],
 ];
 
-export const SALIDA: Punto = PUNTOS[0];
-export const META: Punto = PUNTOS[PUNTOS.length - 1];
+export const SALIDA: Punto = [-104.675367, 24.036361];
+export const META: Punto = [-104.675367, 24.036361];
+export const HIDRATACION: Punto = [-104.672, 24.0367];
 
 /** El trazo ya es el recorrido real por calles, no una recta entre extremos. */
 export const PROVISIONAL = false;
 
-/** Kilómetros medidos sobre el trazo del GPX. */
-export const DISTANCIA_KM = 5;
+/** Kilómetros medidos sobre el circuito oficial. */
+export const DISTANCIA_KM = "3K y 6K";
 
 /**
  * Desnivel acumulado, en metros.
@@ -52,7 +55,7 @@ export const DESNIVEL_M: number | null = null;
  * a qué hora se libera la vialidad. Igual que el desnivel, en null se muestra
  * un guion.
  */
-export const TIEMPO_LIMITE: string | null = null;
+export const TIEMPO_LIMITE: string | null = "2h";
 
 /** Centro y acercamiento iniciales del mapa, calculados del trazo. */
 export function encuadre(puntos: Punto[]): { centro: Punto; limites: [Punto, Punto] } {

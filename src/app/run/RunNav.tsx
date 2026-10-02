@@ -41,8 +41,8 @@ const SECCIONES = [
 
 export default function RunNav({
   ctaHref,
-  ctaCorta = "Comprar",
-  ctaLarga = "Comprar boleto",
+  ctaCorta = "Donar",
+  ctaLarga = "Hacer un donativo",
   base = "",
   destacado = false,
 }: {
@@ -144,7 +144,7 @@ export default function RunNav({
             className="h-6 w-auto shrink-0 sm:h-7"
           />
           <span className="hidden font-geist text-[24px] font-black uppercase tracking-tighter text-white/70 xl:inline">
-            Social Run <span className="font-light">5KM</span>
+            Social Run <span className="font-light">3KM y 6KM</span>
           </span>
         </div>
 
@@ -158,16 +158,14 @@ export default function RunNav({
                   href={`${base}#${seccion.id}`}
                   onClick={enLaPortada ? (e) => irA(e, seccion.id) : undefined}
                   aria-current={activo ? "true" : undefined}
-                  className={`flex flex-col items-center gap-1.5 rounded-xl px-4 py-2.5 transition-colors lg:px-5 ${
-                    activo
-                      ? "bg-[#ece8e0] text-black"
-                      : "text-white/55 hover:text-white"
-                  }`}
+                  className={`flex flex-col items-center gap-1.5 rounded-xl px-4 py-2.5 transition-colors lg:px-5 ${activo
+                    ? "bg-[#ece8e0] text-black"
+                    : "text-white/55 hover:text-white"
+                    }`}
                 >
                   <span
-                    className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                      activo ? "bg-black" : "bg-white/35"
-                    }`}
+                    className={`h-1.5 w-1.5 rounded-full transition-colors ${activo ? "bg-black" : "bg-white/35"
+                      }`}
                   />
                   <span className="font-geist-mono text-[10px] uppercase tracking-[0.16em]">
                     {seccion.etiqueta}
@@ -181,11 +179,10 @@ export default function RunNav({
         {/* ── Comprar ──────────────────────────────────────────────── */}
         <Link
           href={ctaHref}
-          className={`shrink-0 rounded-xl px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] transition-opacity hover:opacity-85 sm:px-7 ${
-            destacado
-              ? "glow-rojo bg-run-red text-white"
-              : "bg-run-amber text-black"
-          }`}
+          className={`shrink-0 rounded-xl px-5 py-3 font-geist-mono text-[10px] uppercase tracking-[0.16em] transition-opacity hover:opacity-85 sm:px-7 ${destacado
+            ? "glow-rojo bg-run-red text-white"
+            : "bg-run-amber text-black"
+            }`}
         >
           <span className="lg:hidden">{ctaCorta}</span>
           <span className="hidden lg:inline">{ctaLarga}</span>

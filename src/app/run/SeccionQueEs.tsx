@@ -40,7 +40,7 @@ export default function SeccionQueEs() {
 
             <div className="flex flex-col justify-center rounded-[20px] bg-run-amber px-7 py-10 sm:px-10 lg:px-12">
               <h2 className="font-geist text-[clamp(2.1rem,4vw,3.8rem)] font-bold uppercase leading-none tracking-tight text-black/85">
-                Social Run 5K
+                Social Run 3KM y 6KM
               </h2>
 
               <div className="mt-7 max-w-[62ch] space-y-4 text-[16px] leading-relaxed text-black/70">
@@ -53,11 +53,10 @@ export default function SeccionQueEs() {
                   de hacerlo.
                 </p>
                 <p>
-                  Sale de la Antigua Estación de Ferrocarril y termina en el
-                  Banco de Alimentos, donde el festival ya está montado
-                  esperando: música en varias zonas, comida y la rifa. Lo que se
-                  recauda se queda en Durango, en el trabajo del Banco de
-                  Alimentos.
+                  Inicia y termina en la Antigua Estación de Ferrocarril, donde
+                  el festival ya está montado esperando: música en varias zonas,
+                  comida y la rifa. Lo que se recauda con los donativos se queda
+                  en Durango, en el trabajo del Banco de Alimentos.
                 </p>
               </div>
             </div>
@@ -78,9 +77,9 @@ export default function SeccionQueEs() {
               <div className="mt-8 flex flex-wrap gap-8">
                 <div>
                   <p className="font-geist text-3xl font-bold text-black/85">
-                    5,000
+                    Gratis
                   </p>
-                  <p className="text-sm text-black/60">cupos</p>
+                  <p className="text-sm text-black/60">evento</p>
                 </div>
                 <div>
                   <p className="font-geist text-3xl font-bold text-black/85">
@@ -90,7 +89,7 @@ export default function SeccionQueEs() {
                 </div>
                 <div>
                   <p className="font-geist text-3xl font-bold text-black/85">
-                    5
+                    3 y 6
                   </p>
                   <p className="text-sm text-black/60">kilómetros</p>
                 </div>

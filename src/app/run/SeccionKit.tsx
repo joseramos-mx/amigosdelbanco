@@ -36,6 +36,13 @@ export default function SeccionKit() {
     <section id="kit" className="px-4 pb-16 sm:px-6 lg:px-12 lg:pb-24">
       <div className="mx-auto max-w-[1500px]">
         <Reveal>
+          <div className="mb-4 rounded-[16px] border border-run-amber/20 bg-run-card px-6 py-4 text-center sm:mb-6">
+            <p className="font-geist text-xs leading-relaxed text-white/85 sm:text-sm">
+              <span className="font-semibold uppercase tracking-wider text-run-amber">Importante:</span>{" "}
+              la cortesía de acceso es gratis, pero no incluye el kit del corredor.
+            </p>
+          </div>
+
           <div className="grid gap-3 lg:h-[560px] lg:grid-cols-3 lg:gap-4">
             {/* ── Título + playera ─────────────────────────────────────── */}
             <div className="flex flex-col gap-3 lg:gap-4">

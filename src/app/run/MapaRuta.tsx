@@ -6,7 +6,7 @@ import type { Map as MapaLibre } from "maplibre-gl";
 // ejecución hace que el bundler sirva HTML en lugar del archivo. Pesa poco y
 // no arrastra el JS de la librería, que sigue siendo diferido.
 import "maplibre-gl/dist/maplibre-gl.css";
-import { META, PUNTOS, SALIDA, encuadre, type Punto } from "@/lib/run/ruta";
+import { HIDRATACION, PUNTOS, SALIDA, encuadre, type Punto } from "@/lib/run/ruta";
 
 /**
  * Mapa de la ruta.
@@ -146,34 +146,35 @@ export default function MapaRuta() {
         mapa.on("load", () => {
           if (cancelado) return;
 
-          for (const [punto, etiqueta] of [
-            [SALIDA, "Salida"],
-            [META, "Meta"],
-          ] as const) {
-            const nodo = document.createElement("div");
-            nodo.className =
-              "relative rounded-full bg-run-amber px-4 py-2 font-geist-mono " +
-              "text-[11px] uppercase tracking-[0.16em] text-black shadow-lg";
-            nodo.textContent = etiqueta;
+          // Marcador Salida y Meta
+          const nodoSM = document.createElement("div");
+          nodoSM.className =
+            "relative rounded-full bg-run-amber px-4 py-2 font-geist-mono " +
+            "text-[11px] uppercase tracking-[0.16em] text-black shadow-lg font-bold";
+          nodoSM.textContent = "Salida y Meta";
+          const colaSM = document.createElement("span");
+          colaSM.className =
+            "absolute -right-1 bottom-1.5 h-3.5 w-3.5 rotate-45 rounded-[3px] bg-run-amber";
+          nodoSM.appendChild(colaSM);
 
-            // La colita del globo: un cuadrado girado que asoma por la
-            // esquina. Se pinta encima de la píldora en vez de detrás —del
-            // mismo ámbar, así que da igual— porque mandarlo atrás con un
-            // z-index negativo lo esconde detrás del lienzo del mapa, no solo
-            // detrás de la píldora. Va después del texto porque
-            // `textContent` borra los hijos que ya hubiera.
-            const cola = document.createElement("span");
-            cola.className =
-              "absolute -right-1 bottom-1.5 h-3.5 w-3.5 rotate-45 rounded-[3px] bg-run-amber";
-            nodo.appendChild(cola);
+          new maplibre.Marker({ element: nodoSM, anchor: "right" })
+            .setLngLat(SALIDA)
+            .addTo(mapa);
 
-            // Anclado a la derecha, la píldora queda a la izquierda del punto
-            // y la cola cae justo encima de él. Por eso el encuadre reserva
-            // más margen de ese lado.
-            new maplibre.Marker({ element: nodo, anchor: "right" })
-              .setLngLat(punto)
-              .addTo(mapa);
-          }
+          // Marcador Punto de Hidratación
+          const nodoH = document.createElement("div");
+          nodoH.className =
+            "relative rounded-full bg-[#10b981] px-3.5 py-1.5 font-geist-mono " +
+            "text-[10px] uppercase tracking-[0.16em] text-white shadow-lg font-semibold";
+          nodoH.textContent = "Hidratación";
+          const colaH = document.createElement("span");
+          colaH.className =
+            "absolute -right-1 bottom-1 h-3 w-3 rotate-45 rounded-[2px] bg-[#10b981]";
+          nodoH.appendChild(colaH);
+
+          new maplibre.Marker({ element: nodoH, anchor: "right" })
+            .setLngLat(HIDRATACION)
+            .addTo(mapa);
 
           // El ajuste va en el cuadro siguiente, no aquí: "load" puede
           // dispararse antes de que el navegador termine de acomodar la

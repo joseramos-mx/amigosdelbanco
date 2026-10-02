@@ -2,7 +2,6 @@ import Image from "next/image";
 import MapaRuta from "./MapaRuta";
 import Reveal from "./Reveal";
 import {
-  DESNIVEL_M,
   DISTANCIA_KM,
   LIGA_GOOGLE_MAPS,
   TIEMPO_LIMITE,
@@ -21,14 +20,10 @@ import {
  * mapa. En celular se apila y cada bloque toma su propio alto.
  */
 
-/** Guion cuando el dato todavía no lo confirma la organización. */
-const SIN_DATO = "—";
-
 export default function SeccionRuta() {
   const datos = [
-    { etiqueta: "Distancia", valor: `${DISTANCIA_KM} km` },
-    { etiqueta: "Desnivel", valor: DESNIVEL_M === null ? SIN_DATO : `${DESNIVEL_M} m` },
-    { etiqueta: "Tiempo", valor: TIEMPO_LIMITE ?? SIN_DATO },
+    { etiqueta: "Distancia", valor: DISTANCIA_KM },
+    { etiqueta: "Tiempo", valor: TIEMPO_LIMITE ?? "2h" },
   ];
 
   return (
@@ -53,7 +48,7 @@ export default function SeccionRuta() {
               </div>
 
               <div className="rounded-[14px] bg-run-card px-8 py-7 sm:px-10">
-                <div className="flex items-end justify-between gap-4">
+                <div className="flex items-end justify-around gap-6">
                   {datos.map((dato) => (
                     <div key={dato.etiqueta} className="text-center">
                       <p className="font-geist-mono text-[10px] uppercase tracking-[0.18em] text-white/45">
@@ -77,10 +72,8 @@ export default function SeccionRuta() {
                   Cómo llegar
                 </a>
 
-                <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-white/45">
-                  Sale de la Antigua Estación de Ferrocarril y termina en el
-                  Banco de Alimentos. Recorrido urbano, medido sobre el trazo
-                  oficial que entregó la organización.
+                <p className="mt-4 max-w-[50ch] text-sm leading-relaxed text-white/60">
+                  Inicia y termina donde mismo, Av. Gómez Morín.
                 </p>
               </div>
             </div>
@@ -88,6 +81,57 @@ export default function SeccionRuta() {
             {/* ── Columna derecha: mapa ────────────────────────────────── */}
             <div className="h-[420px] lg:h-full">
               <MapaRuta />
+            </div>
+          </div>
+
+          {/* ── Itinerario y dinámica del circuito ───────────────────── */}
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-geist text-xl font-bold uppercase tracking-tight text-white">5:00 PM</p>
+                <p className="mt-1 font-geist-mono text-xs uppercase tracking-wider text-run-amber">
+                  Antigua Estación de Ferrocarril
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                  <line x1="6" y1="1" x2="6" y2="4" />
+                  <line x1="10" y1="1" x2="10" y2="4" />
+                  <line x1="14" y1="1" x2="14" y2="4" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-geist text-xl font-bold uppercase tracking-tight text-white">6:00 PM</p>
+                <p className="mt-1 text-xs text-white/70">
+                  Corremos juntos a ritmo moderado acompañados de música
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                  <line x1="4" y1="22" x2="4" y2="15" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-geist text-xl font-bold uppercase tracking-tight text-white">Circuito</p>
+                <p className="mt-1 text-xs text-white/70">
+                  3 km y 6 km sobre Boulevard Felipe Pescador y Av. Gómez Morín
+                </p>
+              </div>
             </div>
           </div>
         </Reveal>
