@@ -77,7 +77,86 @@ export default function PanelArtista({
                     className={`absolute inset-0 transition-opacity duration-700 ${i === activo ? "opacity-100" : "pointer-events-none opacity-0"
                         }`}
                 >
-                    {a.ajuste === "contener" ? (
+                    {!a.foto ? (
+                        <div className="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[#0c0c0c] p-6 text-neutral-100 sm:p-8 lg:p-10 select-none">
+                            {/* Fondo radial cálido & resplandor */}
+                            <div
+                                className="pointer-events-none absolute inset-0 opacity-70"
+                                style={{
+                                    background:
+                                        "radial-gradient(ellipse 85% 75% at 50% 50%, rgba(233, 166, 45, 0.18) 0%, rgba(12, 12, 12, 0.95) 100%)",
+                                }}
+                            />
+
+                            {/* Marca de agua tipográfica gigante de fondo */}
+                            <div className="pointer-events-none absolute -left-8 -top-6 text-[18vw] font-bold uppercase tracking-tight text-white/[0.03] font-schabo sm:text-[130px] lg:text-[160px] leading-none">
+                                MARIACHI
+                            </div>
+                            <div className="pointer-events-none absolute -right-6 -bottom-6 text-[18vw] font-bold uppercase tracking-tight text-white/[0.03] font-schabo sm:text-[130px] lg:text-[160px] leading-none">
+                                DURANGO
+                            </div>
+
+                            {/* Borde / marco estilizado */}
+                            <div className="pointer-events-none absolute inset-3 rounded-[16px] border border-run-amber/25 sm:inset-4" />
+                            <div className="pointer-events-none absolute inset-3.5 rounded-[14px] border border-white/[0.04] sm:inset-4.5" />
+
+                            {/* Top Kicker */}
+                            <div className="relative z-10 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-run-amber animate-pulse" />
+                                    <span className="font-geist-mono text-[11px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-run-amber">
+                                        Mariachi en Vivo
+                                    </span>
+                                </div>
+                                <span className="font-geist-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-neutral-400">
+                                    El de casa
+                                </span>
+                            </div>
+
+                            {/* Centro: Composición Tipográfica Principal al estilo del grupo */}
+                            <div className="relative z-10 flex flex-col items-center justify-center my-auto py-2 text-center">
+                                {/* • INTERNACIONAL • */}
+                                <div className="flex items-center justify-center gap-2 sm:gap-3 text-run-amber font-schabo text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase tracking-[0.25em]">
+                                    <span className="text-[10px] sm:text-xs">●</span>
+                                    <span className="text-white tracking-[0.2em] drop-shadow-md">
+                                        INTERNACIONAL
+                                    </span>
+                                    <span className="text-[10px] sm:text-xs">●</span>
+                                </div>
+
+                                {/* DURANGO (Western Rye font with spurs & center pinstripe) */}
+                                <div className="relative my-1 sm:my-2 w-full max-w-2xl flex items-center justify-center">
+                                    <div className="font-rye text-5xl sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl tracking-wider text-run-amber uppercase leading-none drop-shadow-[0_4px_35px_rgba(233,166,45,0.45)] select-none">
+                                        DURANGO
+                                    </div>
+                                    {/* Línea horizontal que cruza las púas centrales de las letras como en el diseño original */}
+                                    <div className="pointer-events-none absolute inset-x-8 top-1/2 -translate-y-1/2 h-[2px] bg-white/45 mix-blend-overlay sm:inset-x-12" />
+                                </div>
+
+                                {/* —✦— MARIACHI —✦— */}
+                                <div className="mt-0.5 flex items-center justify-center gap-2 sm:gap-3 text-run-amber">
+                                    <span className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-run-amber" />
+                                    <span className="text-[10px] sm:text-xs">✦</span>
+                                    <span className="font-schabo text-base sm:text-lg md:text-xl tracking-[0.35em] text-neutral-200 uppercase">
+                                        MARIACHI
+                                    </span>
+                                    <span className="text-[10px] sm:text-xs">✦</span>
+                                    <span className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-run-amber" />
+                                </div>
+                            </div>
+
+                            {/* Bottom: Instrumentación y detalles sonoros */}
+                            <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center font-geist-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-neutral-300">
+                                <span>Trompetas</span>
+                                <span className="text-run-amber">✦</span>
+                                <span>Violines</span>
+                                <span className="text-run-amber">✦</span>
+                                <span>Guitarrón</span>
+                                <span className="text-run-amber">✦</span>
+                                <span>Voz y Corazón</span>
+                            </div>
+                        </div>
+                    ) : a.ajuste === "contener" ? (
                         <>
                             {/* Fondo: la misma foto muy desenfocada, solo para rellenar los
                   lados. La foto de verdad va encima, completa. */}

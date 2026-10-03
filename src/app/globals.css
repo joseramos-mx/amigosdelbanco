@@ -18,6 +18,7 @@
   --font-geist: var(--font-geist-sans);
   --font-geist-mono: var(--font-geist-mono-code);
   --font-schabo: var(--font-schabo-display);
+  --font-rye: var(--font-rye);
 }
 
 :root {

@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Rye } from "next/font/google";
 import localFont from "next/font/local";
 import SmoothScroll from "@/components/SmoothScroll";
 import MotionProvider from "./MotionProvider";
@@ -12,6 +12,13 @@ const geist = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono-code",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const rye = Rye({
+  variable: "--font-rye",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -31,7 +38,7 @@ export default function RunLayout({
 }>) {
   return (
     <div
-      className={`${geist.variable} ${geistMono.variable} ${schabo.variable} font-geist bg-black text-white min-h-screen flex flex-col`}
+      className={`${geist.variable} ${geistMono.variable} ${schabo.variable} ${rye.variable} font-geist bg-black text-white min-h-screen flex flex-col`}
     >
       <SmoothScroll>
         <MotionProvider>{children}</MotionProvider>

@@ -15,14 +15,15 @@
 
 export type Artista = {
   nombre: string;
-  /** Foto del artista, ruta dentro de `public/`. */
-  foto: string;
+  /** Foto del artista, ruta dentro de `public/`. Opcional si el diseño es tipográfico. */
+  foto?: string;
   /**
    * Logo del artista, ruta dentro de `public/`. Va en su propio recuadro
    * grande junto a la foto, NO sobre ella: así sirve igual un PNG
    * transparente que un JPG con fondo. Se ajusta solo al recuadro.
+   * Opcional si el diseño es tipográfico.
    */
-  logo: string;
+  logo?: string;
   /**
    * Color del recuadro detrás del logo. Por defecto, blanco. Si el logo es un
    * JPG con fondo de otro color, pon aquí ese mismo color para que no se
@@ -126,9 +127,8 @@ export const MOODS: Mood[] = [
       "Trompetas, violines y guitarrón con el mariachi de casa. Los clásicos de siempre para cantarse con el corazón en la mano, con el grito bien dado y sin esperar a que alguien más empiece.",
     artistas: [
       {
-        nombre: "Mariachi Internacional Durango",
-        foto: "/run/artistas/mariachi-internacional-durango.jpg",
-        logo: "/run/artistas/mariachi-internacional-durango-logo.png",
+        nombre: "Internacional Durango",
+        fondoLogo: "#0a0a0a",
       },
     ],
     playlist: null,
@@ -156,8 +156,10 @@ export const MOODS: Mood[] = [
     artistas: [
       {
         nombre: "Octava Década",
-        foto: "/run/artistas/octava-decada.jpg",
-        logo: "/run/artistas/octava-decada-logo.png",
+        foto: "/run/artistas/OCTAVA_DECADA_GRUPO.png",
+        logo: "/run/artistas/OCTAVA_DECADA_LOGO.png",
+        fondoLogo: "#000000",
+        enfoque: "center 45%",
       },
     ],
     playlist: null,

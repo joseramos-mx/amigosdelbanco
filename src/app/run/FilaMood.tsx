@@ -78,11 +78,43 @@ export default function FilaMood({
                                 }`}
                             style={{ background: a.fondoLogo ?? "#fff" }}
                         >
-                            <img
-                                src={a.logo}
-                                alt={a.nombre}
-                                className="h-full w-full object-contain"
-                            />
+                            {a.logo ? (
+                                <img
+                                    src={a.logo}
+                                    alt={a.nombre}
+                                    className="h-full w-full object-contain"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full flex-col items-center justify-center rounded-[14px] border border-run-amber/30 bg-neutral-950/95 p-3 text-center select-none shadow-inner">
+                                    {/* • INTERNACIONAL • */}
+                                    <div className="flex items-center justify-center gap-1.5 text-run-amber font-schabo text-xs sm:text-sm lg:text-base uppercase tracking-[0.2em]">
+                                        <span className="text-[7px]">●</span>
+                                        <span className="text-white tracking-[0.18em]">
+                                            INTERNACIONAL
+                                        </span>
+                                        <span className="text-[7px]">●</span>
+                                    </div>
+
+                                    {/* DURANGO in Rye */}
+                                    <div className="relative my-0.5 w-full flex items-center justify-center">
+                                        <div className="font-rye text-2xl sm:text-3xl lg:text-4xl tracking-wider text-run-amber uppercase leading-none drop-shadow-sm">
+                                            DURANGO
+                                        </div>
+                                        <div className="pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 h-[1px] bg-white/40 mix-blend-overlay" />
+                                    </div>
+
+                                    {/* —✦— MARIACHI —✦— */}
+                                    <div className="flex items-center justify-center gap-1.5 text-run-amber">
+                                        <span className="h-px w-5 bg-gradient-to-r from-transparent to-run-amber" />
+                                        <span className="text-[7px]">✦</span>
+                                        <span className="font-schabo text-[11px] sm:text-xs tracking-[0.25em] text-neutral-300 uppercase">
+                                            MARIACHI
+                                        </span>
+                                        <span className="text-[7px]">✦</span>
+                                        <span className="h-px w-5 bg-gradient-to-l from-transparent to-run-amber" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
