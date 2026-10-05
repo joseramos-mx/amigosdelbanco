@@ -147,7 +147,7 @@ export default function SeccionRuta() {
                   Festival de la Generosidad
                 </p>
                 <p className="mt-1 text-xs text-white/70">
-                  3 horas de música en vivo con 4 géneros musicales, food village, rifa de auto y convivencia
+                  3 horas de música en vivo con 5 géneros musicales, food village, rifa de auto y convivencia
                 </p>
               </div>
             </div>

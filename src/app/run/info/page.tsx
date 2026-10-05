@@ -81,7 +81,7 @@ const CRONOGRAMA = [
   {
     hora: "7:00 - 10:00 PM",
     titulo: "Festival de la Generosidad",
-    detalle: "3 horas de música en vivo con 4 géneros musicales, food village, rifa de auto y convivencia.",
+    detalle: "3 horas de música en vivo con 5 géneros musicales, food village, rifa de auto y convivencia.",
     icono: (
       <svg viewBox="0 0 24 24" className="h-6 w-6 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 18V5l12-2v13" />
