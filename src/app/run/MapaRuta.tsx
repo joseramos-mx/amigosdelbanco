@@ -30,6 +30,8 @@ import { PUNTOS, SALIDA, encuadre, type Punto } from "@/lib/run/ruta";
  */
 
 const AMBAR = "#e9a62d";
+const CARTO_KEY =
+  process.env.NEXT_PUBLIC_CARTO_KEY || "cb1_4awj_1_e11589686559c5b2552829e8";
 
 const ESTILO = {
   version: 8 as const,
@@ -37,9 +39,9 @@ const ESTILO = {
     carto: {
       type: "raster" as const,
       tiles: [
-        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+        `https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?key=${CARTO_KEY}`,
+        `https://b.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?key=${CARTO_KEY}`,
+        `https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?key=${CARTO_KEY}`,
       ],
       tileSize: 256,
       attribution:
