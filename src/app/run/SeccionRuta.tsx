@@ -23,17 +23,17 @@ import {
 export default function SeccionRuta() {
   const datos = [
     { etiqueta: "Distancia", valor: DISTANCIA_KM },
-    { etiqueta: "Tiempo", valor: TIEMPO_LIMITE ?? "2h" },
+    { etiqueta: "Tiempo", valor: TIEMPO_LIMITE ?? "1h" },
   ];
 
   return (
     <section id="ruta" className="px-4 py-16 sm:px-6 lg:px-12 lg:py-24">
-      <div className="mx-auto max-w-[1500px]">
+      <div className="mx-auto max-w-375">
         <Reveal>
-          <div className="grid gap-x-7 gap-y-3 lg:h-[760px] lg:grid-cols-[minmax(0,1.24fr)_minmax(0,1fr)]">
+          <div className="grid gap-x-7 gap-y-3 lg:h-190 lg:grid-cols-[minmax(0,1.24fr)_minmax(0,1fr)]">
             {/* ── Columna izquierda: foto + ficha ──────────────────────── */}
             <div className="flex flex-col gap-3">
-              <div className="relative h-[260px] overflow-hidden rounded-[14px] sm:h-[340px] lg:h-auto lg:flex-1">
+              <div className="relative h-65 overflow-hidden rounded-[14px] sm:h-85 lg:h-auto lg:flex-1">
                 <Image
                   src="/run/reloj.jpg"
                   alt="Reloj y vitral de la fachada de la Antigua Estación de Ferrocarril de Durango, punto de salida"
@@ -79,13 +79,13 @@ export default function SeccionRuta() {
             </div>
 
             {/* ── Columna derecha: mapa ────────────────────────────────── */}
-            <div className="h-[420px] lg:h-full">
+            <div className="h-105 lg:h-full">
               <MapaRuta />
             </div>
           </div>
 
           {/* ── Itinerario y dinámica del circuito ───────────────────── */}
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
                 <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -104,11 +104,10 @@ export default function SeccionRuta() {
             <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
                 <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-                  <line x1="6" y1="1" x2="6" y2="4" />
-                  <line x1="10" y1="1" x2="10" y2="4" />
-                  <line x1="14" y1="1" x2="14" y2="4" />
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
               </div>
               <div>
@@ -130,6 +129,25 @@ export default function SeccionRuta() {
                 <p className="font-geist text-xl font-bold uppercase tracking-tight text-white">Circuito</p>
                 <p className="mt-1 text-xs text-white/70">
                   3 km y 6 km sobre Boulevard Felipe Pescador y Av. Gómez Morín
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 rounded-[14px] bg-run-card p-5 sm:flex-col sm:items-start sm:p-6">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-run-amber/15 text-run-amber">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-geist text-xl font-bold uppercase tracking-tight text-white">7:00 - 10:00 PM</p>
+                <p className="mt-1 font-geist-mono text-xs uppercase tracking-wider text-run-amber">
+                  Festival de la Generosidad
+                </p>
+                <p className="mt-1 text-xs text-white/70">
+                  3 horas de música en vivo con 4 géneros musicales, food village, rifa de auto y convivencia
                 </p>
               </div>
             </div>

@@ -96,7 +96,7 @@ export default function InfoRunPage() {
   return (
     <>
       <main className="min-h-svh px-4 pt-8 pb-16 sm:px-6 lg:px-12 lg:pt-12">
-        <div className="mx-auto max-w-[1200px]">
+        <div className="mx-auto max-w-300">
           {/* ── Navegación superior de regreso ────────────────────────── */}
           <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
             <Link
@@ -118,7 +118,7 @@ export default function InfoRunPage() {
 
           {/* ── Encabezado principal con Logo del Festival ────────────── */}
           <Reveal className="text-center">
-            <div className="mx-auto max-w-[720px]">
+            <div className="mx-auto max-w-180">
               <Image
                 src="/run/assets/asset2.png"
                 alt="9 de Octubre — Festival de la Generosidad + Social Run"
@@ -138,7 +138,7 @@ export default function InfoRunPage() {
             <h1 className="mt-6 font-geist text-[clamp(1.75rem,3.8vw,3rem)] font-extrabold uppercase tracking-tight text-white">
               ¡Tu participación es <span className="text-run-amber">gratuita!</span>
             </h1>
-            <p className="mx-auto mt-3 max-w-[650px] text-sm text-white/75 sm:text-base leading-relaxed">
+            <p className="mx-auto mt-3 max-w-162.5 text-sm text-white/75 sm:text-base leading-relaxed">
               Únete al gran día duranguense de la generosidad: una carrera deportiva, festival cultural,
               concierto en vivo y convivencia familiar para apoyar al Banco de Alimentos de Durango.
             </p>
@@ -147,7 +147,7 @@ export default function InfoRunPage() {
           {/* ── Banner: Recoge tus cortesías en Estadio Caliente ──────── */}
           <Reveal delay={80} className="mt-10 rounded-[20px] bg-run-card border border-white/10 p-6 sm:p-8">
             <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:justify-between lg:text-left">
-              <div className="max-w-[600px]">
+              <div className="max-w-150">
                 <span className="inline-block rounded-md bg-red-600 px-3 py-1 font-geist-mono text-xs font-bold uppercase tracking-wider text-white">
                   Evento Gratuito
                 </span>
@@ -165,7 +165,7 @@ export default function InfoRunPage() {
                   href="https://www.google.com/maps/search/?api=1&query=Estadio+Caliente+Durango"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-[340px] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full max-w-85 transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   title="Ver ubicación del Estadio Caliente en Google Maps"
                 >
                   <Image
@@ -261,7 +261,7 @@ export default function InfoRunPage() {
           </Reveal>
 
           {/* ── Música en Vivo: 5 Moods ──────────────────────────────── */}
-          <Reveal delay={200} className="mt-16 rounded-[24px] bg-run-card p-7 sm:p-10 border border-white/10">
+          <Reveal delay={200} className="mt-16 rounded-3xl bg-run-card p-7 sm:p-10 border border-white/10">
             <div className="text-center">
               <span className="inline-block rounded-full bg-run-amber/15 px-4 py-1 font-geist-mono text-xs uppercase tracking-widest text-run-amber">
                 Festival de la Generosidad
@@ -297,7 +297,7 @@ export default function InfoRunPage() {
           </Reveal>
 
           {/* ── Dinámica: Día Duranguense de la Generosidad ────────────── */}
-          <Reveal delay={240} className="mt-16 rounded-[24px] border border-run-amber/25 bg-linear-to-br from-[#231a0e] via-run-card to-black p-7 sm:p-10">
+          <Reveal delay={240} className="mt-16 rounded-3xl border border-run-amber/25 bg-linear-to-br from-[#231a0e] via-run-card to-black p-7 sm:p-10">
             <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] items-center">
               <div>
                 <span className="font-geist-mono text-xs font-semibold uppercase tracking-widest text-run-amber">

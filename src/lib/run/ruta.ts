@@ -54,7 +54,7 @@ export const DESNIVEL_M: number | null = null;
  * a qué hora se libera la vialidad. Igual que el desnivel, en null se muestra
  * un guion.
  */
-export const TIEMPO_LIMITE: string | null = "2h";
+export const TIEMPO_LIMITE: string | null = "1h";
 
 /** Centro y acercamiento iniciales del mapa, calculados del trazo. */
 export function encuadre(puntos: Punto[]): { centro: Punto; limites: [Punto, Punto] } {
