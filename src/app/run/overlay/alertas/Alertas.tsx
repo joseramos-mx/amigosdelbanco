@@ -68,14 +68,18 @@ export default function Alertas({ clave, demo, privado, fondo }: Props) {
             aria-live="polite"
           >
             <div className="relative flex items-center drop-shadow-[0_1vmin_2.4vmin_rgba(0,0,0,.55)]">
-              {/* Logo en medallón: fondo claro para que se lea sin importar los colores del logo */}
-              <div className="relative z-10 grid h-[13vmin] min-h-[4.5rem] w-[13vmin] min-w-[4.5rem] shrink-0 place-items-center rounded-full bg-white p-[1.8vmin] ring-[.7vmin] ring-run-amber">
+              {/* Logo a la izquierda, sin círculo, ligeramente superpuesto al óvalo */}
+              <div className="relative z-10 -mr-[3.5vmin] h-[11vmin] min-h-[4.2rem] max-h-[6.8rem] shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.svg" alt="Banco de Alimentos de Durango" className="h-full w-full object-contain" />
+                <img
+                  src="/run/logo.png"
+                  alt="Festival de la Generosidad - Social Run"
+                  className="h-full w-auto object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.85)]"
+                />
               </div>
 
-              {/* Barra delgada tipo ticker */}
-              <div className="relative -ml-[4vmin] flex min-w-0 flex-1 items-center justify-between gap-[2vmin] overflow-hidden rounded-full border-[.5vmin] border-run-amber bg-gradient-to-r from-[#3a2c0e] via-[#262014] to-[#171717] py-[1.1vmin] pl-[6vmin] pr-[1.4vmin]">
+              {/* Óvalo de la info del donador */}
+              <div className="relative flex min-w-0 flex-1 items-center justify-between gap-[2vmin] overflow-hidden rounded-full border-[.5vmin] border-run-amber bg-gradient-to-r from-[#3a2c0e] via-[#262014] to-[#171717] py-[1.1vmin] pl-[5.5vmin] pr-[1.4vmin]">
                 <span
                   aria-hidden
                   className="pointer-events-none absolute -right-[6vmin] -top-[8vmin] h-[20vmin] w-[20vmin] rounded-full bg-run-amber/25 blur-3xl"
