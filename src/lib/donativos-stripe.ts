@@ -133,3 +133,32 @@ export const donanteRecienteDeStripe = cache(async (): Promise<RecentDonor | nul
     return null;
   }
 });
+
+export const donacionesRecientesDeStripe = cache(async (limit = 50) => {
+  try {
+    const [charges, customers] = await Promise.all([getAllCharges(), getAllCustomers()]);
+    const customersById = new Map(customers.map((c) => [c.id, c]));
+    const sorted = [...charges].sort((a, b) => b.created - a.created);
+    const list = [];
+    for (const c of sorted) {
+      const net = chargeNet(c);
+      if (net <= 0) continue;
+      const custId = customerIdOf(c);
+      const cust = custId ? customersById.get(custId) : null;
+      const isPublic = cust?.metadata?.list_public === "true";
+      const name = isPublic && cust?.name ? cust.name : "Donante Anónimo";
+      list.push({
+        id: c.id,
+        display_name: name,
+        amount_cents: net,
+        kind: "once" as const,
+        created_at: new Date(c.created * 1000).toISOString(),
+      });
+      if (list.length >= limit) break;
+    }
+    return list;
+  } catch (err) {
+    console.error("[donacionesRecientesDeStripe] error:", err);
+    return [];
+  }
+});

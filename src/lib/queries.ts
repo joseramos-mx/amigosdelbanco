@@ -4,6 +4,7 @@ import { conReintento, db, hayBaseDeDatos } from "@/lib/db";
 import {
   donanteRecienteDeStripe,
   donantesDeStripe,
+  donacionesRecientesDeStripe,
   totalesDeStripe,
 } from "@/lib/donativos-stripe";
 
@@ -119,3 +120,48 @@ export const getMostRecentDonor = cache(async (): Promise<RecentDonor | null> =>
     return null;
   }
 });
+
+export type LiveDonation = {
+  id: string;
+  display_name: string;
+  amount_cents: number;
+  kind: "once" | "recurring";
+  created_at: string;
+};
+
+export const getLiveDonations = async (limit = 50): Promise<LiveDonation[]> => {
+  if (!hayBaseDeDatos()) return donacionesRecientesDeStripe(limit);
+  try {
+    const filas = await conReintento(() => db()<
+      {
+        id: string;
+        display_name: string;
+        amount_cents: number;
+        kind: "once" | "recurring";
+        created_at: Date;
+      }[]
+    >`
+      select dn.id,
+             case 
+               when d.list_public = true and d.display_name is not null and trim(d.display_name) != '' 
+               then d.display_name 
+               else 'Donante Anónimo' 
+             end as display_name,
+             dn.amount_cents::int as amount_cents,
+             dn.kind,
+             dn.created_at
+        from public.donations dn
+        join public.donors d on d.id = dn.donor_id
+       where dn.status = 'succeeded'
+       order by dn.created_at desc
+       limit ${limit}
+    `);
+
+    if (!filas.length) return donacionesRecientesDeStripe(limit);
+    return filas.map((f) => ({ ...f, created_at: f.created_at.toISOString() }));
+  } catch (err) {
+    console.error("[getLiveDonations] consulta a Postgres falló:", err);
+    return donacionesRecientesDeStripe(limit);
+  }
+};
+
