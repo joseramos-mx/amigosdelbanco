@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function OverlayLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <style>{`html,body{background:transparent!important;overflow:hidden}`}</style>
+      <style>{`html,body,body>div,#__next{background:transparent!important;background-image:none!important}html,body{overflow:hidden}`}</style>
       {children}
     </>
   );
