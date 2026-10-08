@@ -23,10 +23,10 @@ export type RespuestaOverlay = {
 
 export type Alcance = "hoy" | "todo";
 
-/** Inicio del día actual en hora de México (UTC-6 fijo, sin horario de verano desde 2022). */
+/** Inicio del día actual en hora de CDMX (UTC-6 fijo, sin horario de verano desde 2022). */
 export function inicioDelDiaMx(ahora = new Date()): Date {
   const partes = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Monterrey",
+    timeZone: "America/Mexico_City",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
