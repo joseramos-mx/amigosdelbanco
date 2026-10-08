@@ -48,70 +48,72 @@ export default function Lista({ clave, alcanceInicial, controles, demo, privado,
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const etiqueta = alcance === "hoy" ? "Recaudado hoy" : "Recaudado en total";
+  const etiqueta = alcance === "hoy" ? "Recaudado hoy" : "Recaudado";
 
   return (
-    <main className="flex h-svh w-full flex-col p-[2vmin]">
+    // Formato "celular": angosto (menos de la mitad de la pantalla) y de altura moderada.
+    // Todo se dimensiona con cqw (relativo al ancho de la tarjeta) para que escale parejo.
+    <main className="w-[23vw] min-w-[200px] max-w-full p-[1.5vmin] [container-type:inline-size]">
       {fondo && <div className="fixed inset-0 -z-10 bg-black" />}
       <style>{`
         @keyframes fila-entra {
-          0%   { transform: translateY(-14px) scale(.98); opacity: 0; }
-          100% { transform: translateY(0) scale(1);       opacity: 1; }
+          0%   { transform: translateY(-8px) scale(.98); opacity: 0; }
+          100% { transform: translateY(0) scale(1);      opacity: 1; }
         }
       `}</style>
 
-      {/* Tarjeta con color: degradado cálido + borde ámbar + resplandor (nada de caja negra plana) */}
-      <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[4vmin] border-[.6vmin] border-run-amber bg-gradient-to-br from-[#3a2c0e] via-[#262014] to-[#171717] px-[2.5vmin] py-[2vmin] shadow-[0_1.5vmin_5vmin_rgba(0,0,0,.55)]">
-        <span aria-hidden className="pointer-events-none absolute -right-[12vmin] -top-[14vmin] h-[48vmin] w-[48vmin] rounded-full bg-run-amber/25 blur-3xl" />
-        <span aria-hidden className="pointer-events-none absolute -bottom-[16vmin] -left-[12vmin] h-[40vmin] w-[40vmin] rounded-full bg-run-amber/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-[6cqw] border-[.8cqw] border-run-amber/80 bg-gradient-to-br from-[#3a2c0e]/95 via-[#262014]/95 to-[#171717]/95 p-[4cqw] shadow-[0_2cqw_6cqw_rgba(0,0,0,.45)]">
+        <span aria-hidden className="pointer-events-none absolute -right-[20cqw] -top-[22cqw] h-[60cqw] w-[60cqw] rounded-full bg-run-amber/20 blur-3xl" />
 
         {/* Encabezado: logo + total */}
-        <header className="relative flex flex-wrap items-center justify-between gap-x-[3vmin] gap-y-[1vmin]">
-          <div className="flex min-w-0 items-center gap-[2.2vmin]">
-            <div className="grid h-[9vmin] min-h-[3.5rem] w-[9vmin] min-w-[3.5rem] shrink-0 place-items-center rounded-full bg-white p-[1.3vmin] ring-[.6vmin] ring-run-amber">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.svg" alt="Banco de Alimentos de Durango" className="h-full w-full object-contain" />
-            </div>
-            <div className="min-w-0">
-              <p className="flex items-center gap-[.9vmin] pb-1 font-geist-mono text-[clamp(.7rem,1.7vmin,1.2rem)] font-bold uppercase tracking-[0.2em] text-run-amber">
-                <span className="inline-block h-[1.3vmin] w-[1.3vmin] min-h-2 min-w-2 animate-pulse rounded-full bg-run-amber" />
-                {etiqueta}
-              </p>
-              <p className="mt-[.4vmin] font-schabo text-[clamp(2.6rem,9.5vmin,7rem)] uppercase leading-none text-run-amber [text-shadow:0_0_4vmin_rgb(255_190_40/.35)]">
-                {datos ? formatMxn(datos.totalCentavos) : "—"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-end gap-[1.2vmin]">
-            {controles && (
-              <div className="flex overflow-hidden rounded-full border border-white/25 font-geist-mono text-[clamp(.7rem,1.7vmin,1.1rem)] uppercase tracking-[0.14em]">
-                {(["hoy", "todo"] as const).map((a) => (
-                  <button
-                    key={a}
-                    onClick={() => setAlcance(a)}
-                    className={`px-[1.8vmin] py-[.9vmin] transition-colors ${
-                      alcance === a ? "bg-run-amber text-black" : "text-white/70 hover:text-white"
-                    }`}
-                  >
-                    {a === "hoy" ? "Hoy" : "Histórico"}
-                  </button>
-                ))}
-              </div>
-            )}
-            <p className="rounded-full bg-white/10 px-[2.2vmin] py-[.8vmin] text-[clamp(1rem,2.8vmin,2rem)] text-white">
-              <span className="font-schabo text-[1.3em] uppercase text-run-amber">{datos?.cantidad ?? 0}</span>{" "}
-              {datos?.cantidad === 1 ? "donación" : "donaciones"}
+        <header className="relative flex items-center gap-[3.5cqw]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/run/logo.png"
+            alt="Banco de Alimentos de Durango"
+            className="h-[13cqw] w-auto shrink-0 object-contain"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-[1.6cqw] font-geist-mono text-[2.6cqw] font-bold uppercase leading-none tracking-[0.16em] text-run-amber">
+              <span className="inline-block h-[2cqw] w-[2cqw] animate-pulse rounded-full bg-run-amber" />
+              <span className="truncate">{etiqueta}</span>
+            </p>
+            <p className="font-schabo text-[11cqw] uppercase leading-none text-run-amber [text-shadow:0_0_4cqw_rgb(255_190_40/.35)] mt-2">
+              {datos ? formatMxn(datos.totalCentavos) : "—"}
             </p>
           </div>
+
+          {/* Total de donaciones, del lado derecho */}
+          <p className="flex shrink-0 flex-col items-center rounded-[3cqw] bg-white/10 px-[3cqw] py-[1.8cqw] leading-none text-white">
+            <span className="font-schabo text-[8cqw] uppercase text-run-amber">{datos?.cantidad ?? 0}</span>
+            <span className="mt-[.8cqw] text-[2.6cqw]">{datos?.cantidad === 1 ? "donación" : "donaciones"}</span>
+          </p>
         </header>
 
-        <div className="relative my-[1.4vmin] h-[.4vmin] rounded-full bg-gradient-to-r from-run-amber via-run-amber/40 to-transparent" />
+        {/* Interruptor Hoy / Histórico (solo con controles) */}
+        <div className="relative flex justify-end">
+          {controles && (
+            <div className="mt-[2.5cqw] flex overflow-hidden rounded-full border border-white/25 font-geist-mono text-[2.4cqw] uppercase leading-none tracking-[0.1em]">
+              {(["hoy", "todo"] as const).map((a) => (
+                <button
+                  key={a}
+                  onClick={() => setAlcance(a)}
+                  className={`px-[2.4cqw] py-[1.2cqw] transition-colors ${alcance === a ? "bg-run-amber text-black" : "text-white/70 hover:text-white"
+                    }`}
+                >
+                  {a === "hoy" ? "Hoy" : "Histórico"}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="relative my-[2.5cqw] h-[.7cqw] rounded-full bg-gradient-to-r from-run-amber via-run-amber/40 to-transparent" />
 
         {/* Lista */}
-        <ul className="relative flex min-h-0 flex-1 flex-col overflow-hidden [container-type:size]">
+        <ul className="relative flex flex-col gap-[1.6cqw]">
           {datos && datos.recientes.length === 0 && (
-            <li className="m-auto text-center text-[clamp(1.1rem,3vmin,2.2rem)] text-white/80">
+            <li className="py-[3cqw] text-center text-[3.6cqw] text-white/80">
               Esperando la primera donación…
             </li>
           )}
@@ -122,17 +124,16 @@ export default function Lista({ clave, alcanceInicial, controles, demo, privado,
             return (
               <li
                 key={d.id}
-                className={`mb-[1.1cqh] flex h-[8.8cqh] shrink-0 items-center gap-[2.4cqh] rounded-[4.5cqh] border px-[1.6cqh] transition-colors duration-1000 ${
-                  nueva
-                    ? "border-run-amber bg-run-amber/35"
-                    : i === 0
-                      ? "border-run-amber/50 bg-white/[0.12]"
-                      : "border-white/10 bg-white/[0.07]"
-                }`}
+                className={`flex h-[11cqw] items-center gap-[2.6cqw] rounded-full border px-[1.2cqw] pr-[3.4cqw] transition-colors duration-1000 ${nueva
+                  ? "border-run-amber bg-run-amber/35"
+                  : i === 0
+                    ? "border-run-amber/50 bg-white/[0.12]"
+                    : "border-white/10 bg-white/[0.07]"
+                  }`}
                 style={nueva ? { animation: "fila-entra .5s cubic-bezier(.2,.8,.2,1) both" } : undefined}
               >
                 {/* Inicial del donador */}
-                <span className="grid aspect-square h-[78%] shrink-0 place-items-center rounded-full bg-run-amber font-schabo text-[clamp(1.2rem,4.6cqh,3.4rem)] uppercase leading-none text-black">
+                <span className="grid aspect-square h-[82%] shrink-0 place-items-center rounded-full bg-run-amber font-schabo text-[5.4cqw] uppercase leading-none text-black">
                   {anonimo ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -153,15 +154,13 @@ export default function Lista({ clave, alcanceInicial, controles, demo, privado,
                 </span>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[clamp(1.1rem,3.9cqh,3rem)] font-medium leading-tight text-white">
-                    {nombre}
-                  </p>
-                  <p className="font-geist-mono text-[clamp(.65rem,2.2cqh,1.4rem)] uppercase tracking-[0.12em] text-white/75">
+                  <p className="truncate text-[4.2cqw] font-medium leading-none text-white">{nombre}</p>
+                  <p className="mt-[1cqw] font-geist-mono text-[2.3cqw] uppercase leading-none tracking-[0.1em] text-white/70">
                     {hace(d.creadoEn, ahoraMs)}
                   </p>
                 </div>
 
-                <p className="shrink-0 font-schabo text-[clamp(1.7rem,5.8cqh,4.4rem)] uppercase leading-none text-run-amber">
+                <p className="shrink-0 font-schabo text-[6.2cqw] uppercase leading-none text-run-amber">
                   {formatMxn(d.centavos)}
                 </p>
               </li>
@@ -170,7 +169,7 @@ export default function Lista({ clave, alcanceInicial, controles, demo, privado,
         </ul>
 
         {!conectado && (
-          <p className="relative mt-[1vmin] text-right font-geist-mono text-[clamp(.6rem,1.3vmin,.9rem)] uppercase tracking-[0.16em] text-white/40">
+          <p className="relative mt-[2cqw] text-right font-geist-mono text-[2.2cqw] uppercase tracking-[0.16em] text-white/40">
             reconectando…
           </p>
         )}
