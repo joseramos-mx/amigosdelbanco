@@ -13,6 +13,7 @@ import BotonSalir from "../BotonSalir";
 import TabsAdmin from "./TabsAdmin";
 import ListaVentas from "./ListaVentas";
 import CapturaFisicosAdmin from "../CapturaFisicosAdmin";
+import EfectivoPanel from "./efectivo/EfectivoPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -97,6 +98,8 @@ export default async function PanelPage() {
         </div>
 
         <TabsAdmin
+          donaciones={<EfectivoPanel />}
+
           ventas={
             <>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

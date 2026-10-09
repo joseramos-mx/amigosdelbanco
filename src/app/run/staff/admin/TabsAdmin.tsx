@@ -2,24 +2,27 @@
 
 import { useState, ReactNode } from "react";
 
-type Tab = "ventas" | "staff" | "acciones" | "cortesias" | "exportaciones";
+type Tab = "donaciones" | "ventas" | "staff" | "acciones" | "cortesias" | "exportaciones";
 
 export default function TabsAdmin({
+  donaciones,
   ventas,
   staff,
   acciones,
   cortesias,
   exportaciones,
 }: {
+  donaciones: ReactNode;
   ventas: ReactNode;
   staff: ReactNode;
   acciones: ReactNode;
   cortesias: ReactNode;
   exportaciones: ReactNode;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("ventas");
+  const [activeTab, setActiveTab] = useState<Tab>("donaciones");
 
   const tabs: { id: Tab; label: string }[] = [
+    { id: "donaciones", label: "donaciones" },
     { id: "ventas", label: "Ventas" },
     { id: "staff", label: "Staff" },
     { id: "acciones", label: "Acciones" },
@@ -35,11 +38,10 @@ export default function TabsAdmin({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`whitespace-nowrap px-5 py-3 text-sm uppercase tracking-wide font-geist-mono transition-colors rounded-t-lg ${
-              activeTab === tab.id
-                ? "bg-run-card border-t border-x border-white/10 text-run-amber"
-                : "border-transparent text-white/40 hover:text-white hover:bg-white/5"
-            }`}
+            className={`whitespace-nowrap px-5 py-3 text-sm uppercase tracking-wide font-geist-mono transition-colors rounded-t-lg ${activeTab === tab.id
+              ? "bg-run-card border-t border-x border-white/10 text-run-amber"
+              : "border-transparent text-white/40 hover:text-white hover:bg-white/5"
+              }`}
             style={{
               marginBottom: activeTab === tab.id ? "-1px" : "0",
               borderBottomColor: activeTab === tab.id ? "#131313" : "transparent" // Asumiendo color de fondo de página para tapar el borde
@@ -52,6 +54,9 @@ export default function TabsAdmin({
 
       {/* Contenido de pestañas */}
       <div className="mt-6">
+        <div className={activeTab === "donaciones" ? "block animate-in fade-in duration-300" : "hidden"}>
+          {donaciones}
+        </div>
         <div className={activeTab === "ventas" ? "block animate-in fade-in duration-300" : "hidden"}>
           {ventas}
         </div>
