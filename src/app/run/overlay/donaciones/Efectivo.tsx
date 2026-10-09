@@ -138,6 +138,70 @@ export default function Efectivo({ clave, alcance, demo, fondo }: Props) {
           0%   { transform: translateX(-110%); }
           100% { transform: translateX(110%); }
         }
+
+        /* ===== Horizontal (por defecto) ===== */
+        .efe-head {
+          display: flex; align-items: center; gap: 3cqh; margin-bottom: 2.5rem;
+        }
+        .efe-logo { height: 22cqh; width: auto; max-width: 40cqw; object-fit: contain; flex-shrink: 0; }
+        .efe-label {
+          display: flex; align-items: center; gap: 1.6cqh;
+          font-weight: 700; text-transform: uppercase; letter-spacing: .2em;
+          font-size: clamp(.7rem, 5.4cqh, 2rem);
+        }
+        .efe-dot { display: inline-block; width: 3cqh; height: 3cqh; min-width: .5rem; min-height: .5rem; border-radius: 9999px; }
+        .efe-total {
+          margin-top: 3cqh; line-height: 1; white-space: nowrap;
+          font-size: min(40cqh, 19cqw);
+        }
+        .efe-zona {
+          margin-top: 2cqh; display: flex; width: 100%; align-items: center; justify-content: center;
+          height: 18cqh; padding: 0 4cqw;
+        }
+        .efe-caja { display: flex; max-width: 100%; align-items: center; overflow: hidden; border-radius: 9999px; border-width: .5cqh; border-style: solid; }
+        .efe-monto {
+          flex-shrink: 0; padding: 1.8cqh 3.2cqh; line-height: 1; text-transform: uppercase;
+          font-size: min(13cqh, 6.5cqw);
+        }
+        .efe-nombre {
+          min-width: 0; padding: 0 3.2cqh; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+          font-weight: 500; font-size: clamp(1rem, 8cqh, 3rem);
+        }
+        .efe-cuenta { font-size: clamp(.9rem, 6cqh, 2.4rem); color: rgb(255 255 255 / .85); text-align: center; }
+
+        /* ===== Vertical (alto > ancho): todo se dimensiona con el ANCHO (cqw) ===== */
+        @container (max-aspect-ratio: 1/1) {
+          .efe-head {
+            flex-direction: column; gap: 3cqw; margin-bottom: 4cqw; padding: 0 5cqw; text-align: center;
+          }
+          .efe-logo { height: auto; width: auto; max-width: 70cqw; max-height: 16cqh; }
+          .efe-label {
+            justify-content: center; gap: 2.4cqw; letter-spacing: .14em;
+            font-size: clamp(.8rem, 5cqw, 3rem); text-align: center;
+          }
+          .efe-dot { width: 3.2cqw; height: 3.2cqw; }
+          .efe-total {
+            margin-top: 2cqw; padding: 0 3cqw;
+            font-size: min(26cqw, 18cqh);
+          }
+          .efe-zona {
+            margin-top: 5cqw; height: auto; min-height: 34cqw; padding: 0 5cqw;
+          }
+          /* Aviso apilado: monto arriba, nombre abajo (puede ir en 2 líneas) */
+          .efe-caja {
+            flex-direction: column; align-items: stretch; width: 100%;
+            border-radius: 7cqw; border-width: .8cqw;
+          }
+          .efe-monto {
+            padding: 3cqw 5cqw; text-align: center; font-size: 15cqw;
+          }
+          .efe-nombre {
+            padding: 3.5cqw 5cqw; text-align: center; white-space: normal; overflow: hidden;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            font-size: clamp(1.1rem, 6.4cqw, 4rem); line-height: 1.2;
+          }
+          .efe-cuenta { font-size: clamp(1rem, 5cqw, 3rem); }
+        }
       `}</style>
 
       {/* La key reinicia la animación de "pop" en cada nueva donación */}
@@ -160,42 +224,42 @@ export default function Efectivo({ clave, alcance, demo, fondo }: Props) {
         )}
 
         {/* Encabezado: logo + etiqueta */}
-        <div className="relative flex items-center gap-[3cqh] mb-10">
+        <div className="efe-head relative">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/run/logo.png"
             alt="Banco de Alimentos de Durango"
-            className="h-[22cqh] w-auto shrink-0 object-contain"
+            className="efe-logo"
           />
-          <p className="flex items-center gap-[1.6cqh] font-geist-mono text-[clamp(.7rem,5.4cqh,2rem)] font-bold uppercase tracking-[0.2em] text-run-amber">
-            <span className="inline-block h-[3cqh] w-[3cqh] min-h-2 min-w-2 animate-pulse rounded-full bg-run-amber" />
+          <p className="efe-label font-geist-mono text-run-amber">
+            <span className="efe-dot animate-pulse bg-run-amber" />
             {etiqueta}
           </p>
         </div>
 
         {/* Total grande */}
-        <p className="relative mt-[3cqh] font-schabo text-[min(40cqh,19cqw)] uppercase leading-none text-run-amber [font-variant-numeric:tabular-nums] [text-shadow:0_0_6cqmin_rgb(255_190_40/.4)]">
+        <p className="efe-total relative font-schabo uppercase text-run-amber [font-variant-numeric:tabular-nums] [text-shadow:0_0_6cqmin_rgb(255_190_40/.4)]">
           {objetivo === null ? "—" : formatMxn(pesosEnteros)}
         </p>
 
-        <div className="relative mt-[2cqh] flex h-[18cqh] w-full items-center justify-center px-[4cqw]">
+        <div className="efe-zona relative">
           {aviso ? (
             <div
               key={aviso.id}
-              className="flex max-w-full items-center overflow-hidden rounded-full border-[.5cqh] border-run-amber bg-black/55 shadow-[0_1cqh_3cqh_rgba(0,0,0,.5)]"
+              className="efe-caja border-run-amber bg-black/55 shadow-[0_1cqh_3cqh_rgba(0,0,0,.5)]"
               style={{ animation: `efe-aviso ${aviso.dur}ms cubic-bezier(.2,.8,.2,1) both` }}
             >
-              <span className="shrink-0 bg-run-amber px-[3.2cqh] py-[1.8cqh] font-schabo text-[min(13cqh,6.5cqw)] uppercase leading-none text-black">
+              <span className="efe-monto bg-run-amber font-schabo text-black">
                 <span className="inline-block translate-y-[0.06em]">+{formatMxn(aviso.centavos)}</span>
               </span>
-              <span className="min-w-0 truncate px-[3.2cqh] text-[clamp(1rem,8cqh,3rem)] font-medium text-white">
+              <span className="efe-nombre text-white">
                 {aviso.nombre?.trim() || "Donador anónimo"} · ¡Gracias! 💛
               </span>
             </div>
           ) : (
             alcance === "todo" &&
             cantidad > 0 && (
-              <p className="text-[clamp(.9rem,6cqh,2.4rem)] text-white/85">
+              <p className="efe-cuenta">
                 {cantidad} {cantidad === 1 ? "aportación" : "aportaciones"} · ¡Gracias! 💛
               </p>
             )
